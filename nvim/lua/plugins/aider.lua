@@ -9,7 +9,7 @@ return {
     opts = function(_, opts)
       local Terminal = require("toggleterm.terminal").Terminal
       local aider = Terminal:new {
-        cmd = "aider",
+        cmd = "aider --model openrouter/anthropic/claude-3.5-sonnet",
         hidden = true,
         direction = "float",
         count = 99,
