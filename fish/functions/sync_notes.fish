@@ -136,7 +136,7 @@ function __sync_notes_git_commit_and_push
     pushd "$GIT_ROOT" >/dev/null
     
     # Check if there are any changes (including untracked files)
-    if test -z (git status --porcelain)
+    if test -z "(git status --porcelain)"
         echo "No git changes detected"
         # Reset change time even when no changes are found
         set -g LAST_CHANGE_TIME 0
