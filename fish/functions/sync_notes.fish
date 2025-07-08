@@ -1,6 +1,11 @@
 function sync_notes --description 'Synchronize markdown files from source to destination directory with git auto-commit'
     __sync_notes_validate_args $argv; or return 1
     __sync_notes_setup_directories $argv[1] $argv[2]; or return 1
+
+    # Initialize git debounce variables (in seconds since epoch)
+    set -g LAST_CHANGE_TIME 0
+    set -g GIT_DEBOUNCE_INTERVAL 300 # 5 minutes in seconds
+
     __sync_notes_perform_initial_sync; or return 1
     __sync_notes_start_polling_loop
 end
@@ -58,13 +63,19 @@ function __sync_notes_perform_initial_sync
         echo "Initial sync failed with status: $status"
         return 1
     end
+
+    # After initial sync, check for changes to arm the git commit debounce
+    if test "$GIT_ENABLED" = "true"
+        pushd "$GIT_ROOT" >/dev/null
+        if not test -z "(git status --porcelain)"
+            echo "Changes detected after initial sync. Arming git commit."
+            set -g LAST_CHANGE_TIME (date +%s)
+        end
+        popd >/dev/null
+    end
 end
 
 function __sync_notes_start_polling_loop
-    # Initialize git debounce variables (in seconds since epoch)
-    set -g LAST_CHANGE_TIME 0
-    set -g GIT_DEBOUNCE_INTERVAL 300  # 5 minutes in seconds
-    
     echo "Starting polling watcher (checking every 5 seconds)..."
     
     # Create timestamp file for tracking changes
