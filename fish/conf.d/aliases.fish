@@ -8,6 +8,7 @@ abbr restart 'sudo systemctl restart'
 abbr status 'systemctl status'
 abbr enable 'sudo systemctl enable'
 abbr disable 'sudo systemctl disable'
+abbr kcat "kitten icat "
 
 if command -q btop
   abbr btop 'btop --force-utf'
