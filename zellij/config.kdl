@@ -151,6 +151,8 @@ keybinds clear-defaults=true {
         bind "Alt ]" { NextSwapLayout; }
         bind "Alt i" { MoveTab "Left"; }
         bind "Alt o" { MoveTab "Right"; }
+        bind "Alt Shift h" "Alt Left" { GoToPreviousTab; }
+        bind "Alt Shift l" "Alt Right" { GoToNextTab; }
     }
     shared_except "normal" "locked" {
         bind "Enter" "Esc" { SwitchToMode "Normal"; }
