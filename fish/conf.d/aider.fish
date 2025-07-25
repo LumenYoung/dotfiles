@@ -19,7 +19,8 @@ abbr aiderm 'aider -m "'
 ###################### Model Arena ##########################
 
 # set -x AIDER_MODEL openrouter/google/gemini-2.5-pro
-set -x AIDER_MODEL openrouter/anthropic/claude-sonnet-4
+# set -x AIDER_MODEL openrouter/anthropic/claude-sonnet-4
+set -x AIDER_MODEL openrouter/qwen/qwen3-coder
 # set -x AIDER_MODEL openrouter/deepseek/deepseek-r1-0528
 # set -x AIDER_MODEL openrouter/x-ai/grok-4
 # set -x AIDER_MODEL openrouter/moonshotai/kimi-k2
