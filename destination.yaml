@@ -5,7 +5,6 @@ electron-flags.conf: ~/.config/electron-flags.conf
 eventviewsrc: ~/.config/eventviewsrc
 gtk-3.0: ~/.config/gtk-3.0
 helix: ~/.config/helix
-input-remapper-2: ~/.config/input-remapper-2
 kcookiejarrc: ~/.config/kcookiejarrc
 kde_local_share_backup.txt: ~/.config/kde_local_share_backup.txt
 kitty: ~/.config/kitty
