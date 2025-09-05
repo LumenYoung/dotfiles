@@ -58,3 +58,4 @@ chromium-flags.conf: "~/.config/chromium-flags.conf"
 neovide: ~/.config/neovide
 fish: ~/.config/fish
 systemd: ~/.config/systemd
+presenterm: ~/.config/presenterm

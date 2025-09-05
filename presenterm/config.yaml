@@ -1,0 +1,3 @@
+snippet:
+  exec_replace:
+    enable: true
