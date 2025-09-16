@@ -76,3 +76,6 @@ set adjust-open width
 # set recolor true
 
 map <C-h> input && set inputbar-text "Type your input: " && exec ~/.config/zathura/scripts/notify.zsh $FILE %input%
+
+map <C-c> feedkeys ":exec sh -c \'echo $FILE | wl-copy\'<Return>"
+map yp feedkeys ":exec sh -c \'echo $FILE | wl-copy\'<Return>"
