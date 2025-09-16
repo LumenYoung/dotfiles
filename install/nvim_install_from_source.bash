@@ -3,7 +3,7 @@
 # Clone neovim, build and install it at ~/.local/
 
 # Default tag
-TAG="v0.11.2"
+TAG="v0.11.4"
 
 # Help function
 show_help() {
