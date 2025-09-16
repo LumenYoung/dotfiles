@@ -3,18 +3,42 @@ return {
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-treesitter/nvim-treesitter",
+    {
+      "AstroNvim/astrocore",
+      opts = {
+        mappings = {
+          n = {
+            ["<Leader>a"] = { name = "Code Companion" },
+            ["<Leader>aa"] = { "<cmd>CodeCompanionChat<cr>", desc = "Chat" },
+            ["<Leader>ap"] = { "<cmd>CodeCompanionActions<cr>", desc = "Action Palette" },
+            ["<Leader>ac"] = { "<cmd>CodeCompanionCmd<cr>", desc = "Action Palette" },
+          },
+          v = {
+            ["<Leader>a"] = { name = "Code Companion" },
+            ["<Leader>aa"] = { "<cmd>'<,'>CodeCompanion<cr>", desc = "Add Selection" },
+            ["<Leader>ae"] = { "<cmd>'<,'>CodeCompanion /explain<cr>", desc = "Explain Selection" },
+            ["<Leader>ar"] = { "<cmd>'<,'>CodeCompanion /review<cr>", desc = "Review Selection" },
+            ["<Leader>af"] = { "<cmd>'<,'>CodeCompanion /fix<cr>", desc = "Fix Selection" },
+            ["<Leader>at"] = { "<cmd>'<,'>CodeCompanion /test<cr>", desc = "Generate Test for Section" },
+          },
+        },
+      },
+    },
   },
   opts = {
     strategies = {
       -- Change the default chat adapter
       chat = {
         adapter = "openrouter",
+        model = "moonshotai/kimi-k2-0905",
       },
       inline = {
         adapter = "openrouter",
+        model = "moonshotai/kimi-k2-0905",
       },
       cmd = {
         adapter = "openrouter",
+        model = "deepseek/deepseek-chat-v3.1",
       },
     },
     -- NOTE: The log_level is in `opts.opts`
@@ -36,8 +60,8 @@ return {
                 "google/gemini-2.5-pro",
                 "moonshotai/kimi-k2-0905",
                 "deepseek/deepseek-chat-v3.1",
-                "anthropic/claude-3.7-sonnet"
-              }
+                "anthropic/claude-sonnet-4",
+              },
             },
           },
         })
