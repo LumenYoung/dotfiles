@@ -290,3 +290,4 @@ install/eget
 install/eget.sh
 *.zwc
 kitty/Wallpapers/*.png
+fish/fishd.tmp.*
