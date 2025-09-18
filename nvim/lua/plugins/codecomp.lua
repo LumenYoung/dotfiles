@@ -53,6 +53,9 @@ return {
             api_key = "OPENROUTER_API_KEY",
             chat_url = "/v1/chat/completions",
           },
+          opts = {
+            stream = true
+          },
           schema = {
             model = {
               default = "google/gemini-2.5-pro",
