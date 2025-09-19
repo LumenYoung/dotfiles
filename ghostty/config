@@ -27,7 +27,9 @@
 # # separated by equals signs.
 font-family = Iosevka Term
 font-size = 14
-# window-padding-x = 2
+window-padding-x = 0
+window-padding-y = 0
+window-padding-balance = true
 #
 # # Spacing around the equals sign does not matter.
 # # All of these are identical:
@@ -59,9 +61,14 @@ keybind = ctrl+shift+l=goto_split:right
 
 keybind = ctrl+shift+plus=increase_font_size:1
 keybind = ctrl+shift+minus=decrease_font_size:1
-
-cursor-style = block
-cursor-style-blink = false
 keybind = ctrl+shift+w=close_surface
 
+cursor-style = block
+cursor-style-blink = true
+
+gtk-tabs-location = bottom
+
 gtk-custom-css = gtk.css
+theme = Catppuccin Frappe
+
+shell-integration = fish
