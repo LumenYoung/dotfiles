@@ -58,3 +58,4 @@ neovide: ~/.config/neovide
 fish: ~/.config/fish
 systemd: ~/.config/systemd
 presenterm: ~/.config/presenterm
+ghostty: ~/.config/ghostty
