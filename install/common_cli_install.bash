@@ -1,34 +1,177 @@
 #!/usr/bin/env bash
 
-# Check if ~/.local/bin is in PATH, if not add it
-if [[ ":$PATH:" != *":$HOME/.local/bin:"* ]]; then
-    export PATH="$HOME/.local/bin:$PATH"
-fi
+set -euo pipefail
 
-# get eget
-curl -o eget.sh https://zyedidia.github.io/eget.sh
-bash eget.sh
-mv eget ~/.local/bin/
+# Configuration
+LOCAL_BIN="$HOME/.local/bin"
+TOOLS_DIR="$HOME/.local/tools"
+LOG_FILE="$TOOLS_DIR/install.log"
 
-# eget
-eget sharkdp/fd --asset ^musl --to ~/.local/bin
-eget BurntSushi/ripgrep --to ~/.local/bin
-eget jesseduffield/lazygit --to ~/.local/bin
-eget zellij-org/zellij --to ~/.local/bin
-eget ajeetdsouza/zoxide --to ~/.local/bin
-eget junegunn/fzf --to ~/.local/bin
-eget casey/just --asset linux-musl --to ~/.local/bin
-eget eza-community/eza --asset tar --asset linux-musl --to ~/.local/bin
-eget sxyazi/yazi --asset linux-musl --to ~/.local/bin --file yazi
-eget sxyazi/yazi --asset linux-musl --to ~/.local/bin --file ya
-eget aristocratos/btop --to ~/.local/bin
-eget sharkdp/bat --asset linux-musl --to ~/.local/bin
-# eget neovim/neovim --to ~/.local/bin/nvim
-# eget jpillora/chisel --asset deb --to ~/.local/bin
+# Tool definitions - makes it easy to add/remove tools
+declare -A TOOL_COMMANDS=(
+    ["fd"]="eget sharkdp/fd --asset ^musl --to $LOCAL_BIN"
+    ["ripgrep"]="eget BurntSushi/ripgrep --to $LOCAL_BIN"
+    ["lazygit"]="eget jesseduffield/lazygit --to $LOCAL_BIN"
+    ["zellij"]="eget zellij-org/zellij --to $LOCAL_BIN"
+    ["zoxide"]="eget ajeetdsouza/zoxide --to $LOCAL_BIN"
+    ["fzf"]="eget junegunn/fzf --to $LOCAL_BIN"
+    ["just"]="eget casey/just --asset linux-musl --to $LOCAL_BIN"
+    ["eza"]="eget eza-community/eza --asset tar --asset linux-musl --to $LOCAL_BIN"
+    ["yazi"]="eget sxyazi/yazi --asset linux-musl --to $LOCAL_BIN --file yazi && eget sxyazi/yazi --asset linux-musl --to $LOCAL_BIN --file ya"
+    ["btop"]="eget aristocratos/btop --to $LOCAL_BIN"
+    ["bat"]="eget sharkdp/bat --asset linux-musl --to $LOCAL_BIN"
+)
 
-# eget atuinsh/atuin --to ~/.local/bin
-# eget denisidoro/navi --to ~/.local/bin
-# eget orf/gping --to ~/.local/bin
-# eget jesvedberg/tpix --to ~/.local/bin
-# eget hackerb9/lsix --to ~/.local/bin
-# eget jesseduffield/lazydocker --to ~/.local/bin
+# Initialize logging and directories
+setup_environment() {
+    mkdir -p "$LOCAL_BIN" "$TOOLS_DIR"
+    # Add local bin to PATH if not present
+    if [[ ":$PATH:" != *":$LOCAL_BIN:"* ]]; then
+        export PATH="$LOCAL_BIN:$PATH"
+    fi
+    # Initialize log
+    echo "=== Installation started at $(date) ===" > "$LOG_FILE"
+}
+
+# Log messages
+log_message() {
+    local message="$1"
+    echo "$(date '+%Y-%m-%d %H:%M:%S') - $message" | tee -a "$LOG_FILE"
+}
+
+# Install eget
+install_eget() {
+    local force="$1"
+    if command -v eget >/dev/null 2>&1 && [[ "$force" != "true" ]]; then
+        log_message "eget is already installed. Use -f to force reinstall."
+        return 0
+    fi
+    
+    log_message "Installing eget..."
+    curl -sSf -o eget.sh https://zyedidia.github.io/eget.sh
+    bash eget.sh >> "$LOG_FILE" 2>&1
+    mv eget "$LOCAL_BIN/"
+    rm -f eget.sh
+    log_message "eget installed successfully"
+}
+
+# Install a specific tool
+install_tool() {
+    local tool="$1"
+    if [[ ! -v "TOOL_COMMANDS[$tool]" ]]; then
+        log_message "Error: Unknown tool '$tool'"
+        return 1
+    fi
+    
+    log_message "Installing $tool..."
+    if eval "${TOOL_COMMANDS[$tool]}" >> "$LOG_FILE" 2>&1; then
+        log_message "$tool installed successfully"
+        return 0
+    else
+        log_message "Error: Failed to install $tool"
+        return 1
+    fi
+}
+
+# Install all tools
+install_all_tools() {
+    log_message "Installing all tools..."
+    for tool in "${!TOOL_COMMANDS[@]}"; do
+        install_tool "$tool"
+    done
+    log_message "All tools installation completed"
+}
+
+# Show usage information
+show_usage() {
+    cat << EOF
+Usage: $0 [OPTIONS] [TOOLS...]
+
+Options:
+    -f, --force      Force reinstall eget
+    -h, --help       Show this help message
+    -l, --list       List available tools
+
+Install CLI tools using eget. If no tools are specified, all tools are installed.
+
+Available tools: ${!TOOL_COMMANDS[*]}
+EOF
+}
+
+# List available tools
+list_tools() {
+    echo "Available tools:"
+    for tool in "${!TOOL_COMMANDS[@]}"; do
+        echo "  - $tool"
+    done
+}
+
+# Parse command line arguments
+parse_arguments() {
+    local force_eget=false
+    local tools=()
+    
+    while [[ $# -gt 0 ]]; do
+        case "$1" in
+            -f|--force)
+                force_eget=true
+                shift
+                ;;
+            -h|--help)
+                show_usage
+                exit 0
+                ;;
+            -l|--list)
+                list_tools
+                exit 0
+                ;;
+            -*)
+                echo "Error: Unknown option $1" >&2
+                show_usage
+                exit 1
+                ;;
+            *)
+                tools+=("$1")
+                shift
+                ;;
+        esac
+    done
+    
+    # Return values
+    echo "$force_eget"
+    if [[ ${#tools[@]} -gt 0 ]]; then
+        printf '%s\n' "${tools[@]}"
+    fi
+}
+
+# Main function
+main() {
+    local force_eget
+    local tools=()
+    
+    setup_environment
+    
+    # Parse arguments
+    IFS=$'\n' read -r -d '' force_eget tools_input <<< "$(parse_arguments "$@")"
+    # Read tools into array
+    while IFS= read -r line; do
+        tools+=("$line")
+    done <<< "$tools_input"
+    
+    # Install eget
+    install_eget "$force_eget"
+    
+    # Install tools
+    if [[ ${#tools[@]} -eq 0 ]]; then
+        install_all_tools
+    else
+        for tool in "${tools[@]}"; do
+            install_tool "$tool"
+        done
+    fi
+    
+    log_message "Installation process completed"
+}
+
+# Run main function
+main "$@"
