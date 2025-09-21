@@ -20,6 +20,7 @@ declare -A TOOL_COMMANDS=(
     ["yazi"]="eget sxyazi/yazi --asset linux-musl --to $LOCAL_BIN --file yazi && eget sxyazi/yazi --asset linux-musl --to $LOCAL_BIN --file ya"
     ["btop"]="eget aristocratos/btop --to $LOCAL_BIN"
     ["bat"]="eget sharkdp/bat --asset linux-musl --to $LOCAL_BIN"
+    ["dust"]="eget bootandy/dust --to $LOCAL_BIN"
 )
 
 # Initialize logging and directories
