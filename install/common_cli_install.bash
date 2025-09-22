@@ -7,6 +7,10 @@ LOCAL_BIN="$HOME/.local/bin"
 TOOLS_DIR="$HOME/.local/tools"
 LOG_FILE="$TOOLS_DIR/install.log"
 
+# Global variables for argument parsing
+force_eget=false
+declare -a tools
+
 # Tool definitions - makes it easy to add/remove tools
 declare -A TOOL_COMMANDS=(
     ["fd"]="eget sharkdp/fd --asset ^musl --to $LOCAL_BIN"
@@ -31,7 +35,7 @@ setup_environment() {
         export PATH="$LOCAL_BIN:$PATH"
     fi
     # Initialize log
-    echo "=== Installation started at $(date) ===" > "$LOG_FILE"
+    echo "=== Installation started at $(date) ===" >"$LOG_FILE"
 }
 
 # Log messages
@@ -47,13 +51,19 @@ install_eget() {
         log_message "eget is already installed. Use -f to force reinstall."
         return 0
     fi
-    
+
     log_message "Installing eget..."
     curl -sSf -o eget.sh https://zyedidia.github.io/eget.sh
-    bash eget.sh >> "$LOG_FILE" 2>&1
-    mv eget "$LOCAL_BIN/"
-    rm -f eget.sh
-    log_message "eget installed successfully"
+    # Don't redirect output to allow interactive prompts
+    if bash eget.sh; then
+        mv eget "$LOCAL_BIN/"
+        rm -f eget.sh
+        log_message "eget installed successfully"
+    else
+        rm -f eget.sh
+        log_message "Error: Failed to install eget"
+        return 1
+    fi
 }
 
 # Install a specific tool
@@ -63,9 +73,10 @@ install_tool() {
         log_message "Error: Unknown tool '$tool'"
         return 1
     fi
-    
+
     log_message "Installing $tool..."
-    if eval "${TOOL_COMMANDS[$tool]}" >> "$LOG_FILE" 2>&1; then
+    # Don't redirect output to allow interactive prompts
+    if eval "${TOOL_COMMANDS[$tool]}"; then
         log_message "$tool installed successfully"
         return 0
     else
@@ -85,7 +96,7 @@ install_all_tools() {
 
 # Show usage information
 show_usage() {
-    cat << EOF
+    cat <<EOF
 Usage: $0 [OPTIONS] [TOOLS...]
 
 Options:
@@ -109,59 +120,46 @@ list_tools() {
 
 # Parse command line arguments
 parse_arguments() {
-    local force_eget=false
-    local tools=()
-    
+    force_eget=false
+    tools=()
+
     while [[ $# -gt 0 ]]; do
         case "$1" in
-            -f|--force)
-                force_eget=true
-                shift
-                ;;
-            -h|--help)
-                show_usage
-                exit 0
-                ;;
-            -l|--list)
-                list_tools
-                exit 0
-                ;;
-            -*)
-                echo "Error: Unknown option $1" >&2
-                show_usage
-                exit 1
-                ;;
-            *)
-                tools+=("$1")
-                shift
-                ;;
+        -f | --force)
+            force_eget=true
+            shift
+            ;;
+        -h | --help)
+            show_usage
+            exit 0
+            ;;
+        -l | --list)
+            list_tools
+            exit 0
+            ;;
+        -*)
+            echo "Error: Unknown option $1" >&2
+            show_usage
+            exit 1
+            ;;
+        *)
+            tools+=("$1")
+            shift
+            ;;
         esac
     done
-    
-    # Return values
-    echo "$force_eget"
-    if [[ ${#tools[@]} -gt 0 ]]; then
-        printf '%s\n' "${tools[@]}"
-    fi
 }
 
 # Main function
 main() {
-    local force_eget
-    local tools=()
-    
     setup_environment
-    
+
     # Parse arguments
-    IFS=$'\n' read -r -d '' force_eget tools_input <<< "$(parse_arguments "$@")"
-    # Read tools into array
-    while IFS= read -r line; do
-        tools+=("$line")
-    done <<< "$tools_input"
-    
+    parse_arguments "$@"
+
     # Install eget
     install_eget "$force_eget"
-    
+
     # Install tools
     if [[ ${#tools[@]} -eq 0 ]]; then
         install_all_tools
@@ -170,7 +168,7 @@ main() {
             install_tool "$tool"
         done
     fi
-    
+
     log_message "Installation process completed"
 }
 
