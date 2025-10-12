@@ -55,7 +55,7 @@ function __sync_notes_perform_initial_sync
     echo "Starting sync from '$SOURCE_DIR' to '$DEST_DIR'"
     echo "Performing initial sync..."
     
-    rsync -av --delete --include="*.md" --include="*/" --exclude="*" "$SOURCE_DIR" "$DEST_DIR"
+    rsync -av --delete --include="*.md" --include="*.png" --include="*.jpg" --include="*.jpeg" --include="*/" --exclude="*" "$SOURCE_DIR" "$DEST_DIR"
     
     if test $status -eq 0
         echo "Initial sync completed successfully"
@@ -96,7 +96,7 @@ end
 
 function __sync_notes_check_for_changes
     # Check if source directory has been modified recently
-    set SOURCE_MODIFIED (find "$SOURCE_DIR" -name "*.md" -newer /tmp/sync_notes_timestamp 2>/dev/null | wc -l)
+    set SOURCE_MODIFIED (find "$SOURCE_DIR" \( -name "*.md" -o -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" \) -newer /tmp/sync_notes_timestamp 2>/dev/null | wc -l)
     test $SOURCE_MODIFIED -gt 0
 end
 
@@ -106,7 +106,7 @@ function __sync_notes_perform_sync
     set -g LAST_CHANGE_TIME (date +%s)
     echo "Changes detected, syncing..."
     
-    rsync -av --delete --include="*.md" --include="*/" --exclude="*" "$SOURCE_DIR" "$DEST_DIR"
+    rsync -av --delete --include="*.md" --include="*.png" --include="*.jpg" --include="*.jpeg" --include="*/" --exclude="*" "$SOURCE_DIR" "$DEST_DIR"
     
     if test $status -eq 0
         echo "Sync completed successfully"
