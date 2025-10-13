@@ -1,0 +1,169 @@
+#!/usr/bin/env python3
+import argparse
+import io
+import sys
+from pathlib import Path
+from PIL import Image, ImageOps
+
+SUPPORTED_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff"}
+
+
+def is_image(p: Path) -> bool:
+    return p.is_file() and p.suffix.lower() in SUPPORTED_EXTS
+
+
+def bytes_to_str(n):
+    for unit in ["B", "KB", "MB", "GB"]:
+        if n < 1024:
+            return f"{n:.0f}{unit}"
+        n /= 1024
+    return f"{n:.0f}TB"
+
+
+def save_bytesio(img, fmt, save_kwargs):
+    buf = io.BytesIO()
+    img.save(buf, format=fmt, **save_kwargs)
+    return buf
+
+
+def best_save_kwargs(fmt, has_alpha):
+    fmt = (fmt or "").upper()
+    if fmt in ("JPG", "JPEG"):
+        return "JPEG", dict(quality=85, optimize=True, progressive=True)
+    if fmt == "PNG":
+        return "PNG", dict(optimize=True)
+    if fmt == "WEBP":
+        # Use lossy WebP by default; preserves alpha if present
+        return "WEBP", dict(quality=85, method=6)
+    # Fallback: PNG
+    return "PNG", dict(optimize=True)
+
+
+def process_image(path: Path, threshold: int, inplace: bool, dry_run: bool) -> None:
+    try:
+        orig_size = path.stat().st_size
+    except Exception as e:
+        print(f"[skip] {path}: cannot stat ({e})", file=sys.stderr)
+        return
+
+    if orig_size <= threshold:
+        print(f"[ok]   {path.name}: {bytes_to_str(orig_size)} ≤ threshold")
+        return
+
+    try:
+        with Image.open(path) as im:
+            im = ImageOps.exif_transpose(im)  # respect orientation
+            orig_w, orig_h = im.width, im.height
+            fmt_guess = im.format
+            has_alpha = im.mode in ("LA", "RGBA", "PA")
+            target_fmt, save_kwargs = best_save_kwargs(fmt_guess, has_alpha)
+
+            # Binary search on scale factor for precision and few iterations
+            low, high = 0.05, 1.0
+            best_bytes = None
+            best_scale = None
+
+            # Preserve color where needed
+            def scaled_bytes(scale):
+                w = max(1, int(orig_w * scale))
+                h = max(1, int(orig_h * scale))
+                resized = im.resize((w, h), Image.LANCZOS)
+                img_to_save = resized
+                if target_fmt in ("JPEG",) and img_to_save.mode not in ("RGB",):
+                    img_to_save = img_to_save.convert("RGB")
+                buf = save_bytesio(img_to_save, target_fmt, save_kwargs)
+                return buf.getvalue(), w, h
+
+            # Early check: maybe just re-encode helps (no resize)
+            data, w0, h0 = scaled_bytes(1.0)
+            if len(data) <= threshold:
+                new_size = len(data)
+                print(
+                    f"[reenc] {path.name}: {bytes_to_str(orig_size)} -> {bytes_to_str(new_size)} (no resize)"
+                )
+                if not dry_run and inplace:
+                    path.write_bytes(data)
+                elif not dry_run:
+                    out = path.with_name(path.stem + "-resized" + path.suffix)
+                    out.write_bytes(data)
+                return
+
+            for _ in range(14):
+                mid = (low + high) / 2.0
+                data, w, h = scaled_bytes(mid)
+                if len(data) <= threshold:
+                    best_bytes = data
+                    best_scale = mid
+                    low = mid  # try larger
+                else:
+                    high = mid  # need smaller
+
+            # If we never got under threshold, take the smallest tried
+            if best_bytes is None:
+                data, w, h = scaled_bytes(low)
+                best_bytes = data
+                best_scale = low
+
+            new_size = len(best_bytes)
+            note = "" if new_size <= threshold else " (still > threshold at min scale)"
+            print(
+                f"[done] {path.name}: {bytes_to_str(orig_size)} -> {bytes_to_str(new_size)}; scale ~{best_scale:.2f}{note}"
+            )
+
+            if dry_run:
+                return
+
+            if inplace:
+                path.write_bytes(best_bytes)
+            else:
+                out = path.with_name(path.stem + "-resized" + path.suffix)
+                out.write_bytes(best_bytes)
+
+    except Exception as e:
+        print(f"[err]  {path}: {e}", file=sys.stderr)
+
+
+def main():
+    ap = argparse.ArgumentParser(
+        description="Resize images over a size threshold by reducing resolution."
+    )
+    ap.add_argument("directory", help="Directory containing images")
+    ap.add_argument(
+        "--threshold-kb",
+        type=int,
+        default=500,
+        help="Size threshold in KB (default 500)",
+    )
+    ap.add_argument(
+        "-r", "--recursive", action="store_true", help="Recurse into subdirectories"
+    )
+    ap.add_argument(
+        "--inplace",
+        action="store_true",
+        help="Overwrite images in place (default is to write *-resized files)",
+    )
+    ap.add_argument(
+        "--dry-run",
+        action="store_true",
+        help="Show what would happen without writing files",
+    )
+    args = ap.parse_args()
+
+    root = Path(args.directory)
+    if not root.is_dir():
+        print(f"Not a directory: {root}", file=sys.stderr)
+        sys.exit(1)
+
+    paths = (
+        p
+        for p in (root.rglob("*") if args.recursive else root.iterdir())
+        if is_image(p)
+    )
+    threshold_bytes = args.threshold_kb * 1024
+
+    for p in paths:
+        process_image(p, threshold_bytes, inplace=args.inplace, dry_run=args.dry_run)
+
+
+if __name__ == "__main__":
+    main()
