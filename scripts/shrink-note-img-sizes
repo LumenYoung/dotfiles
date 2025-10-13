@@ -138,9 +138,11 @@ def main():
         "-r", "--recursive", action="store_true", help="Recurse into subdirectories"
     )
     ap.add_argument(
-        "--inplace",
-        action="store_true",
-        help="Overwrite images in place (default is to write *-resized files)",
+        "--no-inplace",
+        action="store_false",
+        dest="inplace",
+        default=True,
+        help="Write to *-resized files instead of overwriting original images (default is to overwrite)",
     )
     ap.add_argument(
         "--dry-run",
