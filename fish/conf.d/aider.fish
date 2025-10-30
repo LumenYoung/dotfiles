@@ -23,4 +23,4 @@ abbr aiderm 'aider -m "'
 # set -x AIDER_MODEL openrouter/deepseek/deepseek-chat-v3.1
 # set -x AIDER_MODEL openrouter/deepseek/deepseek-r1-0528
 # set -x AIDER_MODEL openrouter/moonshotai/kimi-k2
-set -x AIDER_MODEL openrouter/deepseek/deepseek-chat-v3.1
+set -x AIDER_MODEL openrouter/deepseek/deepseek-v3.1-terminus:exacto
