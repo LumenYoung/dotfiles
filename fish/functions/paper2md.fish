@@ -22,7 +22,7 @@ function paper2md
     
     if test -e "$tmp_output/$base_name/$base_name.md"
         mv -v "$tmp_output/$base_name/$base_name.md" "$md_output/"
-        mv -v "$tmp_output/$base_name/$base_name_meta.json" "$md_output/"
+        mv -v "$tmp_output/$base_name/{$base_name}_meta.json" "$md_output/"
         echo "Files moved to $md_output"
         rm -rf "$tmp_output/$base_name"
 
