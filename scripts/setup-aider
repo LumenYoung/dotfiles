@@ -1,0 +1,46 @@
+#!/usr/bin/env python3
+"""Setup aider configuration files in current directory."""
+
+import os
+import sys
+
+def setup_aider():
+    # Check if .git folder exists
+    if not os.path.isdir('.git'):
+        print("Warning: No .git folder found in current directory")
+        response = input("Continue anyway? [y/N] ")
+        if response.lower() != 'y':
+            print("Aborted.")
+            return 1
+
+    # Create .aider.conf.yml
+    aider_conf = """read:
+  - CONVENTIONS.md
+alias:
+  - "ds:openrouter/deepseek/deepseek-v3.1-terminus:exacto"
+  - "snt:openrouter/anthropic/claude-sonnet-4.5"
+  - "gpt:openrouter/openai/gpt-5"
+  - "km:openrouter/moonshotai/kimi-k2-0905:exacto"
+"""
+
+    # Create CONVENTIONS.md
+    conventions = """- follow the YAGNI and KISS principle
+- unless strictly required for functionalities, don't use/add "try and except" block. We should just let error happen if not considered.
+- when typing in python, use modern approach (dict[] instead Dict, list[] instead of List[] etc.)
+- type everywhere possible, but leave comment only when necessary. don't left comment string when the statement is simple or semantically clear already.
+- If left with an error message only, then just give a short answer on what's happened and propose the solution shortly.
+- If the question starts with "impl-sugg", just give a short, high level overview about your implementation to this request and clearify any questions you need for implementing.
+"""
+
+    with open('.aider.conf.yml', 'w') as f:
+        f.write(aider_conf)
+    
+    with open('CONVENTIONS.md', 'w') as f:
+        f.write(conventions)
+    
+    print("✓ Created .aider.conf.yml")
+    print("✓ Created CONVENTIONS.md")
+    return 0
+
+if __name__ == '__main__':
+    sys.exit(setup_aider())
