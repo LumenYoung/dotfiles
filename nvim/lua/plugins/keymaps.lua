@@ -65,16 +65,11 @@ return {
         local path = vim.fn.expand "%:p"
         local line_number = vim.fn.line "."
         local yank_text = path .. ":" .. line_number
-        
-        -- Use the clipboard provider directly instead of setreg
-        local clipboard_provider = vim.g.clipboard
-        if clipboard_provider and clipboard_provider.copy and clipboard_provider.copy["+"] then
-          clipboard_provider.copy["+"](yank_text)
-        else
-          -- Fallback for when provider isn't available
-          vim.fn.setreg("+", yank_text)
-        end
-        
+
+        -- Use setreg to let the configured clipboard provider handle the copy
+        vim.fn.setreg("+", yank_text)
+        vim.fn.setreg("*", yank_text)
+
         vim.notify("Yanked: " .. yank_text, vim.log.levels.INFO)
       end,
       desc = "Yank file path and line number",

@@ -9,16 +9,16 @@ if vim.env.SSH_CLIENT or vim.env.SSH_TTY then
         opts.options = opts.options or {}
         opts.options.g = opts.options.g or {}
         opts.options.g.clipboard = {
-          name = "ZellijClipboard",
+          name = "OSC 52",
           copy = {
-            ["+"] = { "zellij", "action", "write", "--clipboard", "--" },
-            ["*"] = { "zellij", "action", "write", "--clipboard", "--" },
+            ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+            ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
           },
           paste = {
-            ["+"] = { "zellij", "action", "read", "--clipboard" },
-            ["*"] = { "zellij", "action", "read", "--clipboard" },
+            ["+"] = require("vim.ui.clipboard.osc52").paste("+"),
+            ["*"] = require("vim.ui.clipboard.osc52").paste("*"),
           },
-          cache_enabled = 1,
+          cache_enabled = true,
         }
         return opts
       end,
