@@ -8,7 +8,6 @@ gui:
   language: 'auto' # one of 'auto' | 'en' | 'zh' | 'pl' | 'nl' | 'ja' | 'ko'
   timeFormat: '02 Jan 06 15:04 MST' # https://pkg.go.dev/time#Time.Format
   theme:
-    lightTheme: false # For terminals with a light background
     activeBorderColor:
       - green
       - bold
@@ -18,8 +17,6 @@ gui:
       - blue
     selectedLineBgColor:
       - blue # set to `default` to have no background colour
-    selectedRangeBgColor:
-      - blue
     cherryPickedCommitBgColor:
       - cyan
     cherryPickedCommitFgColor:
@@ -42,7 +39,6 @@ gui:
 git:
   pagers:
     - colorArg: always
-      useConfig: false
   commit:
     signOff: false
   merging:
@@ -71,16 +67,19 @@ git:
   allBranchesLogCmds:
     - git log --graph --all --color=always --abbrev-commit --decorate --date=relative  --pretty=medium
 os:
-  editCommand: 'lvim' # see 'Configuring File Editing' section
-  editCommandTemplate: ''
-  openCommand: ''
+  copyToClipboardCmd: >
+    if [[ "$TERM" =~ ^(screen|tmux) ]]; then
+      printf "\033Ptmux;\033\033]52;c;$(printf {{text}} | base64 -w 0)\a\033\\" > /dev/tty
+    else
+      printf "\033]52;c;$(printf {{text}} | base64 -w 0)\a" > /dev/tty
+    fi
+  editPreset: "nvim"
 refresher:
   refreshInterval: 10 # File/submodule refresh interval in seconds. Auto-refresh can be disabled via option 'git.autoRefresh'.
   fetchInterval: 60 # Re-fetch interval in seconds. Auto-fetch can be disabled via option 'git.autoFetch'.
 update:
   method: prompt # can be: prompt | background | never
   days: 14 # how often an update is checked for
-reporting: 'undetermined' # one of: 'on' | 'off' | 'undetermined'
 confirmOnQuit: false
 # determines whether hitting 'esc' will quit the application when there is nothing to cancel/close
 quitOnTopLevelReturn: false
@@ -117,7 +116,6 @@ keybinding:
     goInto: '<enter>'
     openRecentRepos: '<c-r>'
     confirm: '<enter>'
-    confirm-alt1: 'y'
     remove: 'd'
     new: 'n'
     edit: 'e'
@@ -145,7 +143,6 @@ keybinding:
     diffingMenu-alt: '<c-e>' # deprecated
     copyToClipboard: '<c-o>'
     submitEditorText: '<enter>'
-    appendNewline: '<a-enter>'
     extrasMenu: '@'
     toggleWhitespaceInDiffView: '<c-w>'
     increaseContextInDiffView: '}'
@@ -193,12 +190,10 @@ keybinding:
     pickCommit: 'p' # pick commit (when mid-rebase)
     revertCommit: 't'
     cherryPickCopy: 'c'
-    cherryPickCopyRange: 'C'
     pasteCommits: 'V'
     tagCommit: 'T'
     checkoutCommit: '<space>'
     resetCherryPick: '<c-R>'
-    copyCommitMessageToClipboard: '<c-y>'
     openLogMenu: '<c-l>'
     viewBisectOptions: 'b'
   stash:
@@ -207,8 +202,6 @@ keybinding:
   commitFiles:
     checkoutCommitFile: 'c'
   main:
-    toggleDragSelect: 'v'
-    toggleDragSelect-alt: 'V'
     toggleSelectHunk: 'a'
     pickBothHunks: 'b'
   submodules:
