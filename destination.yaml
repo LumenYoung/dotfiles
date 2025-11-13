@@ -59,3 +59,4 @@ fish: ~/.config/fish
 systemd: ~/.config/systemd
 presenterm: ~/.config/presenterm
 ghostty: ~/.config/ghostty
+.aider.conf.yml: ~/.aider.conf.yml
