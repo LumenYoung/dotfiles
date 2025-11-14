@@ -192,13 +192,13 @@ project_doc_fallback_filenames = []
 
 [features]
 # Leave this table empty to accept defaults. Set explicit booleans to opt in/out.
-unified_exec = false
+unified_exec = true
 streamable_shell = true
 rmcp_client = false
 view_image_tool = true
-web_search_request = false
+web_search_request = true
 experimental_sandbox_command_assessment = false
-ghost_commit = false
+ghost_commit = true
 enable_experimental_windows_sandbox = false
 apply_patch_freeform = true
 
