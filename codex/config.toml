@@ -123,7 +123,7 @@ persistence = "save-all"
 # max_bytes = 0
 
 # URI scheme for clickable citations: vscode (default) | vscode-insiders | windsurf | cursor | none
-file_opener = "none"
+file_opener = "nvim"
 
 ################################################################################
 # UI, Notifications, and Misc
@@ -284,7 +284,7 @@ env_key = "OPENROUTER_API_KEY"
 
 # Hard profile: uses OpenAI GPT-5 via OpenRouter with same policy/settings
 [profiles.hard]
-model = "openai/gpt-5"
+model = "openai/gpt-5.1"
 model_provider = "openrouter"
 approval_policy = "on-request"
 sandbox_mode = "read-only"
