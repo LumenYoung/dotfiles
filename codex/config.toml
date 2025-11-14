@@ -13,7 +13,7 @@
 # Core Model Selection
 ################################################################################
 
-model = "moonshotai/kimi-k2-0905:exacto"
+model = "moonshotai/kimi-k2-thinking"
 # model = "moonshotai/kimi-k2-thinking"
 
 # Model used by the /review feature (code reviews). Default: "gpt-5-codex".
@@ -193,7 +193,7 @@ project_doc_fallback_filenames = []
 [features]
 # Leave this table empty to accept defaults. Set explicit booleans to opt in/out.
 unified_exec = false
-streamable_shell = false
+streamable_shell = true
 rmcp_client = false
 view_image_tool = true
 web_search_request = false
@@ -278,6 +278,19 @@ env_key = "OPENROUTER_API_KEY"
 # profile = "default"
 
 [profiles]
+
+# Explicit default profile inheriting from root settings
+[profiles.default]
+
+# Hard profile: uses OpenAI GPT-5 via OpenRouter with same policy/settings
+[profiles.hard]
+model = "openai/gpt-5"
+model_provider = "openrouter"
+approval_policy = "on-request"
+sandbox_mode = "read-only"
+model_reasoning_effort = "medium"
+model_reasoning_summary = "auto"
+model_verbosity = "medium"
 
 # [profiles.default]
 # model = "gpt-5-codex"
