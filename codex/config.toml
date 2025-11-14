@@ -292,6 +292,15 @@ model_reasoning_effort = "medium"
 model_reasoning_summary = "auto"
 model_verbosity = "medium"
 
+[profiles.hardeng]
+model = "openai/gpt-5.1-codex"
+model_provider = "openrouter"
+approval_policy = "on-request"
+sandbox_mode = "read-only"
+model_reasoning_effort = "medium"
+model_reasoning_summary = "auto"
+model_verbosity = "medium"
+
 # [profiles.default]
 # model = "gpt-5-codex"
 # model_provider = "openai"
