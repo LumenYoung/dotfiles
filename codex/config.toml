@@ -282,6 +282,15 @@ env_key = "OPENROUTER_API_KEY"
 # Explicit default profile inheriting from root settings
 [profiles.default]
 
+[profiles.quick]
+model = "moonshotai/kimi-k2-0905:exacto"
+model_provider = "openrouter"
+approval_policy = "on-request"
+sandbox_mode = "read-only"
+model_reasoning_effort = "medium"
+model_reasoning_summary = "auto"
+model_verbosity = "medium"
+
 # Hard profile: uses OpenAI GPT-5 via OpenRouter with same policy/settings
 [profiles.hard]
 model = "openai/gpt-5.1"
