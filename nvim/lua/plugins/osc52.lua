@@ -1,52 +1,33 @@
--- Check if we are in an SSH session
-if vim.env.SSH_CLIENT or vim.env.SSH_TTY then
-  -- Check if Zellij is running
-  if vim.env.ZELLIJ_SESSION_NAME then
-    -- When inside Zellij over SSH
-    return {
-      "AstroNvim/astrocore",
-      opts = function(_, opts)
-        opts.options = opts.options or {}
-        opts.options.g = opts.options.g or {}
-        opts.options.g.clipboard = {
-          name = "OSC 52",
-          copy = {
-            ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
-            ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
-          },
-          paste = {
-            ["+"] = require("vim.ui.clipboard.osc52").paste("+"),
-            ["*"] = require("vim.ui.clipboard.osc52").paste("*"),
-          },
-          cache_enabled = true,
-        }
-        return opts
-      end,
-    }
-  else
-    -- Direct SSH without Zellij (OSC 52)
-    return {
-      "AstroNvim/astrocore",
-      opts = function(_, opts)
-        opts.options = opts.options or {}
-        opts.options.g = opts.options.g or {}
-        opts.options.g.clipboard = {
-          name = "OSC 52",
-          copy = {
-            ["+"] = require("vim.ui.clipboard.osc52").copy("+"),
-            ["*"] = require("vim.ui.clipboard.osc52").copy("*"),
-          },
-          paste = {
-            ["+"] = require("vim.ui.clipboard.osc52").paste("+"),
-            ["*"] = require("vim.ui.clipboard.osc52").paste("*"),
-          },
-          cache_enabled = true,
-        }
-        return opts
-      end,
-    }
-  end
+-- Enable OSC52 only for copying yanks over SSH, without overriding paste behavior
+if not (vim.env.SSH_CLIENT or vim.env.SSH_TTY) then
+  return {}
 end
 
--- Return an empty table if not in SSH
-return {}
+return {
+  "AstroNvim/astrocore",
+  opts = function(_, opts)
+    opts.autocmds = opts.autocmds or {}
+    opts.autocmds.osc52_yank = {
+      {
+        event = "TextYankPost",
+        desc = "Copy yanked text to local clipboard over OSC52 when in SSH",
+        callback = function()
+          -- regcontents is a list of lines
+          local regcontents = vim.v.event and vim.v.event.regcontents
+          if not regcontents or vim.tbl_isempty(regcontents) then return end
+
+          local ok, osc52 = pcall(require, "vim.ui.clipboard.osc52")
+          if not ok then return end
+
+          local copy_plus = osc52.copy "+"
+          local copy_star = osc52.copy "*"
+
+          copy_plus(regcontents)
+          copy_star(regcontents)
+        end,
+      },
+    }
+
+    return opts
+  end,
+}
