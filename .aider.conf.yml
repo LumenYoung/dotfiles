@@ -1,7 +1,7 @@
 alias:
   - "ds:openrouter/deepseek/deepseek-v3.1-terminus:exacto"
   - "snt:openrouter/anthropic/claude-sonnet-4.5"
-  - "gpt:openrouter/openai/gpt-5"
+  - "gpt:openrouter/openai/gpt-5.1"
   - "km:openrouter/moonshotai/kimi-k2-0905:exacto"
   - "kmt:openrouter/moonshotai/kimi-k2-thinking"
   - "mm: openrouter/minimax/minimax-m2"
