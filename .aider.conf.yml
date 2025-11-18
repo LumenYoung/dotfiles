@@ -5,3 +5,4 @@ alias:
   - "km:openrouter/moonshotai/kimi-k2-0905:exacto"
   - "kmt:openrouter/moonshotai/kimi-k2-thinking"
   - "mm: openrouter/minimax/minimax-m2"
+  - "g:openrouter/google/gemini-3-pro-preview"
