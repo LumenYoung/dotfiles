@@ -291,3 +291,7 @@ install/eget.sh
 *.zwc
 kitty/Wallpapers/*.png
 fish/fishd.tmp.*
+codex/log
+codex/sessions
+codex/history.jsonl
+codex/version.json
