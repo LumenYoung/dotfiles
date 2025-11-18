@@ -61,3 +61,4 @@ presenterm: ~/.config/presenterm
 ghostty: ~/.config/ghostty
 .aider.conf.yml: ~/.aider.conf.yml
 codex: ~/.codex
+claude-code-router: ~/.claude-code-router
