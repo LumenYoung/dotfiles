@@ -8,18 +8,18 @@ return {
       opts = {
         mappings = {
           n = {
-            ["<Leader>a"] = { name = "Code Companion" },
-            ["<Leader>aa"] = { "<cmd>CodeCompanionChat<cr>", desc = "Chat" },
-            ["<Leader>ap"] = { "<cmd>CodeCompanionActions<cr>", desc = "Action Palette" },
-            ["<Leader>ac"] = { "<cmd>CodeCompanionCmd<cr>", desc = "Action Palette" },
+            ["<Leader>A"] = { name = "Code Companion" },
+            ["<Leader>Aa"] = { "<cmd>CodeCompanionChat<cr>", desc = "Chat" },
+            ["<Leader>Ap"] = { "<cmd>CodeCompanionActions<cr>", desc = "Action Palette" },
+            ["<Leader>Ac"] = { "<cmd>CodeCompanionCmd<cr>", desc = "Action Palette" },
           },
           v = {
-            ["<Leader>a"] = { name = "Code Companion" },
-            ["<Leader>aa"] = { "<cmd>'<,'>CodeCompanion<cr>", desc = "Add Selection" },
-            ["<Leader>ae"] = { "<cmd>'<,'>CodeCompanion /explain<cr>", desc = "Explain Selection" },
-            ["<Leader>ar"] = { "<cmd>'<,'>CodeCompanion /review<cr>", desc = "Review Selection" },
-            ["<Leader>af"] = { "<cmd>'<,'>CodeCompanion /fix<cr>", desc = "Fix Selection" },
-            ["<Leader>at"] = { "<cmd>'<,'>CodeCompanion /test<cr>", desc = "Generate Test for Section" },
+            ["<Leader>A"] = { name = "Code Companion" },
+            ["<Leader>Aa"] = { "<cmd>'<,'>CodeCompanion<cr>", desc = "Add Selection" },
+            ["<Leader>Ae"] = { "<cmd>'<,'>CodeCompanion /explain<cr>", desc = "Explain Selection" },
+            ["<Leader>Ar"] = { "<cmd>'<,'>CodeCompanion /review<cr>", desc = "Review Selection" },
+            ["<Leader>Af"] = { "<cmd>'<,'>CodeCompanion /fix<cr>", desc = "Fix Selection" },
+            ["<Leader>At"] = { "<cmd>'<,'>CodeCompanion /test<cr>", desc = "Generate Test for Section" },
           },
         },
       },
