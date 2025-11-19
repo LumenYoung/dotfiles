@@ -10,6 +10,17 @@ return {
     -- }
     local Snacks = require "snacks"
 
+    local function copy_osc52(text)
+      vim.fn.setreg("+", text)
+      vim.fn.setreg("*", text)
+      local ok, osc52 = pcall(require, "vim.ui.clipboard.osc52")
+      if ok then
+        osc52.copy("+")({ text })
+        osc52.copy("*")({ text })
+      end
+      vim.notify("Yanked: " .. text, vim.log.levels.INFO)
+    end
+
     for lhs, key in pairs(nmaps) do
       local new_lhs, matches = lhs:gsub("^<Leader>f", "<Leader>s")
       if matches > 0 then
@@ -64,13 +75,7 @@ return {
       function()
         local path = vim.fn.expand "%:p"
         local line_number = vim.fn.line "."
-        local yank_text = path .. ":" .. line_number
-
-        -- Use setreg to let the configured clipboard provider handle the copy
-        vim.fn.setreg("+", yank_text)
-        vim.fn.setreg("*", yank_text)
-
-        vim.notify("Yanked: " .. yank_text, vim.log.levels.INFO)
+        copy_osc52(path .. ":" .. line_number)
       end,
       desc = "Yank file path and line number",
     }
@@ -79,9 +84,7 @@ return {
     nmaps["<Leader>yr"] = {
       function()
         local path = vim.fn.expand "%:."
-        vim.fn.setreg("+", path)
-        vim.fn.setreg("*", path)
-        vim.notify("Yanked: " .. path, vim.log.levels.INFO)
+        copy_osc52(path)
       end,
       desc = "Yank relative file path",
     }
@@ -90,9 +93,7 @@ return {
     nmaps["<Leader>yp"] = {
       function()
         local path = vim.fn.expand "%:p"
-        vim.fn.setreg("+", path)
-        vim.fn.setreg("*", path)
-        vim.notify("Yanked: " .. path, vim.log.levels.INFO)
+        copy_osc52(path)
       end,
       desc = "Yank absolute file path",
     }
