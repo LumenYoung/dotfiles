@@ -60,7 +60,7 @@ return {
     }
 
     -- Yank current buffer's full path and line number
-    nmaps["<Leader>yp"] = {
+    nmaps["<Leader>yl"] = {
       function()
         local path = vim.fn.expand "%:p"
         local line_number = vim.fn.line "."
@@ -73,6 +73,28 @@ return {
         vim.notify("Yanked: " .. yank_text, vim.log.levels.INFO)
       end,
       desc = "Yank file path and line number",
+    }
+
+    -- Yank relative path (without line number)
+    nmaps["<Leader>yr"] = {
+      function()
+        local path = vim.fn.expand "%:."
+        vim.fn.setreg("+", path)
+        vim.fn.setreg("*", path)
+        vim.notify("Yanked: " .. path, vim.log.levels.INFO)
+      end,
+      desc = "Yank relative file path",
+    }
+
+    -- Yank absolute path (without line number)
+    nmaps["<Leader>yp"] = {
+      function()
+        local path = vim.fn.expand "%:p"
+        vim.fn.setreg("+", path)
+        vim.fn.setreg("*", path)
+        vim.notify("Yanked: " .. path, vim.log.levels.INFO)
+      end,
+      desc = "Yank absolute file path",
     }
   end,
 }
