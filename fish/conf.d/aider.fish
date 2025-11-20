@@ -18,4 +18,4 @@ abbr aiderm 'aider -m "'
 
 ###################### Model Arena ##########################
 
-set -x AIDER_MODEL openrouter/moonshotai/kimi-k2-thinking
+set -x AIDER_MODEL openrouter/deepseek/deepseek-v3.1-terminus:exacto
