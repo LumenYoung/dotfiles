@@ -2,7 +2,7 @@
   "log": true,
   "OPENAI_API_KEY": "$OPENROUTER_API_KEY",
   "OPENAI_BASE_URL": "https://openrouter.ai/api/v1/chat/completions",
-  "OPENAI_MODEL": "qwen/qwen3-coder",
+  "OPENAI_MODEL": "moonshotai/kimi-k2-0905:exacto",
   "Providers": [
     {
       "name": "openrouter",
@@ -25,8 +25,8 @@
   ],
   "Router": {
     "default": "openrouter,moonshotai/kimi-k2-0905:exacto",
-    "background": "openrouter,deepseek/deepseek-v3.1-terminus:exacto",
-    "think": "openrouter,google/gemini-3-pro-preview",
+    "background": "openrouter,moonshotai/kimi-k2-0905:exacto",
+    "think": "openrouter,openai/gpt-5.1",
     "longContext": "openrouter,openai/gpt-5.1",
     "longContextThreshold": 60000,
     "webSearch": "openrouter,moonshotai/kimi-k2-thinking"
