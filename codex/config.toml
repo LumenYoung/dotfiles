@@ -13,11 +13,11 @@
 # Core Model Selection
 ################################################################################
 
-model = "moonshotai/kimi-k2-thinking"
+model = "gpt-5.1-codex"
 # model = "moonshotai/kimi-k2-thinking"
 
 # Model used by the /review feature (code reviews). Default: "gpt-5-codex".
-review_model = "moonshotai/kimi-k2-thinking"
+review_model = "gpt-5.1-codex"
 
 # Provider id selected from [model_providers]. Default: "openai".
 model_provider = "openrouter"
