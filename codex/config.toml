@@ -13,7 +13,7 @@
 # Core Model Selection
 ################################################################################
 
-model = "gpt-5.1-codex"
+model = "gpt-5.1-codex-max"
 # model = "moonshotai/kimi-k2-thinking"
 
 # Model used by the /review feature (code reviews). Default: "gpt-5-codex".
