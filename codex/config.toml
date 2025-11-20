@@ -20,7 +20,7 @@ model = "gpt-5.1-codex"
 review_model = "gpt-5.1-codex"
 
 # Provider id selected from [model_providers]. Default: "openai".
-model_provider = "openrouter"
+model_provider = "openai"
 
 # Optional manual model metadata. When unset, Codex auto-detects from model.
 # Uncomment to force values.
