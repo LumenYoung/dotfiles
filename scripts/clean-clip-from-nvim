@@ -1,0 +1,54 @@
+#!/usr/bin/env python3
+
+import sys
+import re
+import textwrap
+
+def clean_content(raw_text):
+    if not raw_text:
+        return ""
+
+    # 1. "Dedent": Remove the common leading whitespace (The "Visual Mode" box)
+    # This respects your Assumption #2: it calculates the unified number of 
+    # redundant spaces on the left and strips them, preserving relative indentation.
+    # e.g. if every line starts with 4 spaces, it removes 4 spaces from every line.
+    dedented_text = textwrap.dedent(raw_text)
+
+    # 2. Split into paragraphs
+    # Limitation: This treats ANY gap (an empty line, or a line with only spaces)
+    # as a paragraph separator.
+    # Regex: \n (newline) + \s* (any amount of whitespace/empty lines) + \n (newline)
+    paragraphs = re.split(r'\n\s*\n', dedented_text)
+
+    cleaned_paragraphs = []
+
+    for p in paragraphs:
+        # Skip accidental empty entries
+        if not p.strip():
+            continue
+
+        # 3. Sanitize the specific paragraph
+        # Split into lines to handle them individually first
+        lines = [line.strip() for line in p.split('\n')]
+        
+        # Join them with a single space (Unwrap the paragraph)
+        unwrapped = ' '.join(lines)
+        
+        # Squash internal multiple spaces (remove artifacts, keep 1 space)
+        # This handles "   " becoming " "
+        final_text = re.sub(r'\s+', ' ', unwrapped).strip()
+        
+        cleaned_paragraphs.append(final_text)
+
+    # Rejoin paragraphs with a standard double newline
+    return '\n\n'.join(cleaned_paragraphs)
+
+if __name__ == "__main__":
+    # Read input from Pipe (Clipboard)
+    try:
+        input_text = sys.stdin.read()
+        result = clean_content(input_text)
+        print(result)
+    except Exception as e:
+        # Fallback: print raw input if something crashes
+        sys.stdout.write(sys.stdin.read())
