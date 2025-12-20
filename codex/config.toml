@@ -13,7 +13,7 @@
 # Core Model Selection
 ################################################################################
 
-model = "gpt-5.1-codex-max"
+model = "gpt-5.2-codex"
 # model = "moonshotai/kimi-k2-thinking"
 
 # Model used by the /review feature (code reviews). Default: "gpt-5-codex".
@@ -33,7 +33,7 @@ model_provider = "openai"
 ################################################################################
 
 # Reasoning effort: minimal | low | medium | high (default: medium)
-model_reasoning_effort = "medium"
+model_reasoning_effort = "xhigh"
 
 # Reasoning summary: auto | concise | detailed | none (default: auto)
 model_reasoning_summary = "auto"
@@ -88,7 +88,7 @@ sandbox_mode = "workspace-write"
 # Additional writable roots beyond the workspace (cwd). Default: []
 writable_roots = []
 # Allow outbound network access inside the sandbox. Default: false
-network_access = false
+network_access = true
 # Exclude $TMPDIR from writable roots. Default: false
 exclude_tmpdir_env_var = false
 # Exclude /tmp from writable roots. Default: false
@@ -182,6 +182,10 @@ project_doc_max_bytes = 32768
 # Ordered fallbacks when AGENTS.md is missing at a directory level. Default: []
 project_doc_fallback_filenames = []
 "hide_gpt-5.1-codex-max_migration_prompt" = true
+hide_rate_limit_model_nudge = true
+
+[notice.model_migrations]
+"gpt-5.2" = "gpt-5.2-codex"
 
 ################################################################################
 # Tools (legacy toggles kept for compatibility)
@@ -200,7 +204,6 @@ view_image_tool = true
 web_search_request = true
 experimental_sandbox_command_assessment = false
 ghost_commit = true
-enable_experimental_windows_sandbox = false
 apply_patch_freeform = true
 
 ################################################################################
