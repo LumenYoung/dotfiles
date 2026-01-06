@@ -1,0 +1,6 @@
+{
+  "disable_ocr": true,
+  "force_layout_block": "Text",
+  "lowres_image_dpi": 72,
+  "highres_image_dpi": 96
+}

@@ -13,8 +13,9 @@ function paper2md
     # Generate base name for output files
     set -l base_name (basename $pdf_file .pdf | string replace -r " \\d{4}- " " ")
 
-    # Process with marker_single
-    marker_single "$pdf_file" --output_dir $tmp_output
+    # Process with marker_single (fast CPU config)
+    set -l marker_config "$HOME/.config/marker-pdf/fast_cpu.json"
+    marker_single "$pdf_file" --output_dir $tmp_output --config_json $marker_config
 
     # Move the markdown file to Zotero papermd
     set -l md_output "$HOME/Zotero/papermd"
