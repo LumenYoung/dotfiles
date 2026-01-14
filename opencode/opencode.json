@@ -138,6 +138,10 @@
       }
     }
   },
+  "keybinds": {
+    "command_list": "alt+p",
+    "model_list": "alt+m"
+  },
   "$schema": "https://opencode.ai/config.json",
   "permission": {
     "*": "allow",
