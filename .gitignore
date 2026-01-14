@@ -295,3 +295,5 @@ codex/log
 codex/sessions
 codex/history.jsonl
 codex/version.json
+gemini/tmp
+gemini/.gemini/tmp
