@@ -297,3 +297,6 @@ codex/history.jsonl
 codex/version.json
 gemini/tmp
 gemini/.gemini/tmp
+codex/tmp/path/codex-arg0M7T2Tk
+claude-code-router
+tmp
