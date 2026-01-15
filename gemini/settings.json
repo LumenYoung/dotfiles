@@ -12,5 +12,8 @@
     "footer": {
       "hideContextPercentage": false
     }
+  },
+  "experimental": {
+    "skills": true
   }
 }
