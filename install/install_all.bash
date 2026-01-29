@@ -6,10 +6,11 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 ENV_NAME="main"
-MAMBA_ROOT_PREFIX="${MAMBA_ROOT_PREFIX:-$HOME/.micromamba}"
+MAMBA_ROOT_PREFIX="${MAMBA_ROOT_PREFIX:-}"
 DESKTOP=false
 SKIP_PROPAGATE=false
 LOG_FILE="${LOG_FILE:-$HOME/.local/tools/install_all.log}"
+MICROMAMBA_BIN="micromamba"
 
 usage() {
 	cat <<EOF
@@ -72,13 +73,20 @@ EOF
 
 install_micromamba() {
 	ensure_local_bin_path
-	if ! command -v micromamba >/dev/null 2>&1; then
+	if command -v micromamba >/dev/null 2>&1; then
+		MICROMAMBA_BIN="$(command -v micromamba)"
+	else
 		bash "$SCRIPT_DIR/micromamba_install.bash"
+		MICROMAMBA_BIN="$(command -v micromamba)"
 	fi
 
 	ensure_local_bin_path
+	if [[ -z "${MAMBA_ROOT_PREFIX}" ]]; then
+		MAMBA_ROOT_PREFIX="$HOME/.micromamba"
+	fi
 	export MAMBA_ROOT_PREFIX
-	micromamba shell init -s fish >/dev/null 2>&1 || true
+	export MICROMAMBA_BIN
+	"$MICROMAMBA_BIN" shell init -s fish >/dev/null 2>&1 || true
 }
 
 install_micromamba_env() {
@@ -99,15 +107,15 @@ install_micromamba_env() {
 		fontconfig
 	)
 
-	if micromamba env list | grep -Eq "^[[:space:]]*${ENV_NAME}[[:space:]]"; then
-		micromamba install -y -n "$ENV_NAME" -c conda-forge "${packages[@]}"
+	if "$MICROMAMBA_BIN" env list | grep -Eq "^[[:space:]]*${ENV_NAME}[[:space:]]"; then
+		"$MICROMAMBA_BIN" install -y -n "$ENV_NAME" -c conda-forge "${packages[@]}"
 	else
-		micromamba create -y -n "$ENV_NAME" -c conda-forge "${packages[@]}"
+		"$MICROMAMBA_BIN" create -y -n "$ENV_NAME" -c conda-forge "${packages[@]}"
 	fi
 }
 
 run_in_env() {
-	micromamba run -n "$ENV_NAME" "$@"
+	"$MICROMAMBA_BIN" run -n "$ENV_NAME" "$@"
 }
 
 main() {

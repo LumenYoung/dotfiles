@@ -56,5 +56,6 @@ else
     echo "neovim directory exists, checked out $TAG"
 fi
 
+rm -rf .deps build
 make CMAKE_EXTRA_FLAGS="-DCMAKE_INSTALL_PREFIX=$HOME/.local/" CMAKE_BUILD_TYPE=Release
 make install
