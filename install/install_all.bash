@@ -123,6 +123,7 @@ install_micromamba_env() {
 		rust
 		just
 		fontconfig
+		uv
 	)
 
 	if "$MICROMAMBA_BIN" env list | grep -Eq "^[[:space:]]*${ENV_NAME}[[:space:]]"; then
@@ -194,7 +195,11 @@ main() {
 
 	if [[ "$SKIP_PROPAGATE" != "true" ]]; then
 		echo "Running propogate_dotfiles.py" | tee -a "$LOG_FILE"
-		python3 "$REPO_ROOT/propogate_dotfiles.py"
+		run_in_env uv python install 3.12 >/dev/null
+		(
+			cd "$REPO_ROOT"
+			run_in_env uv run --with pyyaml python "$REPO_ROOT/propogate_dotfiles.py"
+		)
 	fi
 
 	echo "=== install_all finished at $(date) ===" | tee -a "$LOG_FILE"

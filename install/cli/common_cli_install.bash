@@ -10,6 +10,8 @@ LOG_FILE="$TOOLS_DIR/install.log"
 # Global variables for argument parsing
 force_eget=false
 declare -a tools
+declare -a failures
+declare -a successes
 
 # Architecture and libc detection for non-interactive asset selection
 detect_arch() {
@@ -114,9 +116,11 @@ install_tool() {
     # Don't redirect output to allow interactive prompts
     if eval "${TOOL_COMMANDS[$tool]}"; then
         log_message "$tool installed successfully"
+        successes+=("$tool")
         return 0
     else
         log_message "Error: Failed to install $tool"
+        failures+=("$tool")
         return 1
     fi
 }
@@ -125,7 +129,7 @@ install_tool() {
 install_all_tools() {
     log_message "Installing all tools..."
     for tool in "${!TOOL_COMMANDS[@]}"; do
-        install_tool "$tool"
+        install_tool "$tool" || true
     done
     log_message "All tools installation completed"
 }
@@ -201,11 +205,17 @@ main() {
         install_all_tools
     else
         for tool in "${tools[@]}"; do
-            install_tool "$tool"
+            install_tool "$tool" || true
         done
     fi
 
-    log_message "Installation process completed"
+    if [[ ${#failures[@]} -gt 0 ]]; then
+        log_message "Installation completed with failures: ${failures[*]}"
+        echo "Failed tools: ${failures[*]}"
+    else
+        log_message "Installation process completed successfully"
+        echo "All tools installed successfully"
+    fi
 }
 
 # Run main function

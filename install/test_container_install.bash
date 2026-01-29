@@ -77,9 +77,10 @@ docker run -d --name "${CONTAINER_NAME}" \
 	" >/dev/null
 
 echo "Container started: ${CONTAINER_NAME}"
-echo "Attach with: docker exec -it ${CONTAINER_NAME} bash"
+echo "Attach with: docker exec -it -u ${USER_NAME} ${CONTAINER_NAME} bash"
 echo "Streaming container logs below. Press Enter to stop and remove the container."
 docker logs -f "${CONTAINER_NAME}" &
 LOG_TAIL_PID=$!
+echo "Attach with: docker exec -it -u ${USER_NAME} ${CONTAINER_NAME} bash"
 read -r _
 kill "${LOG_TAIL_PID}" >/dev/null 2>&1 || true
