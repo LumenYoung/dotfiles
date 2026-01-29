@@ -11,20 +11,56 @@ LOG_FILE="$TOOLS_DIR/install.log"
 force_eget=false
 declare -a tools
 
+# Architecture and libc detection for non-interactive asset selection
+detect_arch() {
+    local arch
+    arch="$(uname -m)"
+    case "$arch" in
+    x86_64 | amd64)
+        echo "x86_64"
+        ;;
+    aarch64 | arm64)
+        echo "aarch64"
+        ;;
+    *)
+        echo "$arch"
+        ;;
+    esac
+}
+
+is_musl() {
+    if ldd --version 2>&1 | grep -qi musl; then
+        return 0
+    fi
+    if getconf GNU_LIBC_VERSION >/dev/null 2>&1; then
+        return 1
+    fi
+    if ls /lib/ld-musl-*.so.1 >/dev/null 2>&1; then
+        return 0
+    fi
+    return 1
+}
+
+ARCH="$(detect_arch)"
+LIBC_FLAVOR="gnu"
+if is_musl; then
+    LIBC_FLAVOR="musl"
+fi
+
 # Tool definitions - makes it easy to add/remove tools
 declare -A TOOL_COMMANDS=(
     ["fd"]="eget sharkdp/fd --asset ^musl --to $LOCAL_BIN"
     ["ripgrep"]="eget BurntSushi/ripgrep --to $LOCAL_BIN"
     ["lazygit"]="eget jesseduffield/lazygit --to $LOCAL_BIN"
-    ["zellij"]="eget zellij-org/zellij --to $LOCAL_BIN"
+    ["zellij"]="eget zellij-org/zellij --asset ${ARCH}-unknown-linux-musl --asset ^no-web --to $LOCAL_BIN"
     ["zoxide"]="eget ajeetdsouza/zoxide --to $LOCAL_BIN"
     ["fzf"]="eget junegunn/fzf --to $LOCAL_BIN"
     ["just"]="eget casey/just --asset linux-musl --to $LOCAL_BIN"
     ["eza"]="eget eza-community/eza --asset tar --asset linux-musl --to $LOCAL_BIN"
-    ["yazi"]="eget sxyazi/yazi --asset linux-musl --to $LOCAL_BIN --file yazi && eget sxyazi/yazi --asset linux-musl --to $LOCAL_BIN --file ya"
+    ["yazi"]="eget sxyazi/yazi --asset ${ARCH}-unknown-linux-musl.zip --to $LOCAL_BIN --file yazi && eget sxyazi/yazi --asset ${ARCH}-unknown-linux-musl.zip --to $LOCAL_BIN --file ya"
     ["btop"]="eget aristocratos/btop --to $LOCAL_BIN"
     ["bat"]="eget sharkdp/bat --asset linux-musl --to $LOCAL_BIN"
-    ["dust"]="eget bootandy/dust --to $LOCAL_BIN"
+    ["dust"]="eget bootandy/dust --asset ${ARCH}-unknown-linux-${LIBC_FLAVOR}.tar.gz --to $LOCAL_BIN"
 )
 
 # Initialize logging and directories
