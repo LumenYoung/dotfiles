@@ -193,6 +193,8 @@ parse_arguments() {
 # Main function
 main() {
     setup_environment
+    failures=()
+    successes=()
 
     # Parse arguments
     parse_arguments "$@"
