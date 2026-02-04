@@ -252,7 +252,7 @@ apply_patch_freeform = true
 [model_providers.openrouter]
 name = "OpenRouter"
 base_url = "https://openrouter.ai/api/v1"
-wire_api = "chat"
+wire_api = "responses"
 env_key = "OPENROUTER_API_KEY"
 
 # --- Example: override OpenAI with explicit base URL or headers ---
