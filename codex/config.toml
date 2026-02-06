@@ -82,6 +82,7 @@ approval_policy = "on-request"
 # - workspace-write
 # - danger-full-access (no sandbox; extremely risky)
 sandbox_mode = "workspace-write"
+personality = "pragmatic"
 
 # Extra settings used only when sandbox_mode = "workspace-write".
 [sandbox_workspace_write]
@@ -194,6 +195,7 @@ hide_rate_limit_model_nudge = true
 ################################################################################
 # Centralized Feature Flags (preferred)
 ################################################################################
+web_search = "live"
 
 [features]
 # Leave this table empty to accept defaults. Set explicit booleans to opt in/out.
@@ -201,7 +203,6 @@ unified_exec = true
 streamable_shell = true
 rmcp_client = false
 view_image_tool = true
-web_search_request = true
 experimental_sandbox_command_assessment = false
 ghost_commit = true
 apply_patch_freeform = true
