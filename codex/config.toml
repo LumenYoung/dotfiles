@@ -13,7 +13,7 @@
 # Core Model Selection
 ################################################################################
 
-model = "gpt-5.2-codex"
+model = "gpt-5.3-codex"
 # model = "moonshotai/kimi-k2-thinking"
 
 # Model used by the /review feature (code reviews). Default: "gpt-5-codex".
@@ -205,7 +205,7 @@ rmcp_client = false
 view_image_tool = true
 experimental_sandbox_command_assessment = false
 ghost_commit = true
-apply_patch_freeform = true
+apply_patch_freeform = false
 
 ################################################################################
 # MCP (Model Context Protocol) servers
