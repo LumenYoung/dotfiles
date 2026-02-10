@@ -66,3 +66,4 @@ hypr: ~/.config/hypr
 marker: ~/.config/marker-pdf
 opencode: ~/.config/opencode
 gemini: ~/.gemini
+codex-session-stream: ~/.local/bin/codex-session-stream
