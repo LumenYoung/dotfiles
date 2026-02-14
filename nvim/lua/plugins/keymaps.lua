@@ -97,5 +97,13 @@ return {
       end,
       desc = "Yank absolute file path",
     }
+
+    for i = 1, 9 do
+      nmaps["<Leader>" .. i] = {
+        function() vim.cmd(i .. "tabnext") end,
+        desc = "Go to tab " .. i,
+      }
+    end
+    nmaps["<Leader>t0"] = { "<cmd>tablast<cr>", desc = "Go to last tab" }
   end,
 }
