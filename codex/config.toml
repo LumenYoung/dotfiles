@@ -19,6 +19,8 @@ model = "gpt-5.3-codex"
 # Model used by the /review feature (code reviews). Default: "gpt-5-codex".
 review_model = "gpt-5.1-codex"
 
+model_auto_compact_token_limit = 244800
+
 # Provider id selected from [model_providers]. Default: "openai".
 model_provider = "openai"
 
