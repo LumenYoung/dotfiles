@@ -219,6 +219,12 @@ apply_patch_freeform = false
 # Define MCP servers under this table. Leave empty to disable.
 [mcp_servers]
 
+[mcp_servers.memorix]
+command = "npx"
+args = ["-y", "memorix@latest", "serve"]
+# First run may download the package; give MCP startup extra headroom.
+startup_timeout_sec = 60.0
+
 # --- Example: STDIO transport ---
 # [mcp_servers.docs]
 # command = "docs-server"                 # required
