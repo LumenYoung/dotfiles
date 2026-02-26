@@ -42,6 +42,7 @@ end
 
 if command -q zellij
   abbr zj 'zellij'
+  abbr zjw 'zjweb'
   abbr zjd 'zellij delete-session'
   abbr zjl 'zellij list-sessions'
   function zjc

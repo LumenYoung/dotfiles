@@ -1,3 +1,5 @@
+simplified_ui true
+
 layout {
 
   default_tab_template split_direction="horizontal" {
