@@ -2,6 +2,19 @@
   "plugin": [
     "opencode-openai-codex-auth"
   ],
+  "mcp": {
+    "memorix": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "memorix@latest",
+        "serve"
+      ],
+      "enabled": true,
+      "timeout": 60000
+    }
+  },
   "provider": {
     "openai": {
       "name": "OpenAI",
