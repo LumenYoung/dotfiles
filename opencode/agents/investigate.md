@@ -1,7 +1,6 @@
 ---
-description: Read-only investigation agent for codebase and pipeline questions with command-based validation.
+description: investigation agent for codebase and pipeline questions with command-based validation.
 mode: primary
-model: openai/gpt-5.2-codex
 temperature: 0.2
 tools:
   read: true
@@ -13,8 +12,8 @@ tools:
   edit: false
   write: false
   patch: false
-  todowrite: false
-  webfetch: false
+  todowrite: true
+  webfetch: true
 permission:
   edit: deny
   task:
