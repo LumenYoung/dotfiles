@@ -13,7 +13,7 @@
 # Core Model Selection
 ################################################################################
 
-model = "gpt-5.3-codex"
+model = "gpt-5.4"
 # model = "moonshotai/kimi-k2-thinking"
 
 # Model used by the /review feature (code reviews). Default: "gpt-5-codex".
@@ -35,7 +35,7 @@ model_provider = "openai"
 ################################################################################
 
 # Reasoning effort: minimal | low | medium | high (default: medium)
-model_reasoning_effort = "xhigh"
+model_reasoning_effort = "high"
 
 # Reasoning summary: auto | concise | detailed | none (default: auto)
 model_reasoning_summary = "auto"
