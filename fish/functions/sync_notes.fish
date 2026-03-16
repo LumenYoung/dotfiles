@@ -67,7 +67,8 @@ function __sync_notes_perform_initial_sync
     # After initial sync, check for changes to arm the git commit debounce
     if test "$GIT_ENABLED" = "true"
         pushd "$GIT_ROOT" >/dev/null
-        if not test -z "(git status --porcelain)"
+        set GIT_STATUS (git status --porcelain)
+        if test -n "$GIT_STATUS"
             echo "Changes detected after initial sync. Arming git commit."
             set -g LAST_CHANGE_TIME (date +%s)
         end
@@ -147,7 +148,8 @@ function __sync_notes_git_commit_and_push
     pushd "$GIT_ROOT" >/dev/null
     
     # Check if there are any changes (including untracked files)
-    if test -z "(git status --porcelain)"
+    set GIT_STATUS (git status --porcelain)
+    if test -z "$GIT_STATUS"
         echo "No git changes detected"
         # Reset change time even when no changes are found
         set -g LAST_CHANGE_TIME 0
