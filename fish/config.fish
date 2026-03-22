@@ -1,6 +1,8 @@
 if status is-login
-    exec bash -c "test -e /etc/profile && source /etc/profile;\
-    exec fish"
+    if test "$SHELL" = /bin/fish -o "$SHELL" = /usr/bin/fish
+        exec bash -c "test -e /etc/profile && source /etc/profile;\
+        exec fish"
+    end
 end
 
 set sponge_delay 20
