@@ -60,6 +60,8 @@ end
 if command -q yazi
   function ya
     set -l tmp (mktemp -t "yazi-cwd.XXXXX")
+    set -l shim_dir (realpath (dirname (status filename))/../../scripts)
+    set -lx PATH $shim_dir $PATH
     yazi $argv --cwd-file="$tmp"
     if set -l cwd (cat -- "$tmp") && test -n "$cwd" && test "$cwd" != "$PWD"
       cd -- "$cwd"

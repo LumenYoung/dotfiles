@@ -1,0 +1,4 @@
+#!/bin/sh
+
+# Yazi already emits OSC52, so this shim makes its wl-copy fallback fail fast.
+exit 127
