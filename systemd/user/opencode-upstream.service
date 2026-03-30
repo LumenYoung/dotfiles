@@ -1,0 +1,16 @@
+[Unit]
+Description=OpenCode Upstream Server (user)
+After=network.target opencode-guard.service
+Wants=opencode-guard.service
+
+[Service]
+Type=simple
+WorkingDirectory=%h/docker-com
+EnvironmentFile=-%h/docker-com/.env_opencode_upstream
+Environment=PATH=%h/micromamba/envs/main/bin:%h/.local/share/mamba/envs/main/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/fish -c 'set -lx OPENCODE_HOSTNAME 127.0.0.1; set -lx OPENCODE_PORT 14096; if test -f "$HOME/.config/opencode/server-env.fish"; source "$HOME/.config/opencode/server-env.fish"; end; exec opencode serve --hostname "$OPENCODE_HOSTNAME" --port "$OPENCODE_PORT"'
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target
