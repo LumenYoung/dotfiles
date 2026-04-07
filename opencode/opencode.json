@@ -1,7 +1,7 @@
 {
   "plugin": [
     "opencode-openai-codex-auth",
-    "oh-my-opencode@latest"
+    "oh-my-openagent@latest"
   ],
   "mcp": {
     "memorix": {
@@ -113,6 +113,8 @@
       }
     }
   },
+  "model": "openai/gpt-5.4",
+  "small_model": "openai/gpt-5.4-mini",
   "$schema": "https://opencode.ai/config.json",
   "permission": {
     "*": "allow",
