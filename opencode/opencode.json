@@ -4,6 +4,16 @@
     "oh-my-openagent@latest"
   ],
   "mcp": {
+    "openspace": {
+      "type": "remote",
+      "url": "https://openspace.lumeny.io/mcp",
+      "enabled": true,
+      "headers": {
+        "Authorization": "Bearer {env:OPENSPACE_MCP_TOKEN}"
+      },
+      "oauth": false,
+      "timeout": 120000
+    },
     "memorix": {
       "type": "local",
       "command": [
