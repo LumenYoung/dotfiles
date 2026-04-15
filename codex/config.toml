@@ -226,6 +226,24 @@ url = "https://openspace.lumeny.io/mcp"
 bearer_token_env_var = "OPENSPACE_MCP_TOKEN"
 startup_timeout_sec = 20.0
 tool_timeout_sec = 1200.0
+
+[mcp_servers.lucid_memory]
+url = "https://lucid.lumeny.io/mcp"
+env_http_headers = { "X-Lucid-Token" = "LUCID_API_TOKEN" }
+startup_timeout_sec = 20.0
+tool_timeout_sec = 120.0
+
+[mcp_servers.lucid_memory.tools.add_memory]
+approval_mode = "approve"
+
+[mcp_servers.lucid_memory.tools.search_nodes]
+approval_mode = "approve"
+
+[mcp_servers.lucid_memory.tools.search_memory_facts]
+approval_mode = "approve"
+
+[mcp_servers.lucid_memory.tools.get_episodes]
+approval_mode = "approve"
 # --- Example: STDIO transport ---
 # [mcp_servers.docs]
 # command = "docs-server"                 # required

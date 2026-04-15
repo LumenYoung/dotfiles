@@ -1,7 +1,8 @@
 {
   "plugin": [
     "opencode-openai-codex-auth",
-    "oh-my-openagent@latest"
+    "oh-my-openagent@latest",
+    "file:///home/yang/dotfiles/opencode/plugins/lucid-memory.js"
   ],
   "mcp": {
     "openspace": {
@@ -10,6 +11,16 @@
       "enabled": true,
       "headers": {
         "Authorization": "Bearer {env:OPENSPACE_MCP_TOKEN}"
+      },
+      "oauth": false,
+      "timeout": 120000
+    },
+    "lucid-memory": {
+      "type": "remote",
+      "url": "https://lucid.lumeny.io/mcp",
+      "enabled": true,
+      "headers": {
+        "X-Lucid-Token": "{env:LUCID_API_TOKEN}"
       },
       "oauth": false,
       "timeout": 120000
