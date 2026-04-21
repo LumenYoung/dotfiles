@@ -17,9 +17,9 @@ model = "gpt-5.4"
 # model = "moonshotai/kimi-k2-thinking"
 
 # Model used by the /review feature (code reviews). Default: "gpt-5-codex".
-review_model = "gpt-5.1-codex"
+review_model = "gpt-5.4"
 
-model_auto_compact_token_limit = 244800
+model_auto_compact_token_limit = 210000
 
 # Provider id selected from [model_providers]. Default: "openai".
 model_provider = "openai"
@@ -85,6 +85,7 @@ approval_policy = "on-request"
 # - danger-full-access (no sandbox; extremely risky)
 sandbox_mode = "danger-full-access"
 personality = "pragmatic"
+approvals_reviewer = "user"
 
 # Extra settings used only when sandbox_mode = "workspace-write".
 [sandbox_workspace_write]
@@ -184,7 +185,6 @@ project_doc_max_bytes = 32768
 
 # Ordered fallbacks when AGENTS.md is missing at a directory level. Default: []
 project_doc_fallback_filenames = []
-"hide_gpt-5.1-codex-max_migration_prompt" = true
 hide_rate_limit_model_nudge = true
 
 [notice.model_migrations]
@@ -203,11 +203,7 @@ web_search = "live"
 # Leave this table empty to accept defaults. Set explicit booleans to opt in/out.
 unified_exec = true
 streamable_shell = true
-rmcp_client = false
-view_image_tool = true
-experimental_sandbox_command_assessment = false
 ghost_commit = true
-apply_patch_freeform = false
 
 ################################################################################
 # MCP (Model Context Protocol) servers
@@ -305,80 +301,6 @@ env_key = "OPENAI_API_KEY"
 
 # Explicit default profile inheriting from root settings
 [profiles.default]
-
-[profiles.quick]
-model = "moonshotai/kimi-k2-0905:exacto"
-model_provider = "openrouter"
-approval_policy = "on-request"
-sandbox_mode = "read-only"
-model_reasoning_effort = "medium"
-model_reasoning_summary = "auto"
-model_verbosity = "medium"
-
-# Hard profile: uses OpenAI GPT-5 via OpenRouter with same policy/settings
-[profiles.gemini]
-model = "google/gemini-3-pro-preview"
-model_provider = "openrouter"
-approval_policy = "on-request"
-sandbox_mode = "read-only"
-model_reasoning_effort = "medium"
-model_reasoning_summary = "auto"
-model_verbosity = "medium"
-
-[profiles.gemini-3_1-pro]
-model = "gemini-3.1-pro-preview"
-model_provider = "lumeny_api"
-approval_policy = "on-request"
-sandbox_mode = "read-only"
-model_reasoning_effort = "medium"
-model_reasoning_summary = "auto"
-model_verbosity = "medium"
-
-[profiles.gemini-3-pro]
-model = "gemini-3-pro-preview"
-model_provider = "lumeny_api"
-approval_policy = "on-request"
-sandbox_mode = "read-only"
-model_reasoning_effort = "medium"
-model_reasoning_summary = "auto"
-model_verbosity = "medium"
-
-[profiles.gemini-3-flash]
-model = "gemini-3-flash-preview"
-model_provider = "lumeny_api"
-approval_policy = "on-request"
-sandbox_mode = "read-only"
-model_reasoning_effort = "medium"
-model_reasoning_summary = "auto"
-model_verbosity = "medium"
-
-[profiles.gemini-3_1-flash-lite]
-model = "gemini-3.1-flash-lite-preview"
-model_provider = "lumeny_api"
-approval_policy = "on-request"
-sandbox_mode = "read-only"
-model_reasoning_effort = "medium"
-model_reasoning_summary = "auto"
-model_verbosity = "medium"
-
-# [profiles.default]
-# model = "gpt-5-codex"
-# model_provider = "openai"
-# approval_policy = "on-request"
-# sandbox_mode = "read-only"
-# model_reasoning_effort = "medium"
-# model_reasoning_summary = "auto"
-# model_verbosity = "medium"
-# chatgpt_base_url = "https://chatgpt.com/backend-api/"
-# experimental_compact_prompt_file = "compact_prompt.txt"
-# include_apply_patch_tool = false
-# experimental_use_unified_exec_tool = false
-# experimental_use_rmcp_client = false
-# experimental_use_freeform_apply_patch = false
-# experimental_sandbox_command_assessment = false
-# tools_web_search = false
-# tools_view_image = true
-# features = { unified_exec = false }
 
 ################################################################################
 # Projects (trust levels)
