@@ -83,7 +83,7 @@ approval_policy = "on-request"
 # - read-only (default)
 # - workspace-write
 # - danger-full-access (no sandbox; extremely risky)
-sandbox_mode = "workspace-write"
+sandbox_mode = "danger-full-access"
 personality = "pragmatic"
 
 # Extra settings used only when sandbox_mode = "workspace-write".
