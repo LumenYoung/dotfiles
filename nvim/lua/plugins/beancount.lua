@@ -5,10 +5,10 @@ local beancount_file = "/home/yang/Documents/git/finance/beans/main.bean"
 
 return {
   {
-    "Saghen/blink.cmp",
+    "saghen/blink.cmp",
     -- use the latest release, via version = '*', if you also use the latest release for blink.cmp
     specs = {
-      { "Saghen/blink.compat", version = "*", lazy = true, opts = {} },
+      { "saghen/blink.compat", version = "*", lazy = true, opts = {} },
     },
     dependencies = {
       "crispgm/cmp-beancount",
@@ -32,9 +32,8 @@ return {
   },
   {
     "AstroNvim/astrolsp",
-    -- we need to use the function notation to get access to the `lspconfig` module
     ---@param opts AstroLSPOpts
-    opts = function(plugin, opts)
+    opts = function(_, opts)
       -- insert `beancount` into our list of servers
       opts.servers = opts.servers or {}
       table.insert(opts.servers, "beancount")

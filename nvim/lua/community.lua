@@ -10,7 +10,7 @@ return {
   { import = "astrocommunity.pack.lua" },
   -- { dir = "/home/yang/Documents/git/astrocommunity" },
   { import = "astrocommunity.completion.copilot-lua" },
-  { import = "astrocommunity.pack.python-ruff" },
+  { import = "astrocommunity.pack.python.ruff" },
   { import = "astrocommunity.colorscheme.cyberdream-nvim" },
   { import = "astrocommunity.utility.lua-json5" },
   { import = "astrocommunity.colorscheme.catppuccin" },
