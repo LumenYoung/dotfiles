@@ -1,5 +1,6 @@
 # Abbreviations and functions
 abbr lg 'lazygit'
+abbr codexd 'codex-direct'
 abbr za 'zathura'
 abbr kssh 'kitty +kitten ssh'
 abbr start 'sudo systemctl start'
