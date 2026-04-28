@@ -10,6 +10,7 @@ function codex --description 'Run codex with optional OpenAI-compatible override
         if test -n "$LUMENY_OPENAI_BASE_URL"; and test -n "$LUMENY_OPENAI_API_KEY"
             env OPENAI_API_KEY="$LUMENY_OPENAI_API_KEY" "$codex_bin" \
                                 -c "model_provider=\"lumeny_api\"" \
+                                -c "features.enable_request_compression=false" \
                                 $argv
             return $status
         end
