@@ -1,0 +1,1 @@
+/home/yang/.codex/AGENTS.md

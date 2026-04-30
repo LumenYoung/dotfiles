@@ -311,6 +311,10 @@ tmp
 /codex/cache/codex_apps_tools
 /codex/models_cache.json
 /codex/skills/.system
+/codex-t3/.personality_migration
+/codex-t3/.tmp
+/codex-t3/tmp
+/codex-t3/memories
 /gemini/google_accounts.json
 /gemini/history
 /gemini/oauth_creds.json

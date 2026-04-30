@@ -1,0 +1,7 @@
+{
+  "providers": {
+    "codex": {
+      "homePath": "~/.codex-t3"
+    }
+  }
+}

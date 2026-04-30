@@ -61,9 +61,11 @@ presenterm: ~/.config/presenterm
 ghostty: ~/.config/ghostty
 .aider.conf.yml: ~/.aider.conf.yml
 codex: ~/.codex
+codex-t3: ~/.codex-t3
 claude-code-router: ~/.claude-code-router
 hypr: ~/.config/hypr
 marker: ~/.config/marker-pdf
 opencode: ~/.config/opencode
+t3-code: ~/.config/t3-code
 gemini: ~/.gemini
 codex-session-stream: ~/.local/bin/codex-session-stream
