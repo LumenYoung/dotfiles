@@ -2,6 +2,15 @@
   "providers": {
     "codex": {
       "homePath": "~/.codex-t3"
+    },
+    "opencode": {
+      "enabled": false
+    },
+    "claudeAgent": {
+      "enabled": false
+    },
+    "cursor": {
+      "enabled": false
     }
   }
 }
