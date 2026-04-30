@@ -1,0 +1,28 @@
+[Unit]
+Description=T3 Code Server (user)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=%h
+# Configuration lives in fish, not in this unit:
+# - Put service-specific overrides in ~/.config/t3-code/server-env.fish.
+# - Put shared interactive fish environment in ~/.local.fish; this service sources it
+#   before server-env.fish so service-specific values can override shared defaults.
+# - T3CODE_HOST controls the bind address; default: 0.0.0.0.
+# - T3CODE_PORT controls the listening port; default: 4096. This machine sets it
+#   to 14096 in ~/.local.fish because Caddy routes server.lumeny.io there.
+# - T3CODE_HOME controls T3 Code's base dir/userdata/auth state; default: ~/.t3.
+# - T3CODE_NPM_CACHE controls the isolated npm cache for npx t3@latest; default:
+#   $T3CODE_HOME/npm-cache. Keep this separate from ~/.npm to avoid stale npx locks.
+# - LUMENY_OPENAI_BASE_URL and LUMENY_OPENAI_API_KEY may be exported by ~/.local.fish;
+#   server-env.fish maps LUMENY_OPENAI_API_KEY to OPENAI_API_KEY for provider clients.
+# After changing env files, run:
+#   systemctl --user restart t3-code.service
+Environment=PATH=%h/micromamba/envs/main/bin:%h/.local/share/mamba/envs/main/bin:%h/.local/bin:/usr/local/bin:/usr/bin:/bin
+ExecStart=/usr/bin/fish -lc 'if test -f "$HOME/.local.fish"; source "$HOME/.local.fish"; end; if test -f "$HOME/.config/t3-code/server-env.fish"; source "$HOME/.config/t3-code/server-env.fish"; end; set -q T3CODE_HOST; or set -gx T3CODE_HOST 0.0.0.0; set -q T3CODE_PORT; or set -gx T3CODE_PORT 4096; set -q T3CODE_HOME; or set -gx T3CODE_HOME "$HOME/.t3"; set -q T3CODE_NPM_CACHE; or set -gx T3CODE_NPM_CACHE "$T3CODE_HOME/npm-cache"; set -gx npm_config_cache "$T3CODE_NPM_CACHE"; mkdir -p "$T3CODE_HOME/userdata"; if not test -e "$T3CODE_HOME/userdata/settings.json"; and test -f "$HOME/.config/t3-code/settings.json"; cp "$HOME/.config/t3-code/settings.json" "$T3CODE_HOME/userdata/settings.json"; end; exec npx -y t3@latest serve --mode web --host "$T3CODE_HOST" --port "$T3CODE_PORT" --base-dir "$T3CODE_HOME" --no-browser --auto-bootstrap-project-from-cwd "$HOME"'
+Restart=always
+RestartSec=2
+
+[Install]
+WantedBy=default.target
