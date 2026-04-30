@@ -1,4 +1,4 @@
-function t3-auth-token --description 'Issue a T3 Code bearer session token'
+function t3-auth-token --description 'Issue a T3 Code one-time pairing token'
     if test -f "$HOME/.local.fish"
         source "$HOME/.local.fish"
     end
@@ -11,15 +11,12 @@ function t3-auth-token --description 'Issue a T3 Code bearer session token'
     set -q T3CODE_NPM_CACHE; or set -gx T3CODE_NPM_CACHE "$T3CODE_HOME/npm-cache"
     set -gx npm_config_cache "$T3CODE_NPM_CACHE"
 
-    set -l ttl 30d
-    set -l role owner
+    set -l ttl 10m
     set -l label "$USER@"(hostname -s)
 
-    npx -y t3@latest auth session issue \
+    env NODE_NO_WARNINGS=1 npx -y t3@latest auth pairing create \
         --base-dir "$T3CODE_HOME" \
         --ttl "$ttl" \
-        --role "$role" \
         --label "$label" \
-        --token-only \
         $argv
 end
