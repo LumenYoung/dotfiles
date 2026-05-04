@@ -15,7 +15,7 @@ FORCE_REINSTALL=false
 LOG_FILE="${LOG_FILE:-$HOME/.local/tools/install_all.log}"
 MICROMAMBA_BIN="micromamba"
 FISH_VERSION_DEFAULT="4.0.2"
-NVIM_TAG_DEFAULT="master"
+NVIM_TAG_DEFAULT="v0.12.0"
 
 usage() {
 	cat <<EOF
@@ -169,21 +169,17 @@ main() {
 	run_in_env bash "$CLI_DIR/common_cli_install.bash"
 	echo "[5/6] Building neovim from source" | tee -a "$LOG_FILE"
 	if [[ "$FORCE_REINSTALL" == "true" ]]; then
-		run_in_env bash "$CLI_DIR/nvim_install_from_source.bash"
+		run_in_env bash "$CLI_DIR/nvim_install_from_source.bash" -t "$NVIM_TAG_DEFAULT"
 	else
 		if command -v nvim >/dev/null 2>&1; then
-			if [[ "$NVIM_TAG_DEFAULT" == "master" ]]; then
-				echo "nvim installed and tag is master; skipping (use --force to rebuild)" | tee -a "$LOG_FILE"
+			current_nvim_version="$(nvim --version | head -n 1 | awk '{print $2}' | sed 's/^v//')"
+			if [[ "v${current_nvim_version}" == "$NVIM_TAG_DEFAULT" ]]; then
+				echo "nvim ${current_nvim_version} already installed; skipping" | tee -a "$LOG_FILE"
 			else
-				current_nvim_version="$(nvim --version | head -n 1 | awk '{print $2}' | sed 's/^v//')"
-				if [[ "v${current_nvim_version}" == "$NVIM_TAG_DEFAULT" ]]; then
-					echo "nvim ${current_nvim_version} already installed; skipping" | tee -a "$LOG_FILE"
-				else
-					run_in_env bash "$CLI_DIR/nvim_install_from_source.bash"
-				fi
+				run_in_env bash "$CLI_DIR/nvim_install_from_source.bash" -t "$NVIM_TAG_DEFAULT"
 			fi
 		else
-			run_in_env bash "$CLI_DIR/nvim_install_from_source.bash"
+			run_in_env bash "$CLI_DIR/nvim_install_from_source.bash" -t "$NVIM_TAG_DEFAULT"
 		fi
 	fi
 
