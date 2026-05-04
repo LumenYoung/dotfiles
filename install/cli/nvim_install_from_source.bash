@@ -5,7 +5,7 @@ set -euo pipefail
 # Clone neovim, build and install it at ~/.local/
 
 # Default tag
-TAG="v0.11.4"
+TAG="v0.12.0"
 NEOVIM_REPO_URL="https://github.com/neovim/neovim"
 NEOVIM_SRC_DIR="${NEOVIM_SRC_DIR:-$HOME/.local/tools/neovim}"
 
@@ -17,13 +17,13 @@ Usage: $0 [-t TAG] [-d DIR] [-h]
 Clone, build and install neovim from source at ~/.local/
 
 Options:
-    -t TAG    Specify the git tag/version to build (default: v0.11.4)
+    -t TAG    Specify the git tag/version to build (default: v0.12.0)
     -d DIR    Source checkout directory (default: \$HOME/.local/tools/neovim)
     -h        Show this help message
 
 Examples:
-    $0                  # Install default version (v0.11.4)
-    $0 -t v0.10.0      # Install specific version
+    $0                  # Install default version (v0.12.0)
+    $0 -t v0.12.1      # Install specific version
     $0 -t master       # Install latest master branch
 
 EOF
