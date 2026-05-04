@@ -13,7 +13,7 @@
 # Core Model Selection
 ################################################################################
 
-model = "gpt-5.4"
+model = "gpt-5.5"
 # model = "moonshotai/kimi-k2-thinking"
 
 # Model used by the /review feature (code reviews). Default: "gpt-5-codex".
@@ -149,6 +149,9 @@ disable_paste_burst = false
 
 # Track Windows onboarding acknowledgement (Windows only). Default: false
 windows_wsl_setup_acknowledged = false
+
+[tui.model_availability_nux]
+"gpt-5.5" = 2
 
 # External notifier program (argv array). When unset: disabled.
 # Example: notify = ["notify-send", "Codex"]
