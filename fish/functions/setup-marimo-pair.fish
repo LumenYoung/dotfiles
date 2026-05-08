@@ -27,7 +27,7 @@ function setup-marimo-pair --description 'Install marimo-pair as a repo-local Co
 
     if not test -d "$source_dir/.git"
         mkdir -p (dirname "$source_dir")
-        git clone https://github.com/LumenYoung/marimo-pair.git "$source_dir"
+        git clone git@github.com:LumenYoung/marimo-pair.git "$source_dir"
         or return $status
     else
         git -C "$source_dir" pull --ff-only
