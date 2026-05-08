@@ -69,3 +69,4 @@ opencode: ~/.config/opencode
 t3-code: ~/.config/t3-code
 gemini: ~/.gemini
 codex-session-stream: ~/.local/bin/codex-session-stream
+marimo.toml: ~/.marimo.toml
