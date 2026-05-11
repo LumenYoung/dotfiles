@@ -301,6 +301,7 @@ gemini/.gemini/tmp
 codex/tmp/path/codex-arg0M7T2Tk
 claude-code-router
 tmp
+auth.json
 /codex/shell_snapshots
 *.sqlite
 /.opencode/plugins
@@ -324,3 +325,6 @@ tmp
 /gemini/trusted_hooks.json
 /install/error.log
 /codex/installation_id
+/codex/.tmp
+/codex/auth_private.json
+/codex-t3/auth_private.json
