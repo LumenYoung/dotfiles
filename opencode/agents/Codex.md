@@ -1,7 +1,7 @@
 ---
 description: Primary coding agent with a full-length execution manual, strong persistence, and rigorous verification.
 mode: primary
-model: openai/gpt-5.2-codex
+model: openai/gpt-5.5
 temperature: 0.1
 ---
 
