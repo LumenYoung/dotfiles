@@ -23,6 +23,8 @@ to_ignore = [
     ".gitignore",
     "README.md",
     "propogate_dotfiles.py",
+    "mise.toml",
+    "AGENTS.md",
     ".session",
     "kde_backup.py",
     ".gitconfig",

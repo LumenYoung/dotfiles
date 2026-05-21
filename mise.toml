@@ -1,0 +1,86 @@
+[tools]
+# Core CLI tools formerly installed via eget
+fd = "latest"
+ripgrep = "latest"
+lazygit = "latest"
+zellij = "latest"
+zoxide = "latest"
+fzf = "latest"
+just = "latest"
+eza = "latest"
+yazi = "latest"
+btop = "latest"
+bat = "latest"
+dust = "latest"
+
+# Editors, runtimes, and build helpers
+neovim = "latest"
+node = "lts"
+rust = "latest"
+uv = "latest"
+cmake = "latest"
+ninja = "latest"
+make = "latest"
+
+# Agent / AI CLI tools
+codex = "latest"
+
+[tasks.ensure-local-fish]
+description = "Create per-machine local fish override file"
+run = "touch ~/.local.fish"
+
+[tasks.propagate-core]
+description = "Symlink core dotfiles only"
+run = "uv run --with pyyaml python propogate_dotfiles.py --core"
+
+[tasks.propagate]
+description = "Symlink all dotfiles into configured destinations"
+run = "uv run --with pyyaml python propogate_dotfiles.py"
+
+[tasks.install-fish]
+description = "Build and install fish shell into ~/.local with a mise-managed C++ compiler"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
+mise install conda:gxx_linux-64
+GXX_DIR="$(mise where conda:gxx_linux-64)"
+COMPILER_SHIMS="$(mktemp -d)"
+trap 'rm -rf "$COMPILER_SHIMS"' EXIT
+ln -sf "$GXX_DIR/bin/x86_64-conda-linux-gnu-gcc" "$COMPILER_SHIMS/cc"
+ln -sf "$GXX_DIR/bin/x86_64-conda-linux-gnu-gcc" "$COMPILER_SHIMS/gcc"
+ln -sf "$GXX_DIR/bin/x86_64-conda-linux-gnu-g++" "$COMPILER_SHIMS/c++"
+ln -sf "$GXX_DIR/bin/x86_64-conda-linux-gnu-g++" "$COMPILER_SHIMS/g++"
+export PATH="$COMPILER_SHIMS:$GXX_DIR/bin:$PATH"
+export CC=cc
+export CXX=c++
+export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=cc
+
+bash install/cli/fish_install.bash
+"""
+
+[tasks.nvim-source]
+description = "Build Neovim from source into ~/.local"
+run = "bash install/cli/nvim_install_from_source.bash"
+
+[tasks.desktop]
+description = "Install desktop extras: Nerd Font and kitty"
+run = """
+bash install/desktop/nerdfont_install.bash
+bash install/desktop/kitty_install.bash
+"""
+
+[tasks.setup]
+description = "Bootstrap this machine from dotfiles"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
+mise install
+mise run ensure-local-fish
+mise run propagate-core
+
+if ! mise run install-fish; then
+  echo "WARN: fish install failed; continuing because C++ compiler may be missing on this host." >&2
+fi
+"""

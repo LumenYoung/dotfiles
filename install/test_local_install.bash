@@ -39,4 +39,4 @@ if [[ ! -f "${REPO_ROOT}/propogate_dotfiles.py" ]]; then
 	exit 1
 fi
 
-(cd "${SCRIPT_DIR}" && bash ./install_all.bash ${DESKTOP_FLAG})
+(cd "${SCRIPT_DIR}" && bash ./setup.bash ${DESKTOP_FLAG})

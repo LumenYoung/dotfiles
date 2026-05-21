@@ -70,9 +70,9 @@ docker run -d --name "${CONTAINER_NAME}" \
 		useradd -m -u \${HOST_UID} -g \${HOST_GID} -s /bin/bash ${USER_NAME} || true
 		chown -R ${USER_NAME}:\${HOST_GID} /home/${USER_NAME}
 		set +e
-		su - ${USER_NAME} -c 'cd ${INSTALL_DIR} && bash ./install_all.bash ${DESKTOP_FLAG}'
+		su - ${USER_NAME} -c 'cd ${INSTALL_DIR} && bash ./setup.bash ${DESKTOP_FLAG}'
 		install_rc=\$?
-		echo \"install_all.bash exited with code: \$install_rc\"
+		echo \"setup.bash exited with code: \$install_rc\"
 		tail -f /dev/null
 	" >/dev/null
 

@@ -13,10 +13,14 @@ command -v cmake >/dev/null 2>&1 || {
     echo "Error: cmake is required but not installed" >&2
     missing_deps=1
 }
-command -v wget >/dev/null 2>&1 || {
-    echo "Error: wget is required but not installed" >&2
+if command -v curl >/dev/null 2>&1; then
+    DOWNLOADER=(curl -fL -o)
+elif command -v wget >/dev/null 2>&1; then
+    DOWNLOADER=(wget -O)
+else
+    echo "Error: curl or wget is required but neither is installed" >&2
     missing_deps=1
-}
+fi
 
 # Exit if any dependencies are missing
 if [ $missing_deps -eq 1 ]; then
@@ -39,7 +43,7 @@ mkdir -p "$LOCAL_DIR" $BUILD_TEMP_DIR
 cd $BUILD_TEMP_DIR
 
 # download source files for Fish Shell
-wget https://github.com/fish-shell/fish-shell/releases/download/${FISH_SHELL_VERSION}/fish-${FISH_SHELL_VERSION}.tar.xz
+"${DOWNLOADER[@]}" fish-${FISH_SHELL_VERSION}.tar.xz "https://github.com/fish-shell/fish-shell/releases/download/${FISH_SHELL_VERSION}/fish-${FISH_SHELL_VERSION}.tar.xz"
 
 # extract files, configure, and compile
 
