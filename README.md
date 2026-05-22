@@ -17,7 +17,7 @@ mise run clean-user-tools
 mise run clean-user-tools -- --yes
 ```
 
-`mise run setup` installs mise-managed CLI tools, creates `~/.local.fish`, propagates core configs, and tries to build fish. Fish build failure is non-fatal because some hosts may not have a C++ compiler.
+`mise run setup` installs mise-managed CLI tools, creates `~/.local.fish`, propagates core configs, and tries to build fish. Fish is built with mise-provided build dependencies but installed into normal user-local paths such as `~/.local/bin/fish`; it should not require mise internals to start. Fish build failure is non-fatal because some hosts may not have a C++ compiler.
 
 Core propagation links: `nvim`, `zellij`, `fish`, `btop`, `yazi`, and `lazygit`.
 

@@ -66,6 +66,7 @@ export CXX=c++
 export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER=cc
 
 bash install/cli/fish_install.bash
+test -x "$HOME/.local/bin/fish"
 """
 
 [tasks.nvim-source]
