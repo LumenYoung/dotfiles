@@ -25,6 +25,15 @@ make = "latest"
 # Agent / AI CLI tools
 codex = "latest"
 
+[tools."github:ogulcancelik/herdr"]
+version = "latest"
+
+[tools."github:ogulcancelik/herdr".platforms]
+linux-x64 = { asset_pattern = "herdr-linux-x86_64", bin = "herdr" }
+linux-arm64 = { asset_pattern = "herdr-linux-aarch64", bin = "herdr" }
+macos-x64 = { asset_pattern = "herdr-macos-x86_64", bin = "herdr" }
+macos-arm64 = { asset_pattern = "herdr-macos-aarch64", bin = "herdr" }
+
 [tasks.ensure-local-fish]
 description = "Create per-machine local fish override file"
 run = "touch ~/.local.fish"
@@ -70,6 +79,141 @@ bash install/desktop/nerdfont_install.bash
 bash install/desktop/kitty_install.bash
 """
 
+
+[tasks.clean-user-tools]
+description = "Preview or remove legacy ~/.local/bin tools now managed by mise"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
+LOCAL_BIN="${HOME}/.local/bin"
+CONFIG_FILE="${MISE_CONFIG_FILE:-mise.toml}"
+DRY_RUN=true
+INTERACTIVE=false
+YES=false
+
+usage() {
+  cat <<'EOF'
+Usage: mise run clean-user-tools -- [--yes|--interactive]
+
+Default mode previews legacy ~/.local/bin binaries that are now managed by mise.
+  --yes          Remove all detected legacy binaries without prompting
+  --interactive Prompt once before removing all detected legacy binaries
+EOF
+}
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --yes)
+      YES=true
+      DRY_RUN=false
+      shift
+      ;;
+    --interactive)
+      INTERACTIVE=true
+      DRY_RUN=false
+      shift
+      ;;
+    -h|--help)
+      usage
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $1" >&2
+      usage >&2
+      exit 1
+      ;;
+  esac
+done
+
+if [[ ! -d "$LOCAL_BIN" ]]; then
+  echo "No ~/.local/bin directory found; nothing to clean."
+  exit 0
+fi
+
+TOOLS_SECTION="$(awk '/^\[tasks\./ { exit } { print }' "$CONFIG_FILE")"
+tool_declared() {
+  local tool="$1"
+  grep -Eq "^[[:space:]]*${tool}[[:space:]]*=" <<<"$TOOLS_SECTION" || \
+    grep -Fq "[tools.\"${tool}\"]" <<<"$TOOLS_SECTION"
+}
+
+# Allowlist only: tool declaration -> binary names that older scripts placed in ~/.local/bin.
+declare -a TOOL_BIN_ALLOWLIST=(
+  'fd|fd'
+  'ripgrep|rg'
+  'lazygit|lazygit'
+  'zellij|zellij'
+  'zoxide|zoxide'
+  'fzf|fzf'
+  'just|just'
+  'eza|eza'
+  'yazi|yazi ya'
+  'btop|btop'
+  'bat|bat'
+  'dust|dust'
+  'neovim|nvim'
+  'codex|codex'
+  'github:ogulcancelik/herdr|herdr'
+)
+
+declare -a candidates=()
+for entry in "${TOOL_BIN_ALLOWLIST[@]}"; do
+  tool="${entry%%|*}"
+  bins="${entry#*|}"
+  if ! tool_declared "$tool"; then
+    continue
+  fi
+  for bin in $bins; do
+    path="$LOCAL_BIN/$bin"
+    [[ -e "$path" || -L "$path" ]] || continue
+    if [[ -d "$path" && ! -L "$path" ]]; then
+      echo "Skipping directory: $path" >&2
+      continue
+    fi
+    if [[ -L "$path" ]]; then
+      target="$(readlink "$path" || true)"
+      if [[ "$target" == *"/.local/share/mise/"* || "$target" == *"/.local/state/mise/"* ]]; then
+        echo "Skipping mise-owned symlink: $path -> $target" >&2
+        continue
+      fi
+    fi
+    candidates+=("$path")
+  done
+done
+
+if [[ ${#candidates[@]} -eq 0 ]]; then
+  echo "No legacy mise-managed binaries found in ~/.local/bin."
+  exit 0
+fi
+
+printf 'Legacy ~/.local/bin binaries managed by mise:\n'
+printf '  %s\n' "${candidates[@]}"
+
+if [[ "$DRY_RUN" == "true" ]]; then
+  echo "Dry run only. Re-run with --yes to remove, or --interactive to prompt."
+  exit 0
+fi
+
+if [[ "$YES" != "true" ]]; then
+  if [[ "$INTERACTIVE" != "true" || ! -t 0 ]]; then
+    echo "Refusing to remove without --yes or an interactive terminal." >&2
+    exit 1
+  fi
+  read -r -p "Remove all listed legacy binaries? [y/N] " answer
+  case "$answer" in
+    y|Y|yes|YES) ;;
+    *)
+      echo "Skipped legacy binary cleanup."
+      exit 0
+      ;;
+  esac
+fi
+
+rm -f -- "${candidates[@]}"
+printf 'Removed %d legacy binaries.\n' "${#candidates[@]}"
+"""
+
 [tasks.setup]
 description = "Bootstrap this machine from dotfiles"
 run = """
@@ -77,6 +221,9 @@ run = """
 set -euo pipefail
 
 mise install
+if ! mise run clean-user-tools -- --interactive; then
+  echo "WARN: legacy user-space tool cleanup skipped or unavailable; continuing setup." >&2
+fi
 mise run ensure-local-fish
 mise run propagate-core
 

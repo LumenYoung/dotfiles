@@ -4,10 +4,17 @@ This repo stores config file mappings in `destination.yaml` for my machines.
 
 ## Bootstrap a machine
 
-Use the thin setup wrapper. It installs `mise` if needed, trusts this repo's `mise.toml`, then runs `mise run setup`.
+Use the thin setup wrapper. It installs `mise` if needed, trusts this repo's `mise.toml`, then runs `mise run setup`. During setup, if old `~/.local/bin` binaries are found for tools now managed by mise, setup prompts once before removing them. The managed tools are available on PATH in shells that activate mise; without activation, run them through `mise exec -- <tool>` or add mise activation to your shell startup.
 
 ```bash
 bash install/setup.bash
+```
+
+Preview legacy user-space binaries that are now managed by mise:
+
+```bash
+mise run clean-user-tools
+mise run clean-user-tools -- --yes
 ```
 
 `mise run setup` installs mise-managed CLI tools, creates `~/.local.fish`, propagates core configs, and tries to build fish. Fish build failure is non-fatal because some hosts may not have a C++ compiler.
