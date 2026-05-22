@@ -51,8 +51,8 @@ text = path.read_text() if path.exists() else ""
 start = "# >>> mise"
 end = "# <<< mise"
 block = """# >>> mise
-if test -x \"$HOME/.local/bin/mise\"
-    \"$HOME/.local/bin/mise\" activate fish | source
+if test -x "$HOME/.local/bin/mise"
+    "$HOME/.local/bin/mise" activate fish | source
 end
 # <<< mise
 """
