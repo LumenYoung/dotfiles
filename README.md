@@ -35,7 +35,7 @@ mise run nvim-source    # optional Neovim source build fallback
 ## Local machine overrides
 
 Use `~/.local.fish` for fish commands that should not be synced.
-`mise run ensure-local-fish` creates the file if it does not exist and inserts an idempotent mise activation block so interactive fish can find mise-managed tools.
+`mise run ensure-local-fish` creates the file if it does not exist. Mise activation and shims PATH setup live in the versioned fish config so mise-managed tools are available in interactive fish.
 
 ## ZSH
 

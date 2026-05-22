@@ -8,6 +8,14 @@ end
 set sponge_delay 20
 set sponge_purge_only_on_exit true
 
+if test -d ~/.local/share/mise/shims
+    fish_add_path ~/.local/share/mise/shims
+end
+
+if test -x ~/.local/bin/mise
+    ~/.local/bin/mise activate fish | source
+end
+
 if status is-interactive
     # Commands to run in interactive sessions can go here
     set -l current_tty (tty)
