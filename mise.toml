@@ -159,6 +159,7 @@ declare -a TOOL_BIN_ALLOWLIST=(
 )
 
 declare -a candidates=()
+found=false
 for entry in "${TOOL_BIN_ALLOWLIST[@]}"; do
   tool="${entry%%|*}"
   bins="${entry#*|}"
@@ -180,10 +181,11 @@ for entry in "${TOOL_BIN_ALLOWLIST[@]}"; do
       fi
     fi
     candidates+=("$path")
+    found=true
   done
 done
 
-if [[ ${#candidates[@]} -eq 0 ]]; then
+if [[ "$found" != "true" ]]; then
   echo "No legacy mise-managed binaries found in ~/.local/bin."
   exit 0
 fi
@@ -211,8 +213,12 @@ if [[ "$YES" != "true" ]]; then
   esac
 fi
 
+removed_count=0
+for _candidate in "${candidates[@]}"; do
+  removed_count=$((removed_count + 1))
+done
 rm -f -- "${candidates[@]}"
-printf 'Removed %d legacy binaries.\n' "${#candidates[@]}"
+printf 'Removed %d legacy binaries.\n' "$removed_count"
 '''
 
 [tasks.setup]
