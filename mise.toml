@@ -35,8 +35,40 @@ macos-x64 = { asset_pattern = "herdr-macos-x86_64", bin = "herdr" }
 macos-arm64 = { asset_pattern = "herdr-macos-aarch64", bin = "herdr" }
 
 [tasks.ensure-local-fish]
-description = "Create per-machine local fish override file"
-run = "touch ~/.local.fish"
+description = "Create per-machine local fish override file and ensure mise activation"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+
+LOCAL_FISH="$HOME/.local.fish"
+touch "$LOCAL_FISH"
+
+python3 - "$LOCAL_FISH" <<'PY'
+from pathlib import Path
+import sys
+path = Path(sys.argv[1])
+text = path.read_text() if path.exists() else ""
+start = "# >>> mise"
+end = "# <<< mise"
+block = """# >>> mise
+if test -x \"$HOME/.local/bin/mise\"
+    \"$HOME/.local/bin/mise\" activate fish | source
+end
+# <<< mise
+"""
+if start in text and end in text:
+    before, rest = text.split(start, 1)
+    _, after = rest.split(end, 1)
+    text = before.rstrip() + "\n\n" + block + after.lstrip("\n")
+elif "mise activate fish" not in text:
+    if text and not text.endswith("\n"):
+        text += "\n"
+    if text:
+        text += "\n"
+    text += block
+path.write_text(text)
+PY
+'''
 
 [tasks.propagate-core]
 description = "Symlink core dotfiles only"
