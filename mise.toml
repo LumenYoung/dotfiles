@@ -82,7 +82,7 @@ bash install/desktop/kitty_install.bash
 
 [tasks.clean-user-tools]
 description = "Preview or remove legacy ~/.local/bin tools now managed by mise"
-run = """
+run = '''
 #!/usr/bin/env bash
 set -euo pipefail
 
@@ -212,7 +212,7 @@ fi
 
 rm -f -- "${candidates[@]}"
 printf 'Removed %d legacy binaries.\n' "${#candidates[@]}"
-"""
+'''
 
 [tasks.setup]
 description = "Bootstrap this machine from dotfiles"
