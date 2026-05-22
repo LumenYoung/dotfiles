@@ -92,6 +92,66 @@ bash install/desktop/kitty_install.bash
 """
 
 
+[tasks.install-herdr-agent-skill]
+description = "Install Herdr agent skill for Codex-compatible agents"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+
+SKILL_URL="https://raw.githubusercontent.com/ogulcancelik/herdr/master/SKILL.md"
+AGENTS_SKILL_DIR="$HOME/.agents/skills/herdr"
+CODEX_SKILL_DIR="${CODEX_HOME:-$HOME/.codex}/skills/herdr"
+
+mkdir -p "$AGENTS_SKILL_DIR" "$CODEX_SKILL_DIR"
+if command -v curl >/dev/null 2>&1; then
+  curl -fsSL "$SKILL_URL" -o "$AGENTS_SKILL_DIR/SKILL.md"
+elif command -v wget >/dev/null 2>&1; then
+  wget -qO "$AGENTS_SKILL_DIR/SKILL.md" "$SKILL_URL"
+else
+  echo "ERROR: curl or wget is required to install the Herdr agent skill." >&2
+  exit 1
+fi
+cp "$AGENTS_SKILL_DIR/SKILL.md" "$CODEX_SKILL_DIR/SKILL.md"
+
+echo "Installed Herdr agent skill:"
+echo "  $AGENTS_SKILL_DIR/SKILL.md"
+echo "  $CODEX_SKILL_DIR/SKILL.md"
+'''
+
+[tasks.install-herdr-integrations]
+description = "Install Herdr hooks/plugins for locally configured agents"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v herdr >/dev/null 2>&1; then
+  echo "WARN: herdr is not on PATH; skipping Herdr integrations." >&2
+  exit 0
+fi
+
+installed_any=false
+if [[ -d "${CODEX_HOME:-$HOME/.codex}" ]]; then
+  herdr integration install codex
+  installed_any=true
+fi
+if [[ -d "$HOME/.claude" ]]; then
+  herdr integration install claude
+  installed_any=true
+fi
+if [[ -d "$HOME/.config/opencode" ]]; then
+  herdr integration install opencode
+  installed_any=true
+fi
+if [[ -d "$HOME/.hermes" ]]; then
+  herdr integration install hermes
+  installed_any=true
+fi
+
+if [[ "$installed_any" != "true" ]]; then
+  echo "No supported agent config directories found; no Herdr integrations installed."
+fi
+'''
+
 [tasks.clean-user-tools]
 description = "Preview or remove legacy ~/.local/bin tools now managed by mise"
 run = '''
@@ -243,6 +303,8 @@ if ! mise run clean-user-tools -- --interactive; then
   echo "WARN: legacy user-space tool cleanup skipped or unavailable; continuing setup." >&2
 fi
 mise run sync-global-mise-tools
+mise run install-herdr-agent-skill
+mise run install-herdr-integrations
 mise run ensure-local-fish
 mise run propagate-core
 
