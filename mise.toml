@@ -34,6 +34,17 @@ linux-arm64 = { asset_pattern = "herdr-linux-aarch64", bin = "herdr" }
 macos-x64 = { asset_pattern = "herdr-macos-x86_64", bin = "herdr" }
 macos-arm64 = { asset_pattern = "herdr-macos-aarch64", bin = "herdr" }
 
+[tasks.sync-global-mise-tools]
+description = "Copy this repo's mise tool manifest to ~/.config/mise/config.toml"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+
+GLOBAL_MISE_CONFIG="$HOME/.config/mise/config.toml"
+mkdir -p "$(dirname "$GLOBAL_MISE_CONFIG")"
+awk '/^\[tasks\./ { exit } { print }' mise.toml > "$GLOBAL_MISE_CONFIG"
+'''
+
 [tasks.ensure-local-fish]
 description = "Create per-machine local fish override file"
 run = "touch ~/.local.fish"
@@ -231,6 +242,7 @@ mise install
 if ! mise run clean-user-tools -- --interactive; then
   echo "WARN: legacy user-space tool cleanup skipped or unavailable; continuing setup." >&2
 fi
+mise run sync-global-mise-tools
 mise run ensure-local-fish
 mise run propagate-core
 
