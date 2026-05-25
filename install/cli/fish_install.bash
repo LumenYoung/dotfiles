@@ -37,9 +37,10 @@ set -e
 FISH_SHELL_VERSION=4.0.2
 
 # create our directories
-BUILD_TEMP_DIR=/tmp/build_fish_shell
+BUILD_TEMP_DIR="$(mktemp -d /tmp/build_fish_shell.XXXXXX)"
 LOCAL_DIR=$HOME/.local
 mkdir -p "$LOCAL_DIR" $BUILD_TEMP_DIR
+trap 'rm -rf "$BUILD_TEMP_DIR"' EXIT
 cd $BUILD_TEMP_DIR
 
 # download source files for Fish Shell
