@@ -12,4 +12,38 @@ else
     exit 127
 fi
 
+if [ -z "${CODEX_HOME:-}" ]; then
+    export CODEX_HOME="$HOME/.codex-t3"
+fi
+
+if [ -z "${LUMENY_OPENAI_API_KEY:-}" ] && [ -f "$HOME/.local.fish" ]; then
+    if command -v fish >/dev/null 2>&1; then
+        fish_bin="$(command -v fish)"
+    elif [ -x "$HOME/.local/bin/fish" ]; then
+        fish_bin="$HOME/.local/bin/fish"
+    else
+        fish_bin=""
+    fi
+
+    if [ -n "$fish_bin" ]; then
+        lumeny_env="$("$fish_bin" -c '
+            source "$HOME/.local.fish"
+            if set -q LUMENY_OPENAI_API_KEY
+                printf "%s" "$LUMENY_OPENAI_API_KEY"
+            end
+        ' 2>/dev/null || true)"
+        if [ -n "$lumeny_env" ]; then
+            LUMENY_OPENAI_API_KEY="$lumeny_env"
+        fi
+    fi
+fi
+
+if [ -n "${LUMENY_OPENAI_API_KEY:-}" ]; then
+    export OPENAI_API_KEY="$LUMENY_OPENAI_API_KEY"
+    exec "$mise_bin" exec -- codex \
+        -c 'model_provider="lumeny_api"' \
+        -c 'features.enable_request_compression=false' \
+        "$@"
+fi
+
 exec "$mise_bin" exec -- codex "$@"
