@@ -19,6 +19,8 @@ symlink as needed. Agent-specific skills stay in that agent’s own directory.
 
 - `propogate_dotfiles.py` reads `destination.yaml` and symlinks each repo entry into its
   destination path. It operates on **top-level entries** only.
+- `--core` propagates daily shell/editor configs. `--agents` propagates Codex,
+  OpenCode, T3 Code, related systemd user units, and helper binaries used by agents.
 - `skills/` is a shared root for agent-shared repos (currently `skills/superpowers`).
 - Each agent’s `superpowers` directory is a symlink into this shared root.
 

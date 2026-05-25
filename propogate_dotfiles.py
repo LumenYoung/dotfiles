@@ -33,6 +33,16 @@ to_ignore = [
 # Core configs that will be propagated with --core flag
 core_configs = ["nvim", "zellij", "fish", "btop", "yazi", "lazygit"]
 
+# Agent configs propagated during setup after the core shell/tooling exists.
+agent_configs = [
+    "codex",
+    "codex-t3",
+    "opencode",
+    "t3-code",
+    "systemd",
+    "codex-session-stream",
+]
+
 
 # Read the destinations from the destination.yaml file
 def read_destinations(file: str) -> Dict[str, str]:
@@ -150,11 +160,17 @@ def main():
     parser.add_argument(
         "--core", action="store_true", help="Propagate only core configs"
     )
+    parser.add_argument(
+        "--agents", action="store_true", help="Propagate agent configs"
+    )
     args = parser.parse_args()
 
     if args.core:
         # Propagate only core configs
         configs_to_propagate = core_configs
+    elif args.agents:
+        # Propagate agent configs
+        configs_to_propagate = agent_configs
     elif args.configs:
         # Only propagate specified configs
         configs_to_propagate = []

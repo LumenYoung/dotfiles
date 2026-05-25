@@ -6,6 +6,10 @@ if test -f "$HOME/.config/t3-code/server-env.fish"
     source "$HOME/.config/t3-code/server-env.fish"
 end
 
+if test -d "$HOME/.config/t3-code/bin"
+    fish_add_path --prepend "$HOME/.config/t3-code/bin"
+end
+
 function __t3_node_runtime_is_compatible
     type -q node; or return 1
 

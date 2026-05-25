@@ -24,6 +24,8 @@ make = "latest"
 
 # Agent / AI CLI tools
 codex = "latest"
+opencode = "latest"
+"npm:t3" = "latest"
 
 [tools."github:ogulcancelik/herdr"]
 version = "latest"
@@ -52,6 +54,10 @@ run = "touch ~/.local.fish"
 [tasks.propagate-core]
 description = "Symlink core dotfiles only"
 run = "uv run --with pyyaml python propogate_dotfiles.py --core"
+
+[tasks.propagate-agents]
+description = "Symlink Codex, OpenCode, T3 Code, and related user units"
+run = "uv run --with pyyaml python propogate_dotfiles.py --agents"
 
 [tasks.propagate]
 description = "Symlink all dotfiles into configured destinations"
@@ -207,6 +213,7 @@ TOOLS_SECTION="$(awk '/^\[tasks\./ { exit } { print }' "$CONFIG_FILE")"
 tool_declared() {
   local tool="$1"
   grep -Eq "^[[:space:]]*${tool}[[:space:]]*=" <<<"$TOOLS_SECTION" || \
+    grep -Eq "^[[:space:]]*\"${tool}\"[[:space:]]*=" <<<"$TOOLS_SECTION" || \
     grep -Fq "[tools.\"${tool}\"]" <<<"$TOOLS_SECTION"
 }
 
@@ -226,6 +233,8 @@ declare -a TOOL_BIN_ALLOWLIST=(
   'dust|dust'
   'neovim|nvim'
   'codex|codex'
+  'opencode|opencode'
+  'npm:t3|t3'
   'github:ogulcancelik/herdr|herdr'
 )
 
@@ -303,10 +312,11 @@ if ! mise run clean-user-tools -- --interactive; then
   echo "WARN: legacy user-space tool cleanup skipped or unavailable; continuing setup." >&2
 fi
 mise run sync-global-mise-tools
-mise run install-herdr-agent-skill
-mise run install-herdr-integrations
 mise run ensure-local-fish
 mise run propagate-core
+mise run propagate-agents
+mise run install-herdr-agent-skill
+mise run install-herdr-integrations
 
 if ! mise run install-fish; then
   echo "WARN: fish install failed; continuing because C++ compiler may be missing on this host." >&2

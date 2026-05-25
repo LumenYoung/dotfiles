@@ -1,10 +1,12 @@
 {
   "providers": {
     "codex": {
-      "homePath": "~/.codex-t3"
+      "homePath": "~/.codex-t3",
+      "binaryPath": "t3-mise-codex"
     },
     "opencode": {
-      "enabled": false
+      "enabled": true,
+      "binaryPath": "t3-mise-opencode"
     },
     "claudeAgent": {
       "enabled": false

@@ -7,8 +7,11 @@ Type=simple
 WorkingDirectory=%h
 # Configuration lives in fish, not in this unit:
 # - Put service-specific overrides in ~/.config/t3-code/server-env.fish.
-# - Put shared interactive fish environment in ~/.local.fish; this service sources it
-#   before server-env.fish so service-specific values can override shared defaults.
+# - The service starts through fish -c so normal fish init can add mise shims and
+#   activate mise before T3 Code tries to find tools such as opencode.
+# - Put shared machine-local fish environment in ~/.local.fish; start-service.fish
+#   sources it before server-env.fish so service-specific values can override
+#   shared defaults.
 # - T3CODE_HOST controls the bind address; default: 0.0.0.0.
 # - T3CODE_PORT controls the listening port; default: 4096. This machine sets it
 #   to 14096 in ~/.local.fish because Caddy routes server.lumeny.io there.
@@ -19,8 +22,8 @@ WorkingDirectory=%h
 #   server-env.fish maps LUMENY_OPENAI_API_KEY to OPENAI_API_KEY for provider clients.
 # After changing env files, run:
 #   systemctl --user restart t3-code.service
-Environment=PATH=%h/micromamba/envs/main/bin:%h/.local/share/mamba/envs/main/bin:%h/.local/bin:/usr/local/bin:/usr/bin:/bin
-ExecStart=/bin/sh -lc 'if [ -x "$HOME/.local/bin/fish" ]; then fish_bin="$HOME/.local/bin/fish"; elif command -v fish >/dev/null 2>&1; then fish_bin="$(command -v fish)"; elif [ -x /usr/bin/fish ]; then fish_bin=/usr/bin/fish; else echo "fish shell not found" >&2; exit 127; fi; exec "$fish_bin" "$HOME/.config/t3-code/start-service.fish"'
+Environment=PATH=%h/micromamba/envs/main/bin:%h/.local/share/mamba/envs/main/bin:%h/.local/bin:%h/.local/share/mise/shims:/usr/local/bin:/usr/bin:/bin
+ExecStart=/bin/sh -lc 'if [ -x "$HOME/.local/bin/fish" ]; then fish_bin="$HOME/.local/bin/fish"; elif command -v fish >/dev/null 2>&1; then fish_bin="$(command -v fish)"; elif [ -x /usr/bin/fish ]; then fish_bin=/usr/bin/fish; else echo "fish shell not found" >&2; exit 127; fi; exec "$fish_bin" -c "source \"$HOME/.config/t3-code/start-service.fish\""'
 Restart=always
 RestartSec=2
 

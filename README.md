@@ -24,15 +24,17 @@ mise run install-herdr-agent-skill
 mise run install-herdr-integrations
 ```
 
-`mise run setup` installs mise-managed CLI tools, syncs the tool manifest to `~/.config/mise/config.toml` for global shim resolution, installs the Herdr agent skill/integrations when available, creates `~/.local.fish`, propagates core configs, and tries to build fish. Fish is built with mise-provided build dependencies but installed into normal user-local paths such as `~/.local/bin/fish`; it should not require mise internals to start. Fish build failure is non-fatal because some hosts may not have a C++ compiler.
+`mise run setup` installs mise-managed CLI tools, syncs the tool manifest to `~/.config/mise/config.toml` for global shim resolution, installs the Herdr agent skill/integrations when available, creates `~/.local.fish`, propagates core and agent configs, and tries to build fish. Fish is built with mise-provided build dependencies but installed into normal user-local paths such as `~/.local/bin/fish`; it should not require mise internals to start. Fish build failure is non-fatal because some hosts may not have a C++ compiler.
 
 Core propagation links: `nvim`, `zellij`, `fish`, `btop`, `yazi`, and `lazygit`.
+Agent propagation links: `codex`, `codex-t3`, `opencode`, `t3-code`, `systemd`, and `codex-session-stream`.
 
 ## Common commands
 
 ```bash
 mise run setup          # core bootstrap
 mise run propagate-core # link core configs only
+mise run propagate-agents # link agent configs and user units only
 mise run propagate      # link all configs from destination.yaml
 mise run desktop        # install nerd font + kitty extras
 mise run install-fish   # retry fish source build after installing host C++ compiler
