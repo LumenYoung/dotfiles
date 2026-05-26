@@ -328,3 +328,11 @@ auth.json
 /codex/.tmp
 /codex/auth_private.json
 /codex-t3/auth_private.json
+/codex-t3/sessions/2026
+/codex-t3/shell_snapshots
+
+# Pi agent generated state / secrets
+pi-agent/npm/
+pi-agent/auth.json
+pi-agent/sessions/
+pi-agent/backups/

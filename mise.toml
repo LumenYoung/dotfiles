@@ -26,6 +26,7 @@ make = "latest"
 codex = "latest"
 opencode = "latest"
 "npm:t3" = "latest"
+"npm:@earendil-works/pi-coding-agent" = "latest"
 
 [tools."github:ogulcancelik/herdr"]
 version = "latest"
@@ -158,6 +159,11 @@ if [[ "$installed_any" != "true" ]]; then
 fi
 '''
 
+
+[tasks.install-pi-packages]
+description = "Install Pi packages/extensions"
+run = "bash mise-tasks/install-pi-packages"
+
 [tasks.clean-user-tools]
 description = "Preview or remove legacy ~/.local/bin tools now managed by mise"
 run = '''
@@ -235,6 +241,7 @@ declare -a TOOL_BIN_ALLOWLIST=(
   'codex|codex'
   'opencode|opencode'
   'npm:t3|t3'
+  'npm:@earendil-works/pi-coding-agent|pi'
   'github:ogulcancelik/herdr|herdr'
 )
 
@@ -315,6 +322,7 @@ mise run sync-global-mise-tools
 mise run ensure-local-fish
 mise run propagate-core
 mise run propagate-agents
+mise run install-pi-packages
 mise run install-herdr-agent-skill
 mise run install-herdr-integrations
 

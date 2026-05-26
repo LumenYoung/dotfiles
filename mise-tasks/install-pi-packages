@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if ! command -v pi >/dev/null 2>&1; then
+  echo "ERROR: pi is not on PATH. Run mise install first." >&2
+  exit 1
+fi
+
+pi install npm:@howaboua/pi-codex-conversion
+pi list

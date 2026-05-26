@@ -1,0 +1,15 @@
+{
+  "defaultProvider": "openai",
+  "defaultModel": "gpt-5.5",
+  "defaultThinkingLevel": "medium",
+  "transport": "sse",
+  "npmCommand": [
+    "/home/yang/.local/bin/mise",
+    "exec",
+    "--",
+    "npm"
+  ],
+  "packages": [
+    "npm:@howaboua/pi-codex-conversion"
+  ]
+}
