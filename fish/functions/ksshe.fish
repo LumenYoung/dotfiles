@@ -82,7 +82,7 @@ function ksshe --description "Kitty SSH wrapper that injects configured local en
     end
 
     if test $remote_idx -gt (count $args)
-        set -l interactive_cmd "exec env "(string join ' ' -- $exports)' ${SHELL:-/bin/sh} -l'
+        set -l interactive_cmd "exec env "(string join ' ' -- $exports)" /bin/sh -lc "(string escape -- 'exec "${SHELL:-/bin/sh}" -l')
         command kitty +kitten ssh $before_host -t $host $interactive_cmd
         return $status
     end
