@@ -1,8 +1,8 @@
-function sshe --description "SSH wrapper that injects configured local env vars into the remote command"
+function ksshe --description "Kitty SSH wrapper that injects configured local env vars into the remote command"
     set -l default_env_vars LUMENY_OPENAI_BASE_URL LUMENY_OPENAI_API_KEY
 
     if test (count $argv) -lt 1
-        echo "usage: sshe [ssh options] <host> [remote command ...]" >&2
+        echo "usage: ksshe [ssh options] <host> [remote command ...]" >&2
         return 1
     end
 
@@ -46,7 +46,7 @@ function sshe --description "SSH wrapper that injects configured local env vars 
     end
 
     if test $host_idx -eq 0
-        command ssh $args
+        command kitty +kitten ssh $args
         return $status
     end
 
@@ -73,13 +73,13 @@ function sshe --description "SSH wrapper that injects configured local env vars 
     set -l host $args[$host_idx]
 
     if test (count $exports) -eq 0
-        command ssh $args
+        command kitty +kitten ssh $args
         return $status
     end
 
     if test $remote_idx -gt (count $args)
         set -l interactive_cmd "exec env "(string join ' ' -- $exports)' ${SHELL:-/bin/sh} -l'
-        command ssh $before_host -t $host $interactive_cmd
+        command kitty +kitten ssh $before_host -t $host $interactive_cmd
         return $status
     end
 
@@ -87,10 +87,10 @@ function sshe --description "SSH wrapper that injects configured local env vars 
     set -l remote_cmd_str (string join ' ' -- $remote_cmd)
 
     if string match -rq '^[A-Za-z_][A-Za-z0-9_]*=' -- $remote_cmd_str
-        command ssh $args
+        command kitty +kitten ssh $args
         return $status
     end
 
     set -l prefixed_cmd (string join ' ' -- $exports $remote_cmd_str)
-    command ssh $before_host $host $prefixed_cmd
+    command kitty +kitten ssh $before_host $host $prefixed_cmd
 end
