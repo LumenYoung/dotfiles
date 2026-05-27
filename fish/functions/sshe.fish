@@ -1,5 +1,9 @@
 function sshe --description "SSH wrapper that injects configured local env vars into the remote command"
-    set -l default_env_vars LUMENY_OPENAI_BASE_URL LUMENY_OPENAI_API_KEY
+    set -l default_env_vars \
+        LUMENY_OPENAI_BASE_URL \
+        LUMENY_OPENAI_API_KEY \
+        GITHUB_TOKEN \
+        AQUA_GITHUB_TOKEN
 
     if test (count $argv) -lt 1
         echo "usage: sshe [ssh options] <host> [remote command ...]" >&2
