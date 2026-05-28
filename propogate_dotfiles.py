@@ -31,7 +31,16 @@ to_ignore = [
 ]
 
 # Core configs that will be propagated with --core flag
-core_configs = ["nvim", "zellij", "fish", "btop", "yazi", "lazygit"]
+core_configs = [
+    "nvim",
+    "zellij",
+    "herdr/config.toml",
+    "herdr-workspace-cycle",
+    "fish",
+    "btop",
+    "yazi",
+    "lazygit",
+]
 
 # Agent configs propagated during setup after the core shell/tooling exists.
 agent_configs = [

@@ -40,6 +40,8 @@ nixpkgs: ~/.config/nixpkgs
 code-flags.conf: ~/.config/code-flags.conf
 libvirt.conf: ~/.config/libvirt/libvirt.conf
 zellij: ~/.config/zellij
+herdr/config.toml: ~/.config/herdr/config.toml
+herdr-workspace-cycle: ~/.local/bin/herdr-workspace-cycle
 okular/local: ~/.local/share/kxmlgui5/okular
 okular/okularpartrc: ~/.config/okularpartrc
 # okular/okularrc: ~/.config/okularrc

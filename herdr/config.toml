@@ -1,0 +1,41 @@
+onboarding = false
+
+[keys]
+# Match the primary Zellij session prefix: Ctrl-o.
+prefix = "ctrl+o"
+
+# Match Zellij detach: Ctrl-o d.
+detach = "prefix+d"
+
+# Direct workspace navigation.
+next_workspace = "alt+]"
+previous_workspace = "alt+["
+new_workspace = "alt+shift+n"
+
+# Direct tab navigation inside the current workspace.
+previous_tab = "alt+h"
+next_tab = "alt+l"
+new_tab = "alt+n"
+rename_tab = "prefix+r"
+
+# Move resize mode away from Ctrl-o r so rename_tab can use it.
+resize_mode = "prefix+s"
+settings = ""
+
+# Match Vim/Zellij direction semantics for workspace navigation in Herdr's navigate mode.
+navigate_workspace_down = "j"
+navigate_workspace_up = "k"
+
+# Avoid colliding with workspace j/k; keep vertical pane navigation on arrows.
+navigate_pane_down = "down"
+navigate_pane_up = "up"
+
+[[keys.command]]
+key = "alt+j"
+type = "shell"
+command = "herdr-workspace-cycle next"
+
+[[keys.command]]
+key = "alt+k"
+type = "shell"
+command = "herdr-workspace-cycle previous"
