@@ -73,6 +73,7 @@ pi-agent/settings.json: ~/.pi/agent/settings.json
 pi-agent/models.json: ~/.pi/agent/models.json
 pi-agent/pi-codex-conversion.json: ~/.pi/agent/pi-codex-conversion.json
 pi-agent/extensions: ~/.pi/agent/extensions
+pi-agent/scripts: ~/.pi/agent/scripts
 pi-agent/skills: ~/.pi/agent/skills
 gemini: ~/.gemini
 codex-session-stream: ~/.local/bin/codex-session-stream
