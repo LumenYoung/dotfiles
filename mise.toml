@@ -79,6 +79,23 @@ run = """
 set -euo pipefail
 
 mise install conda:gxx_linux-64
+
+add_mise_tool_bin_to_path() {
+  local tool="$1"
+  local install_dir bin
+  install_dir="$(mise where "$tool")"
+  bin="$(find "$install_dir" -maxdepth 5 -type f -perm -u+x -name "$tool" | head -n 1)"
+  if [[ -z "$bin" ]]; then
+    echo "ERROR: unable to find executable for mise tool: $tool" >&2
+    return 1
+  fi
+  export PATH="$(dirname "$bin"):$PATH"
+}
+
+add_mise_tool_bin_to_path cmake
+add_mise_tool_bin_to_path make
+export PATH="$(mise where rust):$PATH"
+
 GXX_DIR="$(mise where conda:gxx_linux-64)"
 COMPILER_SHIMS="$(mktemp -d)"
 trap 'rm -rf "$COMPILER_SHIMS"' EXIT
