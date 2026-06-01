@@ -1,34 +1,41 @@
 [tools]
-# Core CLI tools formerly installed via eget
+# CLI essentials — daily shell/navigation/search primitives
 fd = "latest"
 ripgrep = "latest"
-lazygit = "latest"
-zellij = "latest"
-zoxide = "latest"
 fzf = "latest"
-just = "latest"
+zoxide = "latest"
 eza = "latest"
-yazi = "latest"
-btop = "latest"
 bat = "latest"
 dust = "latest"
+just = "latest"
 
-# Editors, runtimes, and build helpers
+# Terminal workspace / TUI utilities
+zellij = "latest"
+yazi = "latest"
+btop = "latest"
+lazygit = "latest"
+
+# Editors and language runtimes
 neovim = "latest"
 node = "lts"
 rust = "latest"
 uv = "latest"
+
+# Build toolchain
 cmake = "latest"
 ninja = "latest"
 make = "latest"
 
-# Agent / AI CLI tools
+# Agent-facing CLIs
 codex = "latest"
 opencode = "latest"
 "npm:t3" = "latest"
 "npm:@earendil-works/pi-coding-agent" = "latest"
+
+# Agent support tools / integrations
 "aqua:rtk-ai/rtk" = "latest"
 
+# Agent support tools / integrations requiring custom mise metadata
 [tools."github:ogulcancelik/herdr"]
 version = "latest"
 
