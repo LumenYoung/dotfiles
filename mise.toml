@@ -78,6 +78,18 @@ run = """
 #!/usr/bin/env bash
 set -euo pipefail
 
+if command -v fish >/dev/null 2>&1; then
+  echo "fish already available at $(command -v fish); skipping source build."
+  fish --version || true
+  exit 0
+fi
+
+if [[ -x "$HOME/.local/bin/fish" ]]; then
+  echo "fish already installed at $HOME/.local/bin/fish; skipping source build."
+  "$HOME/.local/bin/fish" --version || true
+  exit 0
+fi
+
 mise install conda:gxx_linux-64
 
 add_mise_tool_bin_to_path() {
