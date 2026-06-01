@@ -10,7 +10,9 @@ detach = "prefix+d"
 # Direct workspace navigation.
 next_workspace = "alt+]"
 previous_workspace = "alt+["
-new_workspace = "alt+shift+n"
+# Terminals usually report Alt+Shift+n as Alt+N (uppercase char) rather than
+# Alt+Shift+n, so bind the actual sequence Herdr receives.
+new_workspace = "alt+N"
 
 # Direct tab navigation inside the current workspace.
 previous_tab = "alt+h"
