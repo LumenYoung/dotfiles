@@ -7,3 +7,5 @@
 - Skip trivial reads, transient logs, generic success output, or repetitive status with no lasting value.
 - Before compaction or when context becomes long, write a short checkpoint with the current goal, key findings, active files, blockers, and next step.
 - At the end of meaningful work, write a final handoff summary.
+
+@/home/yang/.codex/RTK.md

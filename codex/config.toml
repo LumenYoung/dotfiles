@@ -85,7 +85,7 @@ approval_policy = "on-request"
 # - danger-full-access (no sandbox; extremely risky)
 sandbox_mode = "danger-full-access"
 personality = "pragmatic"
-approvals_reviewer = "user"
+approvals_reviewer = "guardian_subagent"
 
 # Extra settings used only when sandbox_mode = "workspace-write".
 [sandbox_workspace_write]
