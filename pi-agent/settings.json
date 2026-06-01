@@ -12,5 +12,5 @@
   "packages": [
     "npm:@howaboua/pi-codex-conversion"
   ],
-  "lastChangelogVersion": "0.75.5"
+  "lastChangelogVersion": "0.78.0"
 }
