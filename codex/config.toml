@@ -203,6 +203,7 @@ hide_rate_limit_model_nudge = true
 web_search = "live"
 
 [features]
+hooks = true
 # Leave this table empty to accept defaults. Set explicit booleans to opt in/out.
 unified_exec = true
 streamable_shell = true
