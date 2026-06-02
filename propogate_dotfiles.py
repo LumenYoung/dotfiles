@@ -46,6 +46,8 @@ core_configs = [
 agent_configs = [
     "codex",
     "codex-t3",
+    "claude/skills",
+    "claude/settings.json",
     "opencode",
     "t3-code",
     "systemd",

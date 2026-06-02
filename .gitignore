@@ -333,6 +333,7 @@ auth.json
 
 # Pi agent generated state / secrets
 pi-agent/npm/
+pi-agent/scripts/node_modules/
 pi-agent/auth.json
 pi-agent/sessions/
 pi-agent/backups/

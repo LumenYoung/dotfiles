@@ -18,6 +18,7 @@ lazygit = "latest"
 # Editors and language runtimes
 neovim = "latest"
 node = "lts"
+bun = "latest"
 rust = "latest"
 uv = "latest"
 
@@ -202,6 +203,44 @@ fi
 description = "Install Pi packages/extensions"
 run = "bash mise-tasks/install-pi-packages"
 
+[tasks.install-claude-coms-net-bridge-deps]
+description = "Install dependencies for the Claude Code coms-net bridge"
+run = "cd pi-agent/scripts && bun install"
+
+[tasks.coms-net-server]
+description = "Start the Pi coms-net hub from this repo"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+cd pi-agent/scripts
+exec bun coms-net-server.ts "$@"
+'''
+
+[tasks.claude-coms-net-bridge]
+description = "Expose Claude Code as a Pi coms-net peer"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+cd pi-agent/scripts
+if [[ ! -d node_modules ]]; then
+  bun install
+fi
+exec bun claude-coms-net-bridge.ts "$@"
+'''
+
+[tasks.coms-net-cli]
+description = "Call the Pi coms-net helper CLI"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+cd pi-agent/scripts
+if [[ ! -d node_modules ]]; then
+  bun install
+fi
+exec bun coms-net-cli.ts "$@"
+'''
+
+
 [tasks.install-rtk-integrations]
 description = "Initialize RTK for Codex and Pi"
 run = '''
@@ -291,6 +330,7 @@ declare -a TOOL_BIN_ALLOWLIST=(
   'bat|bat'
   'dust|dust'
   'neovim|nvim'
+  'bun|bun bunx'
   'codex|codex'
   'opencode|opencode'
   'npm:t3|t3'
@@ -379,6 +419,7 @@ mise run propagate-core
 mise run propagate-agents
 mise run install-rtk-integrations
 mise run install-pi-packages
+mise run install-claude-coms-net-bridge-deps
 mise run install-herdr-agent-skill
 mise run install-herdr-integrations
 

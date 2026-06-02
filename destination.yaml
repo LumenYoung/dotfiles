@@ -65,6 +65,8 @@ ghostty: ~/.config/ghostty
 codex: ~/.codex
 codex-t3: ~/.codex-t3
 claude-code-router: ~/.claude-code-router
+claude/settings.json: ~/.claude/settings.json
+claude/skills: ~/.claude/skills
 hypr: ~/.config/hypr
 marker: ~/.config/marker-pdf
 opencode: ~/.config/opencode
