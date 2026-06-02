@@ -14,7 +14,7 @@ Options:
   --desktop    Run mise setup, then desktop extras
   -h, --help   Show this help message
 
-This wrapper only bootstraps mise and delegates real setup logic to:
+This wrapper bootstraps mise, then installs repo-managed tools (including Claude Code) via:
   mise run setup
 EOF
 }

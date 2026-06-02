@@ -30,6 +30,7 @@ make = "latest"
 codex = "latest"
 opencode = "latest"
 "npm:t3" = "latest"
+"npm:@anthropic-ai/claude-code" = "latest"
 "npm:@earendil-works/pi-coding-agent" = "latest"
 
 # Agent support tools / integrations
@@ -293,6 +294,7 @@ declare -a TOOL_BIN_ALLOWLIST=(
   'codex|codex'
   'opencode|opencode'
   'npm:t3|t3'
+  'npm:@anthropic-ai/claude-code|claude'
   'npm:@earendil-works/pi-coding-agent|pi'
   'aqua:rtk-ai/rtk|rtk'
   'github:ogulcancelik/herdr|herdr'
