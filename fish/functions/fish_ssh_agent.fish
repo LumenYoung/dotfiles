@@ -22,21 +22,17 @@ end
 
 
 function fish_ssh_agent --description "Start ssh-agent if not started yet, or uses already started ssh-agent."
-   # If the environment already provides a working agent, keep it.
+   # If the environment already provides an agent socket, keep it.
    # This matters for desktop agents such as gcr/gnome-keyring and for
    # forwarded SSH agents over `ssh -A`: those usually set SSH_AUTH_SOCK but
    # not SSH_AGENT_PID.  The old logic treated missing SSH_AGENT_PID as "no
    # agent" and overwrote SSH_AUTH_SOCK with ~/.ssh/environment, which made
    # keys appear to be lost after `exec fish`.
-   if test -n "$SSH_AUTH_SOCK"
-      ssh-add -l >/dev/null 2>&1
-      set -l ssh_add_status $status
-
-      # ssh-add exits 0 when identities exist, and 1 when the agent is alive
-      # but currently has no identities.  Both mean the socket is usable.
-      if test $ssh_add_status -eq 0; or test $ssh_add_status -eq 1
-         return 0
-      end
+   # Do not probe it with `ssh-add -l`: that can fail for reasons unrelated to
+   # socket validity, and then we would incorrectly replace the inherited
+   # forwarded agent with a fresh local agent.
+   if test -n "$SSH_AUTH_SOCK"; and test -S "$SSH_AUTH_SOCK"
+      return 0
    end
 
    if test -z "$SSH_ENV"
