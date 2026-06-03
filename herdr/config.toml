@@ -28,6 +28,7 @@ focus_pane_down = "alt+j"
 focus_pane_up = "alt+k"
 focus_pane_right = "alt+l"
 close_pane = "alt+x"
+toggle_sidebar = "alt+s"
 
 # Move resize mode away from Ctrl-o r so rename_tab can use it.
 resize_mode = "prefix+s"
