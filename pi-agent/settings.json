@@ -1,8 +1,13 @@
 {
   "defaultProvider": "openai",
   "defaultModel": "gpt-5.5",
-  "defaultThinkingLevel": "medium",
+  "defaultThinkingLevel": "high",
   "transport": "sse",
+  "compaction": {
+    "enabled": true,
+    "reserveTokens": 38400,
+    "keepRecentTokens": 20000
+  },
   "npmCommand": [
     "mise",
     "exec",
@@ -10,7 +15,8 @@
     "npm"
   ],
   "packages": [
-    "npm:@howaboua/pi-codex-conversion"
+    "npm:@howaboua/pi-codex-conversion",
+    "https://github.com/code-yeongyu/pi-goal"
   ],
   "lastChangelogVersion": "0.78.0"
 }
