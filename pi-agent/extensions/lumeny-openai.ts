@@ -72,12 +72,14 @@ export default function lumenyOpenAI(pi: ExtensionAPI) {
   // Lumeny endpoint so no shell wrapper is required.
   process.env.OPENAI_API_KEY = apiKey;
 
+  const modelIds = configuredModelIds();
+
   pi.registerProvider("openai", {
     name: "Lumeny OpenAI",
     baseUrl,
     api: "openai-responses",
     apiKey,
-    models: configuredModelIds().map((id) => ({
+    models: modelIds.map((id) => ({
       id,
       name: modelName(id),
       reasoning: true,
@@ -94,4 +96,35 @@ export default function lumenyOpenAI(pi: ExtensionAPI) {
       },
     })),
   });
+
+  // Claude models served through Lumeny's OpenAI-Responses surface under-report
+  // token usage: cached prompt tokens (Anthropic's cache_read_input_tokens) are
+  // not mapped into the Responses usage fields, so Pi only sees the small
+  // per-turn input and the context panel collapses to ~1% (and auto-compaction
+  // never triggers). Lumeny (CLIProxyAPI) also exposes a native Anthropic
+  // Messages endpoint at POST {host}/v1/messages, authenticated with the same
+  // key via the x-api-key header. Pi's native "anthropic-messages" api reads
+  // cache_read_input_tokens / cache_creation_input_tokens correctly, so route
+  // Claude through it for accurate context accounting.
+  const claudeIds = modelIds.filter((id) => id.startsWith("claude"));
+  if (claudeIds.length > 0) {
+    // The Anthropic SDK appends "/v1/messages" to baseUrl, so it must be the
+    // host root (e.g. https://api.lumeny.io), not the OpenAI "/v1" base.
+    const anthropicBaseUrl = baseUrl.replace(/\/v1\/?$/, "");
+    pi.registerProvider("lumeny-anthropic", {
+      name: "Lumeny Anthropic",
+      baseUrl: anthropicBaseUrl,
+      api: "anthropic-messages",
+      apiKey,
+      models: claudeIds.map((id) => ({
+        id,
+        name: modelName(id),
+        reasoning: true,
+        input: ["text", "image"],
+        contextWindow: MODEL_CONTEXT_WINDOWS[id] ?? 200000,
+        maxTokens: MODEL_MAX_TOKENS[id] ?? 32000,
+        cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
+      })),
+    });
+  }
 }
