@@ -8,17 +8,26 @@ prefix = "ctrl+o"
 detach = "prefix+d"
 
 # Direct workspace navigation.
-next_workspace = "alt+]"
-previous_workspace = "alt+["
-# Terminals usually report Alt+Shift+n as Alt+N (uppercase char) rather than
-# Alt+Shift+n, so bind the actual sequence Herdr receives.
-new_workspace = "alt+N"
+previous_workspace = "alt+b"
+next_workspace = "alt+n"
+new_workspace = "prefix+shift+n"
 
 # Direct tab navigation inside the current workspace.
-previous_tab = "alt+h"
-next_tab = "alt+l"
-new_tab = "alt+n"
+previous_tab = "alt+o"
+next_tab = "alt+p"
+# Terminals usually report Alt+Shift+n as Alt+N (uppercase char) rather than
+# Alt+Shift+n, so bind the actual sequence Herdr receives.
+new_tab = "alt+N"
 rename_tab = "prefix+r"
+
+# Direct pane split/focus shortcuts.
+split_vertical = "alt+v"
+split_horizontal = "alt+c"
+focus_pane_left = "alt+h"
+focus_pane_down = "alt+j"
+focus_pane_up = "alt+k"
+focus_pane_right = "alt+l"
+close_pane = "alt+x"
 
 # Move resize mode away from Ctrl-o r so rename_tab can use it.
 resize_mode = "prefix+s"
@@ -32,12 +41,5 @@ navigate_workspace_up = "k"
 navigate_pane_down = "down"
 navigate_pane_up = "up"
 
-[[keys.command]]
-key = "alt+j"
-type = "shell"
-command = "herdr-workspace-cycle next"
-
-[[keys.command]]
-key = "alt+k"
-type = "shell"
-command = "herdr-workspace-cycle previous"
+[ui]
+agent_panel_scope = "all"
