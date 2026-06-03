@@ -73,13 +73,18 @@ export default function lumenyOpenAI(pi: ExtensionAPI) {
   process.env.OPENAI_API_KEY = apiKey;
 
   const modelIds = configuredModelIds();
+  const claudeIds = modelIds.filter((id) => id.startsWith("claude"));
+  const openaiIds = modelIds.filter((id) => !id.startsWith("claude"));
 
+  // Only expose non-Claude (GPT) models on the OpenAI-Responses provider.
+  // Claude models are served by the native Anthropic provider below, since the
+  // Responses surface under-reports their token usage (see comment further down).
   pi.registerProvider("openai", {
     name: "Lumeny OpenAI",
     baseUrl,
     api: "openai-responses",
     apiKey,
-    models: modelIds.map((id) => ({
+    models: openaiIds.map((id) => ({
       id,
       name: modelName(id),
       reasoning: true,
@@ -106,7 +111,6 @@ export default function lumenyOpenAI(pi: ExtensionAPI) {
   // key via the x-api-key header. Pi's native "anthropic-messages" api reads
   // cache_read_input_tokens / cache_creation_input_tokens correctly, so route
   // Claude through it for accurate context accounting.
-  const claudeIds = modelIds.filter((id) => id.startsWith("claude"));
   if (claudeIds.length > 0) {
     // The Anthropic SDK appends "/v1/messages" to baseUrl, so it must be the
     // host root (e.g. https://api.lumeny.io), not the OpenAI "/v1" base.
