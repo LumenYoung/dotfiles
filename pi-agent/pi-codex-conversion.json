@@ -7,7 +7,7 @@
   "compactionReasoning": "current",
   "responsesCompaction": true,
   "statusLine": true,
-  "useOnAllModels": true,
+  "useOnAllModels": false,
   "webSearch": false,
   "verbosity": "low"
 }
