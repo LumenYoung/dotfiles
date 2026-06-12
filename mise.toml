@@ -62,6 +62,50 @@ awk '/^\[tasks\./ { exit } { print }' mise.toml > "$GLOBAL_MISE_CONFIG"
 description = "Create per-machine local fish override file"
 run = "touch ~/.local.fish"
 
+[tasks.repair-claude-code]
+description = "Repair mise-installed Claude Code when npm postinstall did not place the native binary"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+
+tool="npm:@anthropic-ai/claude-code"
+
+if ! install_dir="$(mise where "$tool" 2>/dev/null)"; then
+  echo "WARN: Claude Code is not installed by mise; skipping repair." >&2
+  exit 0
+fi
+
+pkg_dir="$install_dir/lib/node_modules/@anthropic-ai/claude-code"
+postinstall="$pkg_dir/install.cjs"
+claude_bin="$install_dir/bin/claude"
+
+if [[ -x "$claude_bin" ]] && "$claude_bin" --version >/dev/null 2>&1; then
+  echo "Claude Code native binary is healthy: $claude_bin"
+  exit 0
+fi
+
+if [[ ! -f "$postinstall" ]]; then
+  echo "ERROR: Claude Code postinstall script not found: $postinstall" >&2
+  exit 1
+fi
+
+if ! command -v node >/dev/null 2>&1; then
+  echo "ERROR: node is required to repair Claude Code postinstall state." >&2
+  exit 1
+fi
+
+echo "Claude Code native binary is missing/unhealthy; running npm postinstall repair."
+node "$postinstall"
+mise reshim "$tool" >/dev/null 2>&1 || mise reshim >/dev/null 2>&1 || true
+
+if [[ ! -x "$claude_bin" ]] || ! "$claude_bin" --version >/dev/null 2>&1; then
+  echo "ERROR: Claude Code repair did not produce a working binary: $claude_bin" >&2
+  exit 1
+fi
+
+echo "Claude Code repaired: $($claude_bin --version)"
+'''
+
 [tasks.propagate-core]
 description = "Symlink core dotfiles only"
 run = "uv run --with pyyaml python propogate_dotfiles.py --core"
@@ -410,6 +454,7 @@ run = """
 set -euo pipefail
 
 mise install
+mise run repair-claude-code
 if ! mise run clean-user-tools -- --interactive; then
   echo "WARN: legacy user-space tool cleanup skipped or unavailable; continuing setup." >&2
 fi
