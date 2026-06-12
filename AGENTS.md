@@ -6,14 +6,22 @@ the destination path listed in `destination.yaml`.
 
 ## Skills strategy
 
-We keep **Codex skills separate** and do not force them into the shared skills layout.
-Codex keeps its own skills under `codex/skills/` and `codex/superpowers/skills/`.
+This repo has two distinct skill roles:
 
-For other agents (Gemini, OpenCode, and future CLIs), we **share the full Superpowers repo**
-from `skills/superpowers` by symlinking it into each agent’s config directory.
+1. **Project-local skills for this dotfiles repo** live under `.agents/skills/`.
+   Use these for instructions that only make sense when an agent is working in this repo
+   (for example, `dotfiles-skill-creator`). Pi discovers `.agents/skills/` from the cwd
+   and ancestors, and Codex also supports the `.agents` skills convention.
+2. **Governed globally shared skills** live under `skills/global/`. These are the shared
+   skills this repo maintains for use outside this repo. Expose them to agent skill roots with
+   repo-internal relative symlinks, e.g. `codex/skills/global -> ../../skills/global`.
+
+Keep **agent-specific skills separate**. Codex keeps its own skills under `codex/skills/`
+and may install additional Codex system/user skills there; do not treat `codex/skills/` as
+the governed shared-skill source of truth. Pi-specific skills can live under `pi-agent/skills/`.
 
 If we introduce additional shared skill packs in the future, add them under `skills/` and
-symlink as needed. Agent-specific skills stay in that agent’s own directory.
+symlink/configure as needed. Agent-specific skills stay in that agent’s own directory.
 
 ## Propagation behavior
 
@@ -21,15 +29,22 @@ symlink as needed. Agent-specific skills stay in that agent’s own directory.
   destination path. It operates on **top-level entries** only.
 - `--core` propagates daily shell/editor configs. `--agents` propagates Codex,
   OpenCode, T3 Code, related systemd user units, and helper binaries used by agents.
-- `skills/` is a shared root for agent-shared repos (currently `skills/superpowers`).
-- Each agent’s `superpowers` directory is a symlink into this shared root.
+- `.agents/skills/` is intentionally not propagated globally; it is project-local.
+- `skills/global/` is intentionally not propagated directly to a home-directory path; it is
+  exposed through relative symlinks inside each agent's skill root.
+- Each agent may still have its own skill directory for agent-specific or tool-installed skills.
 
 ## Current agent paths
 
 - Codex: `~/.codex` → `dotfiles/codex` (superpowers symlinked)
 - Gemini: `~/.gemini` → `dotfiles/gemini` (superpowers symlinked)
 - OpenCode: `~/.config/opencode` → `dotfiles/opencode` (superpowers symlinked)
-- Skills root: `~/.config/skills` → `dotfiles/skills`
+- Project-local skills: `dotfiles/.agents/skills`
+- Governed global skills source: `dotfiles/skills/global`
+- Relative shared-skill links:
+  - `codex/skills/global` → `../../skills/global`
+  - `pi-agent/skills/global` → `../../skills/global`
+  - `claude/skills/global` → `../../skills/global`
 
 Update this document whenever the skills layout or propagation rules change.
 

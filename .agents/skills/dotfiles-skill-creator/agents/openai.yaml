@@ -1,0 +1,6 @@
+interface:
+  display_name: "Dotfiles Skill Creator"
+  short_description: "Create repo-local and governed global skills"
+  default_prompt: "Use $dotfiles-skill-creator to create or update an agent skill in this dotfiles repo."
+policy:
+  allow_implicit_invocation: true
