@@ -16,7 +16,9 @@ if [ -z "${CODEX_HOME:-}" ]; then
     export CODEX_HOME="$HOME/.codex-t3"
 fi
 
-if [ -z "${LUMENY_OPENAI_API_KEY:-}" ] && [ -f "$HOME/.local.fish" ]; then
+read_local_fish_var() {
+    var_name="$1"
+
     if command -v fish >/dev/null 2>&1; then
         fish_bin="$(command -v fish)"
     elif [ -x "$HOME/.local/bin/fish" ]; then
@@ -26,20 +28,48 @@ if [ -z "${LUMENY_OPENAI_API_KEY:-}" ] && [ -f "$HOME/.local.fish" ]; then
     fi
 
     if [ -n "$fish_bin" ]; then
-        lumeny_env="$("$fish_bin" -c '
+        "$fish_bin" -c '
             source "$HOME/.local.fish"
-            if set -q LUMENY_OPENAI_API_KEY
-                printf "%s" "$LUMENY_OPENAI_API_KEY"
+            set -l name $argv[1]
+            if set -q $name
+                printf "%s" $$name
             end
-        ' 2>/dev/null || true)"
+        ' -- "$var_name" 2>/dev/null || true
+    fi
+}
+
+toml_double_quote() {
+    printf '%s' "$1" | sed 's/\\/\\\\/g; s/"/\\"/g'
+}
+
+if [ -f "$HOME/.local.fish" ]; then
+    if [ -z "${LUMENY_OPENAI_API_KEY:-}" ]; then
+        lumeny_env="$(read_local_fish_var LUMENY_OPENAI_API_KEY)"
         if [ -n "$lumeny_env" ]; then
             LUMENY_OPENAI_API_KEY="$lumeny_env"
+        fi
+    fi
+
+    if [ -z "${LUMENY_OPENAI_BASE_URL:-}" ]; then
+        lumeny_base_url="$(read_local_fish_var LUMENY_OPENAI_BASE_URL)"
+        if [ -n "$lumeny_base_url" ]; then
+            LUMENY_OPENAI_BASE_URL="$lumeny_base_url"
         fi
     fi
 fi
 
 if [ -n "${LUMENY_OPENAI_API_KEY:-}" ]; then
     export OPENAI_API_KEY="$LUMENY_OPENAI_API_KEY"
+
+    if [ -n "${LUMENY_OPENAI_BASE_URL:-}" ]; then
+        lumeny_base_url_config="model_providers.lumeny_api.base_url=\"$(toml_double_quote "$LUMENY_OPENAI_BASE_URL")\""
+        exec "$mise_bin" exec -- codex \
+            -c 'model_provider="lumeny_api"' \
+            -c "$lumeny_base_url_config" \
+            -c 'features.enable_request_compression=false' \
+            "$@"
+    fi
+
     exec "$mise_bin" exec -- codex \
         -c 'model_provider="lumeny_api"' \
         -c 'features.enable_request_compression=false' \

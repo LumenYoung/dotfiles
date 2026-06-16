@@ -114,6 +114,91 @@ run = "uv run --with pyyaml python propogate_dotfiles.py --core"
 description = "Symlink Codex, OpenCode, T3 Code, and related user units"
 run = "uv run --with pyyaml python propogate_dotfiles.py --agents"
 
+[tasks.t3-code-restart]
+description = "Resolve Lumeny env from current shell/fallback fish env, then restart T3 Code user service"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+
+find_fish() {
+  if command -v fish >/dev/null 2>&1; then
+    command -v fish
+  elif [[ -x "$HOME/.local/bin/fish" ]]; then
+    printf '%s\n' "$HOME/.local/bin/fish"
+  fi
+}
+
+read_fish_env_var() {
+  local name="$1"
+  local fish_bin="${2:-}"
+  if [[ -z "$fish_bin" || ! -f "$HOME/.local.fish" ]]; then
+    return 0
+  fi
+
+  "$fish_bin" -c '
+    source "$HOME/.local.fish"
+    set -l name $argv[1]
+    if set -q $name
+      printf "%s" $$name
+    end
+  ' -- "$name" 2>/dev/null || true
+}
+
+fish_bin="$(find_fish || true)"
+base_url="${LUMENY_OPENAI_BASE_URL:-}"
+api_key="${LUMENY_OPENAI_API_KEY:-}"
+base_url_source="current shell"
+api_key_source="current shell"
+
+if [[ -z "$base_url" ]]; then
+  base_url="$(read_fish_env_var LUMENY_OPENAI_BASE_URL "$fish_bin")"
+  base_url_source="~/.local.fish"
+fi
+
+if [[ -z "$api_key" ]]; then
+  api_key="$(read_fish_env_var LUMENY_OPENAI_API_KEY "$fish_bin")"
+  api_key_source="~/.local.fish"
+fi
+
+if [[ -z "$base_url" || -z "$api_key" ]]; then
+  echo "LUMENY_OPENAI_BASE_URL or LUMENY_OPENAI_API_KEY is missing from both current shell and ~/.local.fish." >&2
+
+  if [[ ! -t 0 ]]; then
+    echo "Non-interactive shell: refusing to restart T3 Code without explicit confirmation." >&2
+    exit 1
+  fi
+
+  read -r -p "Start T3 Code without Lumeny/OpenAI API environment? [y/N] " answer
+  case "$answer" in
+    y|Y|yes|YES)
+      systemctl --user unset-environment \
+        LUMENY_OPENAI_BASE_URL \
+        LUMENY_OPENAI_API_KEY \
+        OPENAI_API_KEY || true
+      echo "Continuing without Lumeny/OpenAI API environment."
+      ;;
+    *)
+      echo "Aborted."
+      exit 1
+      ;;
+  esac
+else
+  export LUMENY_OPENAI_BASE_URL="$base_url"
+  export LUMENY_OPENAI_API_KEY="$api_key"
+  export OPENAI_API_KEY="$api_key"
+  systemctl --user import-environment \
+    LUMENY_OPENAI_BASE_URL \
+    LUMENY_OPENAI_API_KEY \
+    OPENAI_API_KEY
+  echo "Imported LUMENY_OPENAI_BASE_URL from $base_url_source."
+  echo "Imported LUMENY_OPENAI_API_KEY/OPENAI_API_KEY from $api_key_source."
+fi
+
+systemctl --user daemon-reload
+systemctl --user restart t3-code.service
+systemctl --user status t3-code.service --no-pager --lines=10
+'''
+
 [tasks.propagate]
 description = "Symlink all dotfiles into configured destinations"
 run = "uv run --with pyyaml python propogate_dotfiles.py"

@@ -8,7 +8,9 @@ WorkingDirectory=%h
 # Configuration lives in fish, not in this unit:
 # - Put service-specific overrides in ~/.config/t3-code/server-env.fish.
 # - The service starts through fish -c so normal fish init can add mise shims and
-#   activate mise before T3 Code tries to find tools such as opencode.
+#   activate mise before T3 Code tries to find tools such as opencode. The
+#   start wrapper re-prepends mise shims after ~/.local.fish so this service is
+#   not pinned to an older interactive-shell nvm runtime.
 # - Put shared machine-local fish environment in ~/.local.fish; start-service.fish
 #   sources it before server-env.fish so service-specific values can override
 #   shared defaults.
