@@ -36,16 +36,7 @@ opencode = "latest"
 
 # Agent support tools / integrations
 "aqua:rtk-ai/rtk" = "latest"
-
-# Agent support tools / integrations requiring custom mise metadata
-[tools."github:ogulcancelik/herdr"]
-version = "latest"
-
-[tools."github:ogulcancelik/herdr".platforms]
-linux-x64 = { asset_pattern = "herdr-linux-x86_64", bin = "herdr" }
-linux-arm64 = { asset_pattern = "herdr-linux-aarch64", bin = "herdr" }
-macos-x64 = { asset_pattern = "herdr-macos-x86_64", bin = "herdr" }
-macos-arm64 = { asset_pattern = "herdr-macos-aarch64", bin = "herdr" }
+herdr = "latest"
 
 [tasks.sync-global-mise-tools]
 description = "Copy this repo's mise tool manifest to ~/.config/mise/config.toml"
