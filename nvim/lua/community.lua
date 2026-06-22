@@ -21,6 +21,7 @@ return {
   { import = "astrocommunity.pack.cpp" },
   { import = "astrocommunity.pack.docker" },
   { import = "astrocommunity.pack.just" },
+  { import = "astrocommunity.pack.lean" },
   { import = "astrocommunity.pack.yaml" },
   -- { import = "astrocommunity.pack.markdown" },
   { import = "astrocommunity.recipes.neovide" },
