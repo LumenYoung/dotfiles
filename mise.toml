@@ -33,6 +33,9 @@ opencode = "latest"
 "npm:t3" = "latest"
 "npm:@anthropic-ai/claude-code" = "latest"
 "npm:@earendil-works/pi-coding-agent" = "latest"
+"cargo:iwe" = "latest"
+"cargo:iwes" = "latest"
+"cargo:iwec" = "latest"
 
 # Agent support tools / integrations
 "aqua:rtk-ai/rtk" = "latest"
@@ -532,6 +535,20 @@ rm -f -- "${candidates[@]}"
 printf 'Removed %d legacy binaries.\n' "$removed_count"
 '''
 
+[tasks.ensure-iwe-notes]
+description = "Create and initialize the global IWE notes workspace"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+
+NOTES_DIR="$HOME/notes"
+mkdir -p "$NOTES_DIR"
+
+if [[ ! -f "$NOTES_DIR/.iwe/config.toml" ]]; then
+  (cd "$NOTES_DIR" && iwe init)
+fi
+'''
+
 [tasks.setup]
 description = "Bootstrap this machine from dotfiles"
 run = """
@@ -544,6 +561,7 @@ if ! mise run clean-user-tools -- --interactive; then
   echo "WARN: legacy user-space tool cleanup skipped or unavailable; continuing setup." >&2
 fi
 mise run sync-global-mise-tools
+mise run ensure-iwe-notes
 mise run ensure-local-fish
 mise run propagate-core
 mise run propagate-agents

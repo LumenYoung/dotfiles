@@ -1,3 +1,9 @@
+-- Disabled while evaluating IWE for Markdown knowledge management.
+-- Obsidian.nvim overlaps heavily with IWE's note navigation, backlinks,
+-- completion, and Markdown link handling, so keep it out of the runtime to
+-- avoid keymap/LSP/UI collisions.
+if true then return {} end
+
 local workspaces = {
   { name = "public", path = "~/Documents/git/Notes/content", strict = true },
   { name = "public", path = "~/Documents/Silverbullet", strict = true },
