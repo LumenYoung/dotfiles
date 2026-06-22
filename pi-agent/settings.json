@@ -16,7 +16,9 @@
   ],
   "packages": [
     "npm:@howaboua/pi-codex-conversion",
-    "https://github.com/code-yeongyu/pi-goal"
+    "https://github.com/code-yeongyu/pi-goal",
+    "npm:pi-web-access",
+    "npm:pi-mcp-adapter"
   ],
-  "lastChangelogVersion": "0.78.0"
+  "lastChangelogVersion": "0.79.1"
 }
