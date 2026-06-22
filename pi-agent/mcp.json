@@ -1,0 +1,14 @@
+{
+  "settings": {
+    "toolPrefix": "none"
+  },
+  "mcpServers": {
+    "iwe": {
+      "command": "iwec",
+      "cwd": "~/notes",
+      "lifecycle": "lazy",
+      "exposeResources": false,
+      "directTools": true
+    }
+  }
+}
