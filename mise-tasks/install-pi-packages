@@ -7,4 +7,6 @@ if ! command -v pi >/dev/null 2>&1; then
 fi
 
 pi install npm:@howaboua/pi-codex-conversion
+pi install npm:pi-web-access
+pi install npm:pi-mcp-adapter
 pi list

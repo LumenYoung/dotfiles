@@ -72,6 +72,7 @@ marker: ~/.config/marker-pdf
 opencode: ~/.config/opencode
 t3-code: ~/.config/t3-code
 pi-agent/settings.json: ~/.pi/agent/settings.json
+pi-agent/mcp.json: ~/.pi/agent/mcp.json
 pi-agent/models.json: ~/.pi/agent/models.json
 pi-agent/pi-codex-conversion.json: ~/.pi/agent/pi-codex-conversion.json
 pi-agent/extensions: ~/.pi/agent/extensions
