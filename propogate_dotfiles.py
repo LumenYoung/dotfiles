@@ -54,6 +54,7 @@ agent_configs = [
     "codex-session-stream",
     "pi-agent/skills",
     "pi-agent/extensions",
+    "pi-agent/mcp.json",
     "pi-agent/pi-codex-conversion.json",
     "pi-agent/models.json",
     "pi-agent/settings.json",
