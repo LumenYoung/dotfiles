@@ -39,6 +39,7 @@ opencode = "latest"
 
 # Agent support tools / integrations
 "aqua:rtk-ai/rtk" = "latest"
+"github:harehare/mq" = "latest"
 
 # Agent support tools / integrations requiring custom mise metadata
 [tools."github:ogulcancelik/herdr"]
