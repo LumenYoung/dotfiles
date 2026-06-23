@@ -4,8 +4,9 @@
   },
   "mcpServers": {
     "iwe": {
-      "command": "iwec",
-      "cwd": "~/notes",
+      "url": "https://mem.lumeny.io/mcp",
+      "auth": "bearer",
+      "bearerTokenEnv": "IWE_KEY",
       "lifecycle": "lazy",
       "exposeResources": false,
       "directTools": true
