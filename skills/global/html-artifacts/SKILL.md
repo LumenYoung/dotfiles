@@ -65,6 +65,8 @@ Pick the matching reference file below before drafting. Each one has the per-cat
 
 If the request spans multiple categories (e.g., "implementation plan with mockups and a flowchart"), read all the relevant references. They're short.
 
+For research/paper reports covered by `references/reports-and-research.md`, use that reference's base-generation and validation scripts. Resolve `scripts/...` and `references/...` relative to this skill directory; never assume this skill is installed at a particular absolute path.
+
 ## Output mechanics
 
 Two environments, slightly different mechanics.

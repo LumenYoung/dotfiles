@@ -2,6 +2,23 @@
 
 Recurring documents — status updates, post-mortems, deep dives — benefit most from a bit of structure and color. People read them when they're scannable; they ignore them when they're walls of text.
 
+## Research / paper report base
+
+For paper summaries, research reports, benchmark explainers, and literature-note overviews, start from the reusable base rather than restating the CSS from scratch.
+
+- Create the target file with `scripts/new-research-report.mjs`, resolved relative to this skill directory. Do not assume the skill lives at any global absolute path.
+- The script copies `references/research-report-base.html` into the target file and replaces `{{TITLE}}`.
+- Fill the generated file by replacing the placeholder sections and adding paper-specific sections/components as needed.
+- Keep major visible blocks on explicit surface classes such as `.surface-light`, `.surface-dark`, or `.surface-accent`; avoid global heading colors other than `color: inherit`.
+- After editing, run `scripts/validate-report-html.mjs <target.html>`, also resolved relative to this skill directory, and fix failures before returning the artifact.
+
+Example from the skill directory:
+
+```bash
+node scripts/new-research-report.mjs /path/to/report.html --title "Paper Title"
+node scripts/validate-report-html.mjs /path/to/report.html
+```
+
 ## Concept explainer (for learning a new topic)
 
 For "explain consistent hashing to me" or "how does our rate limiter actually work."
