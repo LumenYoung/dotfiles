@@ -557,6 +557,7 @@ run = """
 set -euo pipefail
 
 mise install
+mise upgrade --yes
 mise run repair-claude-code
 if ! mise run clean-user-tools -- --interactive; then
   echo "WARN: legacy user-space tool cleanup skipped or unavailable; continuing setup." >&2

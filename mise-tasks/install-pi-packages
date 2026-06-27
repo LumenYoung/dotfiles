@@ -9,4 +9,7 @@ fi
 pi install npm:@howaboua/pi-codex-conversion
 pi install npm:pi-web-access
 pi install npm:pi-mcp-adapter
+pi install npm:pi-btw
+pi install npm:pi-goal-x
+pi update --extensions
 pi list
