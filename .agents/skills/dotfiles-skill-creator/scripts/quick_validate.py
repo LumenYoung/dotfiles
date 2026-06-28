@@ -22,6 +22,11 @@ def parse_frontmatter(text: str) -> tuple[bool, str, dict[str, str] | None]:
     for line in text[4:end].splitlines():
         if not line.strip():
             continue
+        # This lightweight parser only validates top-level skill metadata. Nested YAML
+        # mappings (for example metadata: { author, version }) are allowed by Pi and
+        # should not be treated as unexpected top-level keys.
+        if line[:1].isspace():
+            continue
         if ":" not in line:
             return False, f"Invalid frontmatter line: {line}", None
         key, value = line.split(":", 1)

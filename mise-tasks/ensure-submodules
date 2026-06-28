@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if [[ ! -f .gitmodules ]]; then
+  echo "No .gitmodules found; skipping submodule initialization."
+  exit 0
+fi
+
+if ! command -v git >/dev/null 2>&1; then
+  echo "ERROR: git is required to initialize submodules." >&2
+  exit 1
+fi
+
+submodule_paths="$(git config --file .gitmodules --get-regexp '^submodule\..*\.path$' | awk '{print $2}')"
+if [[ -z "$submodule_paths" ]]; then
+  echo "No configured submodules found."
+  exit 0
+fi
+
+while IFS= read -r submodule_path; do
+  [[ -n "$submodule_path" ]] || continue
+  if ! git ls-files -s -- "$submodule_path" | awk '$1 == "160000" { found = 1 } END { exit found ? 0 : 1 }'; then
+    echo "WARN: skipping stale .gitmodules entry not tracked as a gitlink: $submodule_path" >&2
+    continue
+  fi
+  git submodule sync --recursive -- "$submodule_path"
+  git submodule update --init --recursive -- "$submodule_path"
+done <<< "$submodule_paths"

@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
 if ! command -v pi >/dev/null 2>&1; then
   echo "ERROR: pi is not on PATH. Run mise install first." >&2
   exit 1
@@ -11,5 +14,15 @@ pi install npm:pi-web-access
 pi install npm:pi-mcp-adapter
 pi install npm:pi-btw
 pi install npm:pi-goal-x
+
+visual_explainer_dir="${REPO_ROOT}/skills/vendor/visual-explainer"
+if [[ -f "${visual_explainer_dir}/package.json" ]]; then
+  # Install from the local submodule, not git/npm, so Pi deduplicates the package skill
+  # with the skills/global/visual-explainer symlink by canonical SKILL.md path.
+  pi install "${visual_explainer_dir}"
+else
+  echo "WARN: visual-explainer submodule is missing; run 'git submodule update --init --recursive'." >&2
+fi
+
 pi update --extensions
 pi list

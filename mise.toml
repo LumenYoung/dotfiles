@@ -332,6 +332,10 @@ fi
 '''
 
 
+[tasks.ensure-submodules]
+description = "Initialize and update git submodules to pinned commits"
+run = "bash mise-tasks/ensure-submodules"
+
 [tasks.install-pi-packages]
 description = "Install Pi packages/extensions"
 run = "bash mise-tasks/install-pi-packages"
@@ -556,6 +560,7 @@ run = """
 #!/usr/bin/env bash
 set -euo pipefail
 
+mise run ensure-submodules
 mise install
 mise upgrade --yes
 mise run repair-claude-code

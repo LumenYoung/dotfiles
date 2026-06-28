@@ -1,6 +1,6 @@
 ---
 name: html-artifacts
-description: Produce a self-contained HTML artifact instead of a markdown document when the request is for content that benefits from spatial layout, color, real diagrams, interactivity, or a round-trip editor. Use this skill aggressively whenever the user asks for a "doc," "writeup," "plan," "spec," "report," "explainer," "summary," "comparison," "review," "PR description," "mockup," "diagram," "flowchart," "deck," "slides," "status update," "post-mortem," "incident report," "playground," or a one-off "editor" or "tool" for triaging/reordering/tuning anything — even if they don't explicitly say "HTML" or "artifact." Also trigger when the user asks Claude to "explain," "summarize," "compare," "explore options for," "brainstorm directions for," or "walk through" a non-trivial topic. Stay in markdown only for short conversational replies, code-only outputs, terminal-style command answers, and content that's genuinely just a few sentences.
+description: Create general-purpose self-contained HTML reports and artifacts for comparisons, plans, explainers, reviews, diagrams, and lightweight interactive editors.
 ---
 
 # HTML Artifacts

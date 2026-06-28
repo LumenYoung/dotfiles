@@ -6,15 +6,19 @@ the destination path listed in `destination.yaml`.
 
 ## Skills strategy
 
-This repo has two distinct skill roles:
+This repo has three distinct skill roles:
 
 1. **Project-local skills for this dotfiles repo** live under `.agents/skills/`.
    Use these for instructions that only make sense when an agent is working in this repo
-   (for example, `dotfiles-skill-creator`). Pi discovers `.agents/skills/` from the cwd
-   and ancestors, and Codex also supports the `.agents` skills convention.
+   (for example, `dotfiles-skill-creator` and `dotfiles-maintenance`). Pi discovers
+   `.agents/skills/` from the cwd and ancestors, and Codex also supports the `.agents`
+   skills convention.
 2. **Governed globally shared skills** live under `skills/global/`. These are the shared
    skills this repo maintains for use outside this repo. Expose them to agent skill roots with
    repo-internal relative symlinks, e.g. `codex/skills/global -> ../../skills/global`.
+3. **Externally maintained vendored skills/packages** live under `skills/vendor/`. Use this
+   for upstream repos tracked as submodules. Expose the actual skill directory through
+   `skills/global/` when it should be globally available.
 
 Keep **agent-specific skills separate**. Codex keeps its own skills under `codex/skills/`
 and may install additional Codex system/user skills there; do not treat `codex/skills/` as
@@ -32,6 +36,8 @@ symlink/configure as needed. Agent-specific skills stay in that agent’s own di
 - `.agents/skills/` is intentionally not propagated globally; it is project-local.
 - `skills/global/` is intentionally not propagated directly to a home-directory path; it is
   exposed through relative symlinks inside each agent's skill root.
+- `skills/vendor/` is for externally maintained upstream repos/submodules. Governed exposure
+  still happens through `skills/global/` symlinks.
 - Each agent may still have its own skill directory for agent-specific or tool-installed skills.
 
 ## Current agent paths
@@ -41,6 +47,7 @@ symlink/configure as needed. Agent-specific skills stay in that agent’s own di
 - OpenCode: `~/.config/opencode` → `dotfiles/opencode` (superpowers symlinked)
 - Project-local skills: `dotfiles/.agents/skills`
 - Governed global skills source: `dotfiles/skills/global`
+- Vendored upstream skill/package source: `dotfiles/skills/vendor`
 - Relative shared-skill links:
   - `codex/skills/global` → `../../skills/global`
   - `pi-agent/skills/global` → `../../skills/global`

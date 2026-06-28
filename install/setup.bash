@@ -58,6 +58,8 @@ export PATH="$(dirname "$MISE_BIN"):$PATH"
 
 cd "$REPO_ROOT"
 
+bash mise-tasks/ensure-submodules
+
 # Trust this repo-local mise.toml so bootstrap can run non-interactively.
 "$MISE_BIN" trust "$REPO_ROOT/mise.toml" >/dev/null 2>&1 || true
 "$MISE_BIN" run setup "${args[@]}"

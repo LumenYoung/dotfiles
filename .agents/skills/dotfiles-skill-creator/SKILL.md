@@ -5,10 +5,11 @@ description: Create or update agent skills in this dotfiles repository. Use when
 
 # Dotfiles Skill Creator
 
-Use this skill to create or update skills in this dotfiles repo without mixing up the two roles of the repository:
+Use this skill to create or update skills in this dotfiles repo without mixing up the repository's skill roles:
 
 1. This repo has **project-local skills** for agents working on the dotfiles repo itself.
 2. This repo also **governs globally shared skills** that should be available outside this repo.
+3. This repo can **vendor externally maintained skill packages** under `skills/vendor/` and expose selected skill directories through `skills/global/`.
 
 ## Placement Decision Tree
 
@@ -46,7 +47,17 @@ Current relative links:
 - `pi-agent/skills/global -> ../../skills/global`
 - `claude/skills/global -> ../../skills/global`
 
-### 3. Agent-specific skill
+### 3. Externally maintained vendored skill/package
+
+Use `skills/vendor/<upstream-name>/` for upstream repositories tracked as submodules or otherwise maintained outside this repo. Expose the actual skill directory through `skills/global/<skill-name>` when it should be available through the governed global skill symlink model.
+
+Example:
+- `skills/vendor/visual-explainer/` is the upstream repo checkout.
+- `skills/global/visual-explainer -> ../vendor/visual-explainer/plugins/visual-explainer` exposes the actual skill.
+
+Do not edit vendored upstream content casually; update the submodule pointer instead. If a Pi package install is used for tools/prompts, point it at the same local submodule checkout to avoid same-name skill collisions from different real paths.
+
+### 4. Agent-specific skill
 
 Use the agent-specific directory only when the skill depends on one agent’s non-portable behavior:
 
@@ -112,7 +123,8 @@ Rules:
 ## Repository Governance Rules
 
 - `.agents/skills` is for this repo’s local agent behavior.
-- `skills/global` is for globally shared, governed skills.
+- `skills/global` is for globally shared, governed skills and symlinks to exposed vendored skills.
+- `skills/vendor` is for externally maintained upstream skill/package repositories.
 - `codex/skills` remains Codex’s own global skill area and may contain Codex system/user-installed skills.
 - Prefer repo-internal relative symlinks from each agent skill root to `skills/global`, rather than home-directory absolute symlinks.
 - If an agent does not discover a nested symlinked directory, add an explicit config or per-skill relative symlinks for that agent rather than copying skill contents.

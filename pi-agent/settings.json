@@ -19,7 +19,8 @@
     "npm:pi-web-access",
     "npm:pi-mcp-adapter",
     "npm:pi-btw",
-    "npm:pi-goal-x"
+    "npm:pi-goal-x",
+    "../../dotfiles/skills/vendor/visual-explainer"
   ],
   "lastChangelogVersion": "0.80.1",
   "theme": "dark"
