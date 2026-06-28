@@ -54,8 +54,13 @@ end
 function __sync_notes_perform_initial_sync
     echo "Starting sync from '$SOURCE_DIR' to '$DEST_DIR'"
     echo "Performing initial sync..."
+
+    # If the service was restarted, close embeds for files changed since the
+    # previous polling timestamp before the initial rsync.
+    __sync_notes_collect_changed_files
+    __sync_notes_publish_embed_closure
     
-    rsync -av --delete --include="*.md" --include="*.png" --include="*.jpg" --include="*.jpeg" --include="*/" --exclude="*" "$SOURCE_DIR" "$DEST_DIR"
+    rsync -av --delete --exclude=".well-known/***" --include="*.md" --include="*.png" --include="*.jpg" --include="*.jpeg" --include="*.gif" --include="*.webp" --include="*.svg" --include="*.pdf" --include="*/" --exclude="*" "$SOURCE_DIR" "$DEST_DIR"
     
     if test $status -eq 0
         echo "Initial sync completed successfully"
@@ -97,17 +102,31 @@ end
 
 function __sync_notes_check_for_changes
     # Check if source directory has been modified recently
-    set SOURCE_MODIFIED (find "$SOURCE_DIR" \( -name "*.md" -o -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" \) -newer /tmp/sync_notes_timestamp 2>/dev/null | wc -l)
-    test $SOURCE_MODIFIED -gt 0
+    __sync_notes_collect_changed_files
+    test (count $SYNC_NOTES_CHANGED_FILES) -gt 0
+end
+
+function __sync_notes_collect_changed_files
+    if not test -e /tmp/sync_notes_timestamp
+        set -g SYNC_NOTES_CHANGED_FILES
+        set -g SYNC_NOTES_CHANGED_MARKDOWN_FILES
+        return 0
+    end
+
+    set -g SYNC_NOTES_CHANGED_FILES (find "$SOURCE_DIR" -type f \( -name "*.md" -o -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.gif" -o -name "*.webp" -o -name "*.svg" -o -name "*.pdf" \) -newer /tmp/sync_notes_timestamp 2>/dev/null)
+    set -g SYNC_NOTES_CHANGED_MARKDOWN_FILES (find "$SOURCE_DIR" -type f -name "*.md" -newer /tmp/sync_notes_timestamp 2>/dev/null)
 end
 
 function __sync_notes_perform_sync
+    # Resolve publish embeds before rsync so newly moved assets/notes are included.
+    __sync_notes_publish_embed_closure
+
     # Update timestamp file and record change time
     touch /tmp/sync_notes_timestamp
     set -g LAST_CHANGE_TIME (date +%s)
     echo "Changes detected, syncing..."
     
-    rsync -av --delete --include="*.md" --include="*.png" --include="*.jpg" --include="*.jpeg" --include="*/" --exclude="*" "$SOURCE_DIR" "$DEST_DIR"
+    rsync -av --delete --exclude=".well-known/***" --include="*.md" --include="*.png" --include="*.jpg" --include="*.jpeg" --include="*.gif" --include="*.webp" --include="*.svg" --include="*.pdf" --include="*/" --exclude="*" "$SOURCE_DIR" "$DEST_DIR"
     
     if test $status -eq 0
         echo "Sync completed successfully"
@@ -118,6 +137,27 @@ function __sync_notes_perform_sync
     else
         echo "Sync failed (status: $status)"
         return 1
+    end
+end
+
+function __sync_notes_publish_embed_closure
+    if test (count $SYNC_NOTES_CHANGED_MARKDOWN_FILES) -eq 0
+        return 0
+    end
+
+    set PUBLISH_DIR (string replace -r '/$' '' -- "$SOURCE_DIR")
+    set SPACE_ROOT (dirname "$PUBLISH_DIR")
+    set CLOSURE_SCRIPT "$HOME/dotfiles/scripts/publish-embed-closure"
+
+    if not test -x "$CLOSURE_SCRIPT"
+        echo "Warning: publish embed closure script not executable: $CLOSURE_SCRIPT"
+        return 0
+    end
+
+    echo "Resolving embedded publish closure..."
+    "$CLOSURE_SCRIPT" --space-root "$SPACE_ROOT" --publish-dir "$PUBLISH_DIR" $SYNC_NOTES_CHANGED_MARKDOWN_FILES
+    if test $status -ne 0
+        echo "Warning: publish embed closure failed; continuing with rsync"
     end
 end
 

@@ -1,0 +1,428 @@
+#!/usr/bin/env python3
+"""Publish embedded SilverBullet files by moving them into Publish/.
+
+This helper is intentionally rooted in the dotfiles scripts folder because it is
+called by the user systemd notes-sync service.  It processes only the markdown
+files passed on the command line, extracts SilverBullet/Obsidian embed links via
+`mq`, moves embedded assets to Publish/att/ and embedded markdown pages to
+Publish/notes/, then rewrites wiki links across the SilverBullet space.
+"""
+
+from __future__ import annotations
+
+import argparse
+import filecmp
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+from dataclasses import dataclass
+from pathlib import Path
+from typing import Iterable
+
+
+ASSET_EXTENSIONS = {
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".gif",
+    ".webp",
+    ".svg",
+    ".pdf",
+}
+
+WIKI_LINK_RE = re.compile(r"(!?)\[\[([^\]|#]+)(#[^\]|]*)?(\|[^\]]*)?\]\]")
+
+
+@dataclass(frozen=True)
+class MovePlan:
+    kind: str
+    source: Path
+    destination: Path
+    old_ref: str
+    new_ref: str
+
+
+@dataclass
+class Stats:
+    moved: int = 0
+    rewritten_files: int = 0
+    rewritten_links: int = 0
+    skipped: int = 0
+
+
+def log(message: str) -> None:
+    print(f"publish-embed-closure: {message}")
+
+
+def warn(message: str) -> None:
+    print(f"publish-embed-closure: warning: {message}", file=sys.stderr)
+
+
+def normalize_rel(path: Path | str) -> str:
+    return Path(str(path).strip()).as_posix().strip("/")
+
+
+def strip_fragment(target: str) -> str:
+    target = target.strip().strip("/")
+    if "#" in target:
+        target = target.split("#", 1)[0]
+    return target.strip().strip("/")
+
+
+def note_ref(path: Path, space_root: Path) -> str:
+    rel = path.relative_to(space_root).as_posix()
+    if rel.endswith(".md"):
+        rel = rel[:-3]
+    return rel
+
+
+def file_ref(path: Path, space_root: Path) -> str:
+    return path.relative_to(space_root).as_posix()
+
+
+def find_mq() -> str | None:
+    found = shutil.which("mq")
+    if found:
+        return found
+
+    home = Path.home()
+    candidates = [
+        home / ".local/share/mise/installs/github-harehare-mq/latest/mq",
+        home / ".local/bin/mq",
+    ]
+    for candidate in candidates:
+        if candidate.exists() and os.access(candidate, os.X_OK):
+            return str(candidate)
+    return None
+
+
+def extract_embeds(path: Path, mq_bin: str) -> list[str]:
+    try:
+        proc = subprocess.run(
+            [mq_bin, "-F", "json", ".embed", str(path)],
+            check=False,
+            text=True,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+        )
+    except OSError as exc:
+        warn(f"failed to run mq for {path}: {exc}")
+        return []
+
+    if proc.returncode != 0:
+        warn(f"mq failed for {path}: {proc.stderr.strip()}")
+        return []
+
+    try:
+        data = json.loads(proc.stdout or "[]")
+    except json.JSONDecodeError as exc:
+        warn(f"mq returned invalid JSON for {path}: {exc}")
+        return []
+
+    if isinstance(data, dict):
+        data = [data]
+    if not isinstance(data, list):
+        return []
+
+    targets: list[str] = []
+    for node in data:
+        if isinstance(node, dict) and isinstance(node.get("target"), str):
+            target = strip_fragment(node["target"])
+            if target:
+                targets.append(target)
+    return targets
+
+
+def iter_markdown_files(root: Path) -> Iterable[Path]:
+    ignored = {".git", ".aider.tags.cache.v4"}
+    for path in sorted(root.rglob("*.md")):
+        if any(part in ignored for part in path.relative_to(root).parts):
+            continue
+        yield path
+
+
+def unique_existing(candidates: Iterable[Path]) -> tuple[Path | None, str | None]:
+    seen: list[Path] = []
+    for candidate in candidates:
+        try:
+            resolved = candidate.resolve()
+        except OSError:
+            continue
+        if candidate.exists() and resolved not in [p.resolve() for p in seen]:
+            seen.append(candidate)
+    if len(seen) == 1:
+        return seen[0], None
+    if not seen:
+        return None, "not found"
+    return None, "ambiguous: " + ", ".join(p.as_posix() for p in seen[:8])
+
+
+def resolve_asset(target: str, space_root: Path, publish_dir: Path) -> tuple[Path | None, str | None]:
+    target_path = Path(target)
+    candidates: list[Path] = []
+    if not target_path.is_absolute():
+        candidates.extend(
+            [
+                space_root / target,
+                publish_dir / target,
+            ]
+        )
+        if not target.startswith("Publish/"):
+            candidates.append(space_root / "Publish" / target)
+        if "/" not in target:
+            candidates.extend(space_root.rglob(target))
+    else:
+        candidates.append(target_path)
+    return unique_existing(candidates)
+
+
+def resolve_note(target: str, space_root: Path, publish_dir: Path) -> tuple[Path | None, str | None]:
+    clean = target[:-3] if target.endswith(".md") else target
+    target_path = Path(clean)
+    candidates: list[Path] = []
+    if not target_path.is_absolute():
+        candidates.extend(
+            [
+                space_root / f"{clean}.md",
+                publish_dir / f"{clean}.md",
+            ]
+        )
+        if not clean.startswith("Publish/"):
+            candidates.append(space_root / "Publish" / f"{clean}.md")
+        if "/" not in clean:
+            candidates.extend(space_root.rglob(f"{clean}.md"))
+    else:
+        candidates.append(target_path.with_suffix(".md") if target_path.suffix != ".md" else target_path)
+    return unique_existing(candidates)
+
+
+def destination_for(kind: str, source: Path, publish_dir: Path) -> Path:
+    if kind == "asset":
+        return publish_dir / "att" / source.name
+    return publish_dir / "notes" / source.name
+
+
+def build_plan(target: str, space_root: Path, publish_dir: Path) -> tuple[MovePlan | None, str | None]:
+    ext = Path(target).suffix.lower()
+    if ext:
+        if ext not in ASSET_EXTENSIONS:
+            return None, f"unsupported embed extension {ext!r} for {target!r}"
+        source, error = resolve_asset(target, space_root, publish_dir)
+        kind = "asset"
+    else:
+        source, error = resolve_note(target, space_root, publish_dir)
+        kind = "note"
+
+    if source is None:
+        return None, f"could not resolve {target!r}: {error}"
+    if not source.resolve().is_relative_to(space_root.resolve()):
+        return None, f"resolved outside SilverBullet space: {source}"
+
+    destination = destination_for(kind, source, publish_dir)
+    if source.resolve() == destination.resolve():
+        return None, None
+
+    old_ref = file_ref(source, space_root) if kind == "asset" else note_ref(source, space_root)
+    new_ref = file_ref(destination, space_root) if kind == "asset" else note_ref(destination, space_root)
+    return MovePlan(kind=kind, source=source, destination=destination, old_ref=old_ref, new_ref=new_ref), None
+
+
+def basename_unique(space_root: Path, plan: MovePlan) -> bool:
+    name = plan.source.name if plan.kind == "asset" else plan.source.with_suffix(".md").name
+    ignored = {plan.source.resolve(), plan.destination.resolve()}
+    matches = []
+    if plan.kind == "asset":
+        matches = [p for p in space_root.rglob(name) if p.resolve() not in ignored]
+    else:
+        matches = [p for p in space_root.rglob(name) if p.resolve() not in ignored]
+    return not matches
+
+
+def normalize_link_target(raw: str, kind: str) -> str:
+    target = normalize_rel(raw)
+    if kind == "note" and target.endswith(".md"):
+        target = target[:-3]
+    return target
+
+
+def rewrite_links(text: str, plan: MovePlan, rewrite_basename: bool) -> tuple[str, int, int]:
+    changed = 0
+    ambiguous = 0
+    old_ref = normalize_link_target(plan.old_ref, plan.kind)
+    old_base = Path(old_ref).name
+
+    def repl(match: re.Match[str]) -> str:
+        nonlocal changed, ambiguous
+        bang = match.group(1) or ""
+        target = normalize_link_target(match.group(2), plan.kind)
+        anchor = match.group(3) or ""
+        display = match.group(4) or ""
+
+        if target == old_ref:
+            changed += 1
+            return f"{bang}[[{plan.new_ref}{anchor}{display}]]"
+        if target == old_base:
+            if rewrite_basename:
+                changed += 1
+                return f"{bang}[[{plan.new_ref}{anchor}{display}]]"
+            ambiguous += 1
+            return match.group(0)
+        if Path(target).name == old_base:
+            ambiguous += 1
+        return match.group(0)
+
+    return WIKI_LINK_RE.sub(repl, text), changed, ambiguous
+
+
+def update_references(space_root: Path, plan: MovePlan, dry_run: bool) -> tuple[int, int, int]:
+    rewrite_basename = basename_unique(space_root, plan)
+    changed_files = 0
+    changed_links = 0
+    ambiguous = 0
+
+    for path in iter_markdown_files(space_root):
+        try:
+            text = path.read_text()
+        except UnicodeDecodeError:
+            continue
+        updated, link_count, ambiguous_count = rewrite_links(text, plan, rewrite_basename)
+        ambiguous += ambiguous_count
+        if updated != text:
+            changed_files += 1
+            changed_links += link_count
+            if not dry_run:
+                path.write_text(updated)
+
+    return changed_files, changed_links, ambiguous
+
+
+def perform_move(plan: MovePlan, dry_run: bool) -> bool:
+    if plan.destination.exists():
+        try:
+            same = plan.source.resolve() == plan.destination.resolve()
+        except OSError:
+            same = False
+        if same:
+            return False
+        if plan.source.is_file() and plan.destination.is_file() and filecmp.cmp(plan.source, plan.destination, shallow=False):
+            warn(f"destination already exists with identical content, leaving source in place: {plan.destination}")
+            return False
+        raise RuntimeError(f"destination already exists: {plan.destination}")
+
+    if dry_run:
+        return True
+    plan.destination.parent.mkdir(parents=True, exist_ok=True)
+    shutil.move(str(plan.source), str(plan.destination))
+    return True
+
+
+def process(
+    initial_files: list[Path],
+    space_root: Path,
+    publish_dir: Path,
+    mq_bin: str,
+    dry_run: bool,
+) -> Stats:
+    stats = Stats()
+    queue = [p.resolve() for p in initial_files if p.exists() and p.suffix == ".md"]
+    seen_files: set[Path] = set()
+    completed_moves: set[tuple[Path, Path]] = set()
+
+    while queue:
+        current = queue.pop(0)
+        if current in seen_files:
+            continue
+        seen_files.add(current)
+
+        targets = extract_embeds(current, mq_bin)
+        if not targets:
+            continue
+
+        log(f"processing {current.relative_to(space_root)} ({len(targets)} embed(s))")
+        for target in targets:
+            plan, error = build_plan(target, space_root, publish_dir)
+            if error:
+                warn(error)
+                stats.skipped += 1
+                continue
+            if plan is None:
+                continue
+
+            key = (plan.source.resolve(), plan.destination.resolve())
+            if key in completed_moves:
+                continue
+
+            if not basename_unique(space_root, plan):
+                warn(
+                    f"skipping {plan.old_ref}: basename {plan.source.name!r} is not unique, "
+                    "so basename wiki links cannot be rewritten safely"
+                )
+                stats.skipped += 1
+                continue
+
+            try:
+                moved = perform_move(plan, dry_run)
+            except RuntimeError as exc:
+                warn(str(exc))
+                stats.skipped += 1
+                continue
+
+            completed_moves.add(key)
+            action = "would move" if dry_run else "moved"
+            if moved:
+                stats.moved += 1
+                log(f"{action} {plan.source.relative_to(space_root)} -> {plan.destination.relative_to(space_root)}")
+
+            changed_files, changed_links, ambiguous = update_references(space_root, plan, dry_run)
+            stats.rewritten_files += changed_files
+            stats.rewritten_links += changed_links
+            if ambiguous:
+                warn(f"ambiguous basename wiki links left unchanged for {plan.old_ref}: {ambiguous}")
+
+            if plan.kind == "note" and plan.destination.exists():
+                queue.append(plan.destination.resolve())
+
+    return stats
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--space-root", required=True, type=Path)
+    parser.add_argument("--publish-dir", required=True, type=Path)
+    parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("files", nargs="*", type=Path, help="Changed Publish markdown files to process")
+    args = parser.parse_args()
+
+    space_root = args.space_root.expanduser().resolve()
+    publish_dir = args.publish_dir.expanduser().resolve()
+    if not space_root.is_dir():
+        raise SystemExit(f"space root does not exist: {space_root}")
+    if not publish_dir.is_dir():
+        raise SystemExit(f"publish dir does not exist: {publish_dir}")
+    if not publish_dir.is_relative_to(space_root):
+        raise SystemExit(f"publish dir must be inside space root: {publish_dir}")
+
+    mq_bin = find_mq()
+    if not mq_bin:
+        warn("mq is not available; skipping embed closure")
+        return 0
+
+    files = [p.expanduser().resolve() for p in args.files]
+    files = [p for p in files if p.exists() and p.is_relative_to(publish_dir)]
+    if not files:
+        return 0
+
+    stats = process(files, space_root, publish_dir, mq_bin, args.dry_run)
+    if stats.moved or stats.rewritten_links or stats.skipped:
+        log(
+            f"summary: moved={stats.moved}, rewritten_files={stats.rewritten_files}, "
+            f"rewritten_links={stats.rewritten_links}, skipped={stats.skipped}"
+        )
+    return 0
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())
