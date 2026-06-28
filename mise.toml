@@ -33,9 +33,7 @@ opencode = "latest"
 "npm:t3" = "latest"
 "npm:@anthropic-ai/claude-code" = "latest"
 "npm:@earendil-works/pi-coding-agent" = "latest"
-"cargo:iwe" = "latest"
-"cargo:iwes" = "latest"
-"cargo:iwec" = "latest"
+"github:iwe-org/iwe" = { version = "latest", version_prefix = "iwe-v" }
 
 # Agent support tools / integrations
 "aqua:rtk-ai/rtk" = "latest"
@@ -473,6 +471,7 @@ declare -a TOOL_BIN_ALLOWLIST=(
   'npm:t3|t3'
   'npm:@anthropic-ai/claude-code|claude'
   'npm:@earendil-works/pi-coding-agent|pi'
+  'github:iwe-org/iwe|iwe iwes iwec'
   'aqua:rtk-ai/rtk|rtk'
   'github:ogulcancelik/herdr|herdr'
 )
@@ -562,7 +561,32 @@ set -euo pipefail
 
 mise run ensure-submodules
 mise install
-mise upgrade --yes
+
+# `mise upgrade` already only installs newer tool versions, but guard it with a
+# dry-run so rerunning setup can cheaply skip the upgrade phase when nothing is
+# outdated. `--local` keeps this scoped to the repo-managed tools in mise.toml.
+upgrade_plan="$(mktemp)"
+trap 'rm -f "$upgrade_plan"' EXIT
+set +e
+mise upgrade --local --dry-run-code >"$upgrade_plan" 2>&1
+upgrade_rc=$?
+set -e
+case "$upgrade_rc" in
+  0)
+    echo "Mise tools are already up to date; skipping upgrade."
+    ;;
+  1)
+    cat "$upgrade_plan"
+    mise upgrade --local --yes
+    ;;
+  *)
+    cat "$upgrade_plan" >&2
+    exit "$upgrade_rc"
+    ;;
+esac
+rm -f "$upgrade_plan"
+trap - EXIT
+
 mise run repair-claude-code
 if ! mise run clean-user-tools -- --interactive; then
   echo "WARN: legacy user-space tool cleanup skipped or unavailable; continuing setup." >&2
