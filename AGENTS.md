@@ -23,8 +23,8 @@ This repo has three distinct skill roles:
 Keep **agent-specific skills separate**. Codex keeps its own skills under `codex/skills/`
 and may install additional Codex system/user skills there; do not treat `codex/skills/` as
 the governed shared-skill source of truth. Pi-specific skills can live under `pi-agent/skills/`.
-Pi global instructions and subagent definitions live under `pi-agent/AGENTS.md` and
-`pi-agent/agents/`.
+The whole Pi agent directory is managed at `pi-agent/`, including global instructions,
+subagent definitions, MCP config, settings, extensions, scripts, and ignored runtime state.
 
 If we introduce additional shared skill packs in the future, add them under `skills/` and
 symlink/configure as needed. Agent-specific skills stay in that agent’s own directory.
@@ -34,7 +34,8 @@ symlink/configure as needed. Agent-specific skills stay in that agent’s own di
 - `propogate_dotfiles.py` reads `destination.yaml` and symlinks each repo entry into its
   destination path. It operates on **top-level entries** only.
 - `--core` propagates daily shell/editor configs. `--agents` propagates Codex,
-  OpenCode, T3 Code, related systemd user units, and helper binaries used by agents.
+  OpenCode, T3 Code, related systemd user units, helper binaries used by agents,
+  and the whole Pi agent directory.
 - `.agents/skills/` is intentionally not propagated globally; it is project-local.
 - `skills/global/` is intentionally not propagated directly to a home-directory path; it is
   exposed through relative symlinks inside each agent's skill root.
@@ -47,8 +48,7 @@ symlink/configure as needed. Agent-specific skills stay in that agent’s own di
 - Codex: `~/.codex` → `dotfiles/codex` (superpowers symlinked)
 - Gemini: `~/.gemini` → `dotfiles/gemini` (superpowers symlinked)
 - OpenCode: `~/.config/opencode` → `dotfiles/opencode` (superpowers symlinked)
-- Pi global instructions: `~/.pi/agent/AGENTS.md` → `dotfiles/pi-agent/AGENTS.md`
-- Pi subagents: `~/.pi/agent/agents` → `dotfiles/pi-agent/agents`
+- Pi: `~/.pi/agent` → `dotfiles/pi-agent`
 - Project-local skills: `dotfiles/.agents/skills`
 - Governed global skills source: `dotfiles/skills/global`
 - Vendored upstream skill/package source: `dotfiles/skills/vendor`
