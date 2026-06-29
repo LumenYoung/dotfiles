@@ -23,6 +23,6 @@
     "npm:pi-goal-x",
     "../../dotfiles/skills/vendor/visual-explainer"
   ],
-  "lastChangelogVersion": "0.80.1",
+  "lastChangelogVersion": "0.80.2",
   "theme": "dark"
 }

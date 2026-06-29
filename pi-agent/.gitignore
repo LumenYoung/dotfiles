@@ -2,6 +2,7 @@
 auth.json
 trust.json
 mcp-cache.json
+run-history.jsonl
 git/
 npm/
 sessions/
