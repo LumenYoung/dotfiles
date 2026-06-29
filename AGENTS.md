@@ -23,6 +23,8 @@ This repo has three distinct skill roles:
 Keep **agent-specific skills separate**. Codex keeps its own skills under `codex/skills/`
 and may install additional Codex system/user skills there; do not treat `codex/skills/` as
 the governed shared-skill source of truth. Pi-specific skills can live under `pi-agent/skills/`.
+Pi global instructions and subagent definitions live under `pi-agent/AGENTS.md` and
+`pi-agent/agents/`.
 
 If we introduce additional shared skill packs in the future, add them under `skills/` and
 symlink/configure as needed. Agent-specific skills stay in that agent’s own directory.
@@ -45,6 +47,8 @@ symlink/configure as needed. Agent-specific skills stay in that agent’s own di
 - Codex: `~/.codex` → `dotfiles/codex` (superpowers symlinked)
 - Gemini: `~/.gemini` → `dotfiles/gemini` (superpowers symlinked)
 - OpenCode: `~/.config/opencode` → `dotfiles/opencode` (superpowers symlinked)
+- Pi global instructions: `~/.pi/agent/AGENTS.md` → `dotfiles/pi-agent/AGENTS.md`
+- Pi subagents: `~/.pi/agent/agents` → `dotfiles/pi-agent/agents`
 - Project-local skills: `dotfiles/.agents/skills`
 - Governed global skills source: `dotfiles/skills/global`
 - Vendored upstream skill/package source: `dotfiles/skills/vendor`
