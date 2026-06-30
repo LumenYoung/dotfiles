@@ -72,6 +72,7 @@ marker: ~/.config/marker-pdf
 opencode: ~/.config/opencode
 t3-code: ~/.config/t3-code
 pi-agent: ~/.pi/agent
+optin-skills: ~/.config/optin-skills
 gemini: ~/.gemini
 codex-session-stream: ~/.local/bin/codex-session-stream
 marimo.toml: ~/.marimo.toml

@@ -6,7 +6,7 @@ the destination path listed in `destination.yaml`.
 
 ## Skills strategy
 
-This repo has three distinct skill roles:
+This repo has four distinct skill roles:
 
 1. **Project-local skills for this dotfiles repo** live under `.agents/skills/`.
    Use these for instructions that only make sense when an agent is working in this repo
@@ -19,6 +19,9 @@ This repo has three distinct skill roles:
 3. **Externally maintained vendored skills/packages** live under `skills/vendor/`. Use this
    for upstream repos tracked as submodules. Expose the actual skill directory through
    `skills/global/` when it should be globally available.
+4. **Opt-in skills** live under `optin-skills/<project>/`. These are intentionally outside auto-discovered
+   agent skill roots and are mapped to `~/.config/optin-skills` for explicit CLI use such as
+   `pi --skill ~/.config/optin-skills/<project>/...` or wrapper functions like `pi-marimo`.
 
 Keep **agent-specific skills separate**. Codex keeps its own skills under `codex/skills/`
 and may install additional Codex system/user skills there; do not treat `codex/skills/` as
@@ -41,6 +44,8 @@ symlink/configure as needed. Agent-specific skills stay in that agent’s own di
   exposed through relative symlinks inside each agent's skill root.
 - `skills/vendor/` is for externally maintained upstream repos/submodules. Governed exposure
   still happens through `skills/global/` symlinks.
+- `optin-skills/` is propagated to `~/.config/optin-skills` and can be included by both `--core`
+  and `--agents` because shell wrappers may reference it while agent commands consume it.
 - Each agent may still have its own skill directory for agent-specific or tool-installed skills.
 
 ## Current agent paths
@@ -52,6 +57,7 @@ symlink/configure as needed. Agent-specific skills stay in that agent’s own di
 - Project-local skills: `dotfiles/.agents/skills`
 - Governed global skills source: `dotfiles/skills/global`
 - Vendored upstream skill/package source: `dotfiles/skills/vendor`
+- Opt-in skill source: `dotfiles/optin-skills` → `~/.config/optin-skills`
 - Relative shared-skill links:
   - `codex/skills/global` → `../../skills/global`
   - `pi-agent/skills/global` → `../../skills/global`

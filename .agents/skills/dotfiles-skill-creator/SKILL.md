@@ -10,6 +10,7 @@ Use this skill to create or update skills in this dotfiles repo without mixing u
 1. This repo has **project-local skills** for agents working on the dotfiles repo itself.
 2. This repo also **governs globally shared skills** that should be available outside this repo.
 3. This repo can **vendor externally maintained skill packages** under `skills/vendor/` and expose selected skill directories through `skills/global/`.
+4. This repo can keep **opt-in skills** under `optin-skills/` for explicit CLI loading without automatic agent discovery.
 
 ## Placement Decision Tree
 
@@ -57,7 +58,16 @@ Example:
 
 Do not edit vendored upstream content casually; update the submodule pointer instead. If a Pi package install is used for tools/prompts, point it at the same local submodule checkout to avoid same-name skill collisions from different real paths.
 
-### 4. Agent-specific skill
+### 4. Opt-in skill
+
+Use `optin-skills/<project>/...` when a skill should be available through an explicit CLI flag or wrapper but should not be advertised to agents by default. Group by project or workflow, not by implementation source; for example, use `optin-skills/marimo/marimo-pair` so more marimo-specific opt-in skills can live beside it later.
+
+Properties:
+- Propagated to `~/.config/optin-skills` for stable explicit paths.
+- Not symlinked into global agent skill roots.
+- Good for workflow-specific or heavy skills such as `marimo-pair`, loaded by wrappers like `pi-marimo`.
+
+### 5. Agent-specific skill
 
 Use the agent-specific directory only when the skill depends on one agent’s non-portable behavior:
 
@@ -69,11 +79,11 @@ When choosing this, add a short note in the skill body explaining why it is not 
 
 ## Creation Workflow
 
-1. Clarify intended scope: project-local, governed global, or agent-specific.
+1. Clarify intended scope: project-local, governed global, opt-in, or agent-specific.
 2. Normalize the skill name to lowercase hyphen-case.
 3. Check for collisions before creating:
    ```bash
-   find .agents/skills skills/global codex/skills pi-agent/skills claude/skills -maxdepth 2 -name SKILL.md -print 2>/dev/null
+   find .agents/skills skills/global optin-skills codex/skills pi-agent/skills claude/skills -maxdepth 4 -name SKILL.md -print 2>/dev/null
    ```
 4. Create the skill skeleton:
    ```bash
@@ -125,6 +135,7 @@ Rules:
 - `.agents/skills` is for this repo’s local agent behavior.
 - `skills/global` is for globally shared, governed skills and symlinks to exposed vendored skills.
 - `skills/vendor` is for externally maintained upstream skill/package repositories.
+- `optin-skills` is for explicit CLI-loaded skills and is propagated to `~/.config/optin-skills`, not agent skill roots.
 - `codex/skills` remains Codex’s own global skill area and may contain Codex system/user-installed skills.
 - Prefer repo-internal relative symlinks from each agent skill root to `skills/global`, rather than home-directory absolute symlinks.
 - If an agent does not discover a nested symlinked directory, add an explicit config or per-skill relative symlinks for that agent rather than copying skill contents.

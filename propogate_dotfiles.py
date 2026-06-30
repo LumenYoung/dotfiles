@@ -40,6 +40,7 @@ core_configs = [
     "btop",
     "yazi",
     "lazygit",
+    "optin-skills",
 ]
 
 # Agent configs propagated during setup after the core shell/tooling exists.
@@ -53,6 +54,7 @@ agent_configs = [
     "systemd",
     "codex-session-stream",
     "pi-agent",
+    "optin-skills",
 ]
 
 
