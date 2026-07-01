@@ -28,34 +28,42 @@ function pi-marimo --description 'Start marimo and Pi with the opt-in marimo-pai
         return 0
     end
 
-    set -l skill_rel marimo/marimo-pair/skills/marimo-pair
-    set -l skill_candidates
+    set -l skill_rels \
+        marimo/marimo-pair/skills/marimo-pair \
+        marimo/marimo-authoring
+    set -l skill_paths
 
-    if set -q XDG_CONFIG_HOME; and test -n "$XDG_CONFIG_HOME"
-        set -a skill_candidates "$XDG_CONFIG_HOME/optin-skills/$skill_rel"
-    end
-    set -a skill_candidates "$HOME/.config/optin-skills/$skill_rel"
+    for skill_rel in $skill_rels
+        set -l skill_candidates
 
-    set -l current_file (status current-filename)
-    if test -n "$current_file"; and command -q realpath
-        set -l repo_root (dirname (dirname (dirname (realpath "$current_file"))))
-        set -a skill_candidates "$repo_root/optin-skills/$skill_rel"
-    end
-
-    set -l skill_path
-    for candidate in $skill_candidates
-        if test -f "$candidate/SKILL.md"
-            set skill_path "$candidate"
-            break
+        if set -q XDG_CONFIG_HOME; and test -n "$XDG_CONFIG_HOME"
+            set -a skill_candidates "$XDG_CONFIG_HOME/optin-skills/$skill_rel"
         end
-    end
+        set -a skill_candidates "$HOME/.config/optin-skills/$skill_rel"
 
-    if test -z "$skill_path"
-        echo "marimo-pair skill not found. Expected one of:" >&2
+        set -l current_file (status current-filename)
+        if test -n "$current_file"; and command -q realpath
+            set -l repo_root (dirname (dirname (dirname (realpath "$current_file"))))
+            set -a skill_candidates "$repo_root/optin-skills/$skill_rel"
+        end
+
+        set -l skill_path
         for candidate in $skill_candidates
-            echo "  $candidate/SKILL.md" >&2
+            if test -f "$candidate/SKILL.md"
+                set skill_path "$candidate"
+                break
+            end
         end
-        return 1
+
+        if test -z "$skill_path"
+            echo "marimo skill not found for $skill_rel. Expected one of:" >&2
+            for candidate in $skill_candidates
+                echo "  $candidate/SKILL.md" >&2
+            end
+            return 1
+        end
+
+        set -a skill_paths "$skill_path"
     end
 
     set -l notebook
@@ -169,7 +177,10 @@ function pi-marimo --description 'Start marimo and Pi with the opt-in marimo-pai
         end
     end
 
-    set -l pi_args --skill "$skill_path"
+    set -l pi_args
+    for skill_path in $skill_paths
+        set -a pi_args --skill "$skill_path"
+    end
     if test -n "$marimo_url"; and test -n "$marimo_token"
         set -a pi_args --append-system-prompt "A marimo server for this pi-marimo session is running at $marimo_url. MARIMO_TOKEN is set in the environment. When using marimo-pair scripts, pass --url $marimo_url explicitly instead of relying on auto-discovery."
     end
