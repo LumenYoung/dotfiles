@@ -19,10 +19,12 @@
     "npm:pi-web-access",
     "npm:pi-mcp-adapter",
     "npm:pi-subagents",
+    "npm:pi-intercom",
+    "npm:pi-prompt-template-model",
     "npm:pi-btw",
     "npm:pi-goal-x",
     "../../dotfiles/skills/vendor/visual-explainer"
   ],
-  "lastChangelogVersion": "0.80.2",
+  "lastChangelogVersion": "0.80.3",
   "theme": "dark"
 }

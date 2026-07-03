@@ -12,6 +12,9 @@ fi
 pi install npm:@howaboua/pi-codex-conversion
 pi install npm:pi-web-access
 pi install npm:pi-mcp-adapter
+pi install npm:pi-subagents
+pi install npm:pi-intercom
+pi install npm:pi-prompt-template-model
 pi install npm:pi-btw
 pi install npm:pi-goal-x
 
