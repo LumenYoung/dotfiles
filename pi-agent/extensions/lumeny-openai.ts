@@ -59,27 +59,26 @@ export default function lumenyOpenAI(pi: ExtensionAPI) {
   const baseUrl = process.env.LUMENY_OPENAI_BASE_URL?.trim();
   const apiKey = process.env.LUMENY_OPENAI_API_KEY?.trim();
   if (!baseUrl) {
-    console.warn("[lumeny-openai] LUMENY_OPENAI_BASE_URL is not set; leaving Pi's OpenAI provider unchanged.");
+    console.warn("[lumeny-openai] LUMENY_OPENAI_BASE_URL is not set; leaving Lumeny OpenAI provider unregistered.");
     return;
   }
   if (!apiKey) {
-    console.warn("[lumeny-openai] LUMENY_OPENAI_API_KEY is not set; leaving Pi's OpenAI provider unchanged.");
+    console.warn("[lumeny-openai] LUMENY_OPENAI_API_KEY is not set; leaving Lumeny OpenAI provider unregistered.");
     return;
   }
 
-  // Pi's built-in openai provider may otherwise prefer OPENAI_API_KEY from the
-  // process environment. Keep this process-local and align it with the selected
-  // Lumeny endpoint so no shell wrapper is required.
+  // Keep OPENAI_API_KEY process-local and aligned with the selected Lumeny
+  // endpoint for any OpenAI-compatible code paths that still consult it.
   process.env.OPENAI_API_KEY = apiKey;
 
   const modelIds = configuredModelIds();
   const claudeIds = modelIds.filter((id) => id.startsWith("claude"));
   const openaiIds = modelIds.filter((id) => !id.startsWith("claude"));
 
-  // Only expose non-Claude (GPT) models on the OpenAI-Responses provider.
+  // Only expose non-Claude (GPT) models on the Lumeny OpenAI-Responses provider.
   // Claude models are served by the native Anthropic provider below, since the
   // Responses surface under-reports their token usage (see comment further down).
-  pi.registerProvider("openai", {
+  pi.registerProvider("lumeny-openai", {
     name: "Lumeny OpenAI",
     baseUrl,
     api: "openai-responses",
