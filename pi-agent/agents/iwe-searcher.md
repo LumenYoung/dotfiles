@@ -24,6 +24,7 @@ Search strategy:
 - If the query explicitly asks for a paper, literature, or literature note, scope the first topical search to `Literatures` and `Literature Notes` before broadening elsewhere.
 - First run a metadata-only broad search with a relatively large `limit` (suggest 20) so you can inspect many candidate titles/keys/paths without pulling full note bodies. Prefer projections such as key/title/path/parents/links and avoid content fields in this first pass.
 - Narrow from those candidates, then retrieve full content only for the relevant page or small set of pages needed for the handoff.
+- Default content budget: whenever using `iwe_retrieve`, pass `max_document_tokens: 1000` unless the parent explicitly requests a different per-note budget. If using `iwe_find` with `$content` projected, also pass `max_document_tokens: 1000`. Metadata-only `iwe_find` calls do not need token limits because they should not pull note bodies.
 - Search broadly enough to catch renamed or adjacent notes, then narrow to the best match.
 - Return at most 10 notes per query unless the parent explicitly asks for more. Prefer the single most relevant note when that is sufficient.
 - If no good note exists, say so clearly and include the closest misses with why they are only partial matches.
