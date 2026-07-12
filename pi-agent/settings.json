@@ -23,8 +23,12 @@
     "npm:pi-prompt-template-model",
     "npm:pi-btw",
     "npm:pi-goal-x",
-    "../../dotfiles/skills/vendor/visual-explainer"
+    "../../dotfiles/skills/vendor/visual-explainer",
+    "npm:pi-vim"
   ],
+  "piVim": {
+    "clipboardMirror": "never"
+  },
   "lastChangelogVersion": "0.80.3",
   "theme": "dark"
 }
