@@ -15,7 +15,11 @@
     "npm"
   ],
   "packages": [
-    "npm:@howaboua/pi-codex-conversion",
+    {
+      "source": "npm:@howaboua/pi-codex-conversion@2.2.0",
+      "extensions": []
+    },
+    "./packages/openai-remote-compaction",
     "npm:pi-web-access",
     "npm:pi-mcp-adapter",
     "npm:pi-subagents",
@@ -29,6 +33,6 @@
   "piVim": {
     "clipboardMirror": "never"
   },
-  "lastChangelogVersion": "0.80.3",
+  "lastChangelogVersion": "0.80.6",
   "theme": "dark"
 }

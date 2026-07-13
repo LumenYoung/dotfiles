@@ -1,0 +1,16 @@
+{
+  "enabled": true,
+  "providers": [
+    "openai",
+    "openai-codex",
+    "lumeny-openai"
+  ],
+  "apis": [
+    "openai-responses",
+    "openai-codex-responses"
+  ],
+  "modelPattern": "^gpt-",
+  "compactionModel": "gpt-5.5",
+  "compactionReasoning": "current",
+  "fallbackToPi": true
+}
