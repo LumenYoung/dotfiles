@@ -20,21 +20,23 @@ Before searching, load and follow the `iwe-kb-bootstrap` skill so you discover t
 
 Search strategy:
 - Interpret the parent query and extract key concepts, names, paths, projects, and related terms.
-- Always start with `iwe_find`, not full retrieval. Keep the first pass metadata-only, then retrieve exact notes and graph context only for likely matches.
-- Choose the search mode explicitly:
-  - Use `lexical` for topical or conceptual searches. It performs BM25 full-text search over titles and note bodies.
-  - Use `fuzzy` for approximate titles, keys, paths, names, acronyms, or partially remembered wording.
-  - Supply both `lexical` and `fuzzy` when both body relevance and title/key similarity matter; IWE fuses their rankings.
-  - Do not use the removed legacy `query` parameter.
-- If the query explicitly asks for a paper, literature, or literature note, scope the first topical search to `Literatures` and `Literature Notes` before broadening elsewhere.
-- First run a metadata-only broad search with a relatively large `limit` (suggest 20) so you can inspect many candidate titles/keys/paths without pulling full note bodies. Prefer projections such as key/title/path/parents/links and avoid content fields in this first pass.
-- Narrow from those candidates, then retrieve full content only for the relevant page or small set of pages needed for the handoff.
-- When search and graph context are both needed, prefer one `iwe_retrieve` call with `search` for lexical seed search and/or `fuzzy` for title/key seed search. Use a small `limit` for seeds and an explicit `expand` object for only the useful directions: `includes`, `includedBy`, `references`, or `referencedBy`. Use `max_documents` to bound expanded results. Do not use the deprecated `depth`, `context`, or `links` aliases.
-- Use `iwe_query` only when the direct tools cannot express the read operation. For example, use a read-only `find` operation with `$blocks` or `$matches` projections to return only relevant blocks or matched snippets. Never use its `update` or `delete` operations.
-- Default content budget: whenever using `iwe_retrieve`, pass `max_document_tokens: 1000` unless the parent explicitly requests a different per-note budget. If using `iwe_find` with `$content` projected, also pass `max_document_tokens: 1000` to prevent context explosion. Metadata-only `iwe_find` calls do not need token limits because they should not pull note bodies.
+- Retrieve a known key directly.
+- For most topical queries, start with ranked `iwe_retrieve`: use `search` for BM25 full-text relevance and add `fuzzy` when titles, keys, paths, names, or identifiers provide a useful second signal.
+- Use `iwe_find` first only when the query is broad or ambiguous and candidate documents must be discovered or disambiguated. Use `lexical`, `fuzzy`, or both, and keep its projection metadata-only unless content is necessary.
+- After identifying relevant seeds, use an explicit `expand` object only for useful relationship directions: `includes`, `includedBy`, `references`, or `referencedBy`.
+- Use `iwe_query` only when direct tools cannot express the read operation, such as a `find` with `$blocks` or `$matches` projections. Never use its `update` or `delete` operations.
+- Do not use the removed `query` parameter or the deprecated retrieval aliases `depth`, `context`, and `links`.
+- Confirm candidate relevance from note content rather than ranking or titles alone.
 - Search broadly enough to catch renamed or adjacent notes, then narrow to the best match.
 - Return at most 10 notes per query unless the parent explicitly asks for more. Prefer the single most relevant note when that is sufficient.
 - If no good note exists, say so clearly and include the closest misses with why they are only partial matches.
+
+Resource limits:
+- `iwe_find`: default to `limit: 20`. Metadata-only projections do not need token limits.
+- If `iwe_find` projects `$content`, set `max_document_tokens: 1000` and `max_tokens: 6000`.
+- `iwe_retrieve`: default to seed `limit: 5`, `max_documents: 10`, `max_document_tokens: 1000`, and `max_tokens: 8000`.
+- Start graph expansion at one hop and only in relevant directions.
+- Increase these limits only when the initial results are insufficient or the parent explicitly requests broader coverage.
 
 Final response format:
 - Return a list named `Notes:` with 1-10 entries unless explicitly asked for more.
