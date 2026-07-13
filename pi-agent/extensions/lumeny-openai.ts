@@ -1,6 +1,9 @@
 import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 
-const DEFAULT_MODEL_IDS = [
+const FALLBACK_MODEL_IDS = [
+  "gpt-5.6-sol",
+  "gpt-5.6-luna",
+  "gpt-5.6-terra",
   "gpt-5.5",
   "gpt-5.4",
   "gpt-5.4-mini",
@@ -11,7 +14,15 @@ const DEFAULT_MODEL_IDS = [
   "claude-haiku-4-5",
 ];
 
+type RemoteModelsPayload = {
+  data?: Array<{ id?: unknown; owned_by?: unknown; name?: unknown }>;
+  models?: Array<{ id?: unknown; owned_by?: unknown; name?: unknown }>;
+};
+
 const MODEL_CONTEXT_WINDOWS: Record<string, number> = {
+  "gpt-5.6-sol": 256000,
+  "gpt-5.6-luna": 256000,
+  "gpt-5.6-terra": 256000,
   "gpt-5.5": 256000,
   "gpt-5.4": 256000,
   "gpt-5.4-mini": 256000,
@@ -23,6 +34,9 @@ const MODEL_CONTEXT_WINDOWS: Record<string, number> = {
 };
 
 const MODEL_MAX_TOKENS: Record<string, number> = {
+  "gpt-5.6-sol": 32768,
+  "gpt-5.6-luna": 32768,
+  "gpt-5.6-terra": 32768,
   "gpt-5.5": 32768,
   "gpt-5.4": 32768,
   "gpt-5.4-mini": 32768,
@@ -33,13 +47,54 @@ const MODEL_MAX_TOKENS: Record<string, number> = {
   "claude-haiku-4-5": 32000,
 };
 
-function configuredModelIds(): string[] {
+function configuredModelIds(): string[] | null {
   const raw = process.env.LUMENY_OPENAI_MODEL_IDS?.trim();
-  if (!raw) return DEFAULT_MODEL_IDS;
+  if (!raw) return null;
   return raw
     .split(/[\s,]+/)
     .map((id) => id.trim())
     .filter(Boolean);
+}
+
+function isOpenAIModelId(id: string): boolean {
+  if (id.startsWith("gpt-image-")) return false;
+  return id.startsWith("gpt-") || id.startsWith("codex-");
+}
+
+function isTruthyEnv(value: string | undefined): boolean {
+  return ["1", "true", "yes", "on"].includes((value ?? "").trim().toLowerCase());
+}
+
+function uniqueModelIds(ids: string[]): string[] {
+  const seen = new Set<string>();
+  const result: string[] = [];
+  for (const id of ids) {
+    if (seen.has(id)) continue;
+    seen.add(id);
+    result.push(id);
+  }
+  return result;
+}
+
+async function discoverModelIds(baseUrl: string, apiKey: string): Promise<string[]> {
+  const modelsUrl = `${baseUrl.replace(/\/+$/, "")}/models`;
+  const timeoutMs = Number(process.env.LUMENY_OPENAI_MODEL_DISCOVERY_TIMEOUT_MS ?? "5000");
+  const response = await fetch(modelsUrl, {
+    headers: { Authorization: `Bearer ${apiKey}` },
+    signal: AbortSignal.timeout(Number.isFinite(timeoutMs) && timeoutMs > 0 ? timeoutMs : 5000),
+  });
+
+  if (!response.ok) {
+    throw new Error(`GET ${modelsUrl} failed with HTTP ${response.status}`);
+  }
+
+  const payload = (await response.json()) as RemoteModelsPayload;
+  const entries = payload.data ?? payload.models ?? [];
+  return uniqueModelIds(
+    entries
+      .map((model) => (typeof model.id === "string" ? model.id.trim() : ""))
+      .filter((id) => id.startsWith("claude-") || isOpenAIModelId(id)),
+  );
 }
 
 function modelName(id: string): string {
@@ -55,7 +110,7 @@ function modelName(id: string): string {
     .replace("Mini", "Mini");
 }
 
-export default function lumenyOpenAI(pi: ExtensionAPI) {
+export default async function lumenyOpenAI(pi: ExtensionAPI) {
   const baseUrl = process.env.LUMENY_OPENAI_BASE_URL?.trim();
   const apiKey = process.env.LUMENY_OPENAI_API_KEY?.trim();
   if (!baseUrl) {
@@ -71,9 +126,27 @@ export default function lumenyOpenAI(pi: ExtensionAPI) {
   // endpoint for any OpenAI-compatible code paths that still consult it.
   process.env.OPENAI_API_KEY = apiKey;
 
-  const modelIds = configuredModelIds();
-  const claudeIds = modelIds.filter((id) => id.startsWith("claude"));
-  const openaiIds = modelIds.filter((id) => !id.startsWith("claude"));
+  let modelIds = configuredModelIds();
+  if (!modelIds) {
+    if (isTruthyEnv(process.env.PI_OFFLINE)) {
+      modelIds = FALLBACK_MODEL_IDS;
+    } else {
+      try {
+        modelIds = await discoverModelIds(baseUrl, apiKey);
+        if (modelIds.length === 0) {
+          console.warn("[lumeny-openai] Remote /models returned no GPT/Codex/Claude models; using fallback model list.");
+          modelIds = FALLBACK_MODEL_IDS;
+        }
+      } catch (error) {
+        console.warn(
+          `[lumeny-openai] Failed to discover models from CLIProxyAPI; using fallback model list: ${error instanceof Error ? error.message : String(error)}`,
+        );
+        modelIds = FALLBACK_MODEL_IDS;
+      }
+    }
+  }
+  const claudeIds = modelIds.filter((id) => id.startsWith("claude-"));
+  const openaiIds = modelIds.filter(isOpenAIModelId);
 
   // Only expose non-Claude (GPT) models on the Lumeny OpenAI-Responses provider.
   // Claude models are served by the native Anthropic provider below, since the

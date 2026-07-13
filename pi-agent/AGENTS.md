@@ -12,12 +12,12 @@ Coordinate with other local pi sessions on related codebases. Use `/skill:pi-int
 
 After substantial implementation work, use `impl-reality-checker` and `impl-quality-reviewer` to verify that the work is actually implemented and not over-engineered. For small, localized code changes, test and inspect the change yourself instead of launching subagents when direct validation is faster and sufficient.
 
-## IWE knowledge-base search
+## IWE knowledge-base workflow
 
-For broad searches in IWE, especially when you lack enough local context to answer directly, delegate the search to the `iwe-searcher` subagent in foreground/blocking mode. Do not launch it with `async: true` or `--bg` unless instructed. Even if you would searching yourselfs, start search with meta data only.
+Delegate broad, unfamiliar, or cross-note discovery to the `iwe-searcher` subagent in foreground/blocking mode. Do not launch it asynchronously unless instructed. Once the relevant keys and context are known, use IWE directly for targeted search and retrieval rather than delegating repeatedly.
 
-The `iwe-searcher` subagent should find the most relevant IWE notes for the current query and return a compact handoff: at most 10 notes unless otherwise specified, each with a note path relative to the SilverBullet/IWE workspace root and a compact summary so the main agent can retrieve and inspect the note directly. It should include a compact tree-view graph only when the note connects to other relevant notes; isolated notes do not need a graph.
+Keep every IWE search and retrieval bounded. Set finite document and token limits, start small, and increase them only when the initial results are insufficient. Never project full content across a broad or unlimited result set.
 
-When calling `iwe-searcher`:
-- Include the current query and any relevant context.
-- For paper/literature queries, start in `Literatures` and `Literature Notes`.
+The searcher should return a compact handoff of at most 10 workspace-relative note paths with short summaries, adding graph context only when it materially helps. Treat this as retrieval guidance: the main agent should retrieve and inspect the relevant notes before relying on or editing them.
+
+The main agent owns all edits. Retrieve the latest note first; prefer narrow `iwe_query` block updates with exact selectors, `expect` guards, and `dry_run` for localized changes. Use whole-document `iwe_update` only when a complete rewrite is intentional, and use dedicated IWE tools for structural operations such as rename, extract, inline, and delete. Retrieve the result after editing to verify the change.
