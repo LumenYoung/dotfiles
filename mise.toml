@@ -28,7 +28,6 @@ ninja = "latest"
 make = "latest"
 
 # Agent-facing CLIs
-codex = "latest"
 opencode = "latest"
 "npm:t3" = "latest"
 "npm:@anthropic-ai/claude-code" = "latest"
@@ -65,7 +64,7 @@ description = "Create per-machine local fish override file"
 run = "touch ~/.local.fish"
 
 [tasks.remove-obsolete-codex]
-description = "Remove the obsolete npm Codex installation from the micromamba main environment"
+description = "Remove obsolete Codex installations that conflict with the current Node-managed CLI"
 run = '''
 #!/usr/bin/env bash
 set -euo pipefail
@@ -75,28 +74,50 @@ LEGACY_CODEX_ENV="${LEGACY_CODEX_ENV:-main}"
 legacy_prefix="${MAMBA_ROOT_PREFIX}/envs/${LEGACY_CODEX_ENV}"
 npm_bin="${legacy_prefix}/bin/npm"
 codex_bin="${legacy_prefix}/bin/codex"
+removed_any=false
 
 if [[ ! -x "$npm_bin" ]]; then
   echo "No npm executable found in micromamba environment '${LEGACY_CODEX_ENV}': $npm_bin"
-  exit 0
-fi
-
-if ! "$npm_bin" list --global --depth=0 @openai/codex >/dev/null 2>&1; then
+elif ! "$npm_bin" list --global --depth=0 @openai/codex >/dev/null 2>&1; then
   echo "No obsolete @openai/codex installation found in: $legacy_prefix"
-  exit 0
+else
+  echo "Removing obsolete @openai/codex from: $legacy_prefix"
+  "$npm_bin" uninstall --global @openai/codex
+  removed_any=true
+
+  if [[ -e "$codex_bin" || -L "$codex_bin" ]]; then
+    echo "ERROR: obsolete Codex binary still exists after npm uninstall: $codex_bin" >&2
+    exit 1
+  fi
 fi
 
-echo "Removing obsolete @openai/codex from: $legacy_prefix"
-"$npm_bin" uninstall --global @openai/codex
-
-if [[ -e "$codex_bin" || -L "$codex_bin" ]]; then
-  echo "ERROR: obsolete Codex binary still exists after npm uninstall: $codex_bin" >&2
+if ! installed_codex_json="$(mise ls --installed codex --json 2>/dev/null)"; then
+  echo "ERROR: unable to inspect legacy Mise Codex installations." >&2
   exit 1
 fi
 
-echo "Obsolete micromamba Codex installation removed."
-if mise_codex="$(mise which codex 2>/dev/null)"; then
-  echo "Mise-managed Codex: $mise_codex"
+if [[ "$(printf '%s' "$installed_codex_json" | tr -d '[:space:]')" != "[]" ]]; then
+  echo "Removing obsolete Mise Codex installation(s):"
+  printf '%s\n' "$installed_codex_json"
+  mise uninstall --all codex
+  removed_any=true
+
+  remaining_codex_json="$(mise ls --installed codex --json 2>/dev/null)"
+  if [[ "$(printf '%s' "$remaining_codex_json" | tr -d '[:space:]')" != "[]" ]]; then
+    echo "ERROR: obsolete Mise Codex installation still exists:" >&2
+    printf '%s\n' "$remaining_codex_json" >&2
+    exit 1
+  fi
+fi
+
+if [[ "$removed_any" == "true" ]]; then
+  echo "Obsolete Codex installation cleanup completed."
+else
+  echo "No obsolete Codex installations found."
+fi
+
+if active_codex="$(command -v codex 2>/dev/null)"; then
+  echo "Active Codex: $active_codex"
 fi
 '''
 
@@ -597,6 +618,7 @@ set -euo pipefail
 
 mise run ensure-submodules
 mise install
+mise run remove-obsolete-codex
 
 # `mise upgrade` already only installs newer tool versions, but guard it with a
 # dry-run so rerunning setup can cheaply skip the upgrade phase when nothing is

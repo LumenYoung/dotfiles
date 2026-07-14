@@ -69,7 +69,7 @@ type RuntimeModules = {
 
 const CONFIG_BASENAME = "openai-remote-compaction.json";
 const CODEX_PACKAGE = "@howaboua/pi-codex-conversion";
-const EXPECTED_CODEX_VERSION = "2.2.0";
+const EXPECTED_CODEX_VERSION = "2.2.1";
 
 function moduleUrl(distRoot: string, relativePath: string): string {
   return pathToFileURL(join(distRoot, relativePath)).href;

@@ -16,7 +16,7 @@
   ],
   "packages": [
     {
-      "source": "npm:@howaboua/pi-codex-conversion@2.2.0",
+      "source": "npm:@howaboua/pi-codex-conversion@2.2.1",
       "extensions": []
     },
     "./packages/openai-remote-compaction",

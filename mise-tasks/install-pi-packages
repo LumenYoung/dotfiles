@@ -9,7 +9,7 @@ if ! command -v pi >/dev/null 2>&1; then
   exit 1
 fi
 
-pi install npm:@howaboua/pi-codex-conversion
+pi install npm:@howaboua/pi-codex-conversion@2.2.1
 pi install npm:pi-web-access
 pi install npm:pi-mcp-adapter
 pi install npm:pi-subagents
