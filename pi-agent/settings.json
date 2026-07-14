@@ -27,10 +27,7 @@
     "npm:pi-prompt-template-model",
     "npm:pi-btw",
     "npm:pi-goal-x",
-    {
-      "source": "npm:tau-mirror@1.0.9",
-      "extensions": []
-    },
+    "git:github.com/LumenYoung/tau@v1.1.0-native.0",
     "../../dotfiles/skills/vendor/visual-explainer",
     "npm:pi-vim"
   ],
