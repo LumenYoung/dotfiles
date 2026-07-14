@@ -56,6 +56,17 @@ fi
 
 export PATH="$(dirname "$MISE_BIN"):$PATH"
 
+# mise embeds the trusted roots used for GitHub artifact attestation checks.
+# Refresh standalone installs before installing tools so stale Sigstore/TSA data
+# does not break bootstrap. Package-manager builds report self-update as
+# unavailable and are left for their package manager to update.
+if "$MISE_BIN" doctor 2>/dev/null | grep -q '^self_update_available: yes$'; then
+	echo "[setup] Checking for mise updates..."
+	if ! "$MISE_BIN" self-update --yes --no-plugins; then
+		echo "[setup] WARN: unable to self-update mise; continuing with $("$MISE_BIN" --version)." >&2
+	fi
+fi
+
 cd "$REPO_ROOT"
 
 bash mise-tasks/ensure-submodules
