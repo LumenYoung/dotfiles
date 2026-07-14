@@ -38,6 +38,13 @@ opencode = "latest"
 "aqua:rtk-ai/rtk" = "latest"
 "github:harehare/mq" = "latest"
 
+[tools."forgejo:lumenyang/lunaly-releases"]
+version = "latest"
+api_url = "https://git.lumeny.io/api/v1"
+matching_regex = "^lunaly-linux-(amd64|arm64)$"
+bin = "lunaly"
+minimum_release_age = "0s"
+
 # Agent support tools / integrations requiring custom mise metadata
 [tools."github:ogulcancelik/herdr"]
 version = "latest"
