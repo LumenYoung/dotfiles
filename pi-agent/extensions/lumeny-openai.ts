@@ -151,7 +151,7 @@ export default async function lumenyOpenAI(pi: ExtensionAPI) {
   // Only expose non-Claude (GPT) models on the Lumeny OpenAI-Responses provider.
   // Claude models are served by the native Anthropic provider below, since the
   // Responses surface under-reports their token usage (see comment further down).
-  pi.registerProvider("lumeny-openai", {
+  const openAIProviderConfig = {
     name: "Lumeny OpenAI",
     baseUrl,
     api: "openai-responses",
@@ -172,7 +172,14 @@ export default async function lumenyOpenAI(pi: ExtensionAPI) {
         xhigh: "high",
       },
     })),
-  });
+  } as const;
+
+  pi.registerProvider("lumeny-openai", openAIProviderConfig);
+
+  // Paseo persists Pi model references as provider/model. Keep `openai` as a
+  // compatibility alias so agents created or remembered with `openai/*` use
+  // the same CLIProxyAPI endpoint and client key as `lumeny-openai/*`.
+  pi.registerProvider("openai", openAIProviderConfig);
 
   // Claude models served through Lumeny's OpenAI-Responses surface under-report
   // token usage: cached prompt tokens (Anthropic's cache_read_input_tokens) are
