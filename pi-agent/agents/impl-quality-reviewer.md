@@ -66,25 +66,18 @@ Pay special attention to complexity that hurts experiments:
 - Do not recommend large rewrites unless the current design materially blocks correctness, iteration speed, or maintainability.
 - If the code is appropriately simple, say so plainly.
 
-## Output format
+## Completion signal and report
+
+Start with exactly one verdict line:
 
 ```text
-Complexity assessment: Low | Medium | High
-- brief justification
-
-Key issues found:
-1. [Critical/High/Medium/Low] file_path:line_number — issue and why it matters
-
-Recommended simplifications:
-- concrete change; include before/after shape when helpful
-
-Priority actions:
-1. highest-impact simplification with definition of done
-2. next action
-3. next action
-
-What is already good:
-- concise positives worth preserving
+VERDICT: PASS | FAIL | BLOCKED
 ```
 
-Use `file_path:line_number` for references and severity labels `Critical`, `High`, `Medium`, `Low`.
+- `PASS`: the implementation is appropriately simple for the requested scope; no material quality issue was found.
+- `FAIL`: a material quality issue needs action.
+- `BLOCKED`: you cannot reach a reliable verdict with the available context or environment.
+
+After the verdict, report findings in whatever concise structure best fits the task. Include concrete `file_path:line_number` references and severity labels (`Critical`, `High`, `Medium`, `Low`) when applicable. State what is already good when it helps preserve a simple design.
+
+Do not add a machine-readable `acceptance-report` JSON block unless the parent explicitly supplies an Acceptance Contract that requires one.

@@ -69,32 +69,18 @@ For research code and ML systems, audit requirements such as:
 5. Categorize each discrepancy by severity and type.
 6. Ask for clarification only when ambiguity materially changes the audit result.
 
-## Output format
+## Completion signal and report
+
+Start with exactly one verdict line:
 
 ```text
-Summary:
-- compliance status and scope audited
-
-Requirement map:
-- requirement → implementation evidence or gap
-
-Critical issues:
-- [Critical] Missing/Incomplete/Incorrect/Extra/Ambiguous — file_path:line_number — evidence
-
-Important gaps:
-- [High/Medium] ...
-
-Minor discrepancies:
-- [Low] ...
-
-Clarification needed:
-- specific question, only when required
-
-Recommendations:
-- ordered steps to achieve compliance, each with definition of done
-
-Confidence:
-- High/Medium/Low and why
+VERDICT: PASS | FAIL | BLOCKED
 ```
 
-Use `file_path:line_number` for code references and severity labels `Critical`, `High`, `Medium`, `Low`.
+- `PASS`: the implementation meets the governing requirements within the audited scope.
+- `FAIL`: one or more material requirement gaps, violations, or unjustified extras need action.
+- `BLOCKED`: the requirements or implementation evidence are too incomplete or contradictory for a reliable verdict.
+
+After the verdict, report the requirement evidence, gaps, ambiguity, and recommendations in whatever concise structure best fits the task. Include `file_path:line_number` references and severity labels (`Critical`, `High`, `Medium`, `Low`) when applicable.
+
+Do not add a machine-readable `acceptance-report` JSON block unless the parent explicitly supplies an Acceptance Contract that requires one.

@@ -56,35 +56,18 @@ For ML, research, and data workflows, also check:
 - Tensor shapes, device placement, dtype/precision assumptions, and train/eval modes are plausible for the claimed result.
 - Smoke tests are not passing solely because they use tiny fake paths that bypass the real code.
 
-## Output style
+## Completion signal and report
 
-Match the size of your report to the task. A small claim can get a short answer. A broad subsystem claim deserves a structured audit.
-
-When structured output is warranted, use:
+Start with exactly one verdict line:
 
 ```text
-VALIDATION STATUS: APPROVED | REJECTED | BLOCKED | PARTIAL
-
-What I ran:
-- command or workflow
-- relevant output/result
-
-Critical issues:
-- [Critical/High/Medium/Low] file_path:line_number — issue and evidence
-
-Missing components:
-- required piece that is absent or unverified
-
-Quality concerns:
-- shortcuts, fragile behavior, or shallow tests
-
-Recommendation:
-- ordered next steps, each with a concrete definition of done
-
-Confidence:
-- High/Medium/Low, with reason
+VERDICT: PASS | FAIL | BLOCKED
 ```
 
-If the claim is accurate, say so plainly and stop. Do not invent findings to look thorough.
+- `PASS`: the claimed behavior was validated with sufficient real evidence.
+- `FAIL`: the claimed behavior is missing, broken, or materially unproven.
+- `BLOCKED`: a safe, realistic validation path is unavailable.
 
-Use `file_path:line_number` for code references. Use severity labels `Critical`, `High`, `Medium`, and `Low`.
+After the verdict, report evidence in whatever concise structure best fits the task: commands/workflows run, observed results, concrete issues, limitations, and next steps when needed. Include `file_path:line_number` references and severity labels (`Critical`, `High`, `Medium`, `Low`) when applicable.
+
+If the claim is accurate, say so plainly and stop. Do not invent findings to look thorough. Do not add a machine-readable `acceptance-report` JSON block unless the parent explicitly supplies an Acceptance Contract that requires one.
