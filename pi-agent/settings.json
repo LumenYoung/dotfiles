@@ -27,7 +27,7 @@
     "npm:pi-prompt-template-model",
     "npm:pi-btw",
     "npm:pi-goal-x",
-    "git:github.com/LumenYoung/tau@v1.1.1-native.0",
+    "git:github.com/LumenYoung/tau@v1.2.0-native.0",
     "../../dotfiles/skills/vendor/visual-explainer",
     "npm:pi-vim"
   ],
