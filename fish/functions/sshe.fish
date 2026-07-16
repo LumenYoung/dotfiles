@@ -3,6 +3,7 @@ function sshe --description "SSH wrapper that injects configured local env vars 
         LUMENY_OPENAI_BASE_URL \
         LUMENY_OPENAI_API_KEY \
         GITHUB_TOKEN \
+        IWE_KEY \
         AQUA_GITHUB_TOKEN
 
     if test (count $argv) -lt 1
