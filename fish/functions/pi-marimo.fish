@@ -1,15 +1,20 @@
 function pi-marimo --description 'Start marimo and Pi with the opt-in marimo-pair skill'
-    argparse --ignore-unknown 'h/help' 'no-start' 'no-token' 'marimo-port=' -- $argv
+    argparse --ignore-unknown 'h/help' 'no-start' 'no-token' 'no-watch' 'marimo-port=' -- $argv
     or return 2
 
     if set -q _flag_help
-        echo "Usage: pi-marimo [--no-start] [--no-token] [--marimo-port PORT] [NOTEBOOK.py] [PI_ARGS...]"
+        echo "Usage: pi-marimo [--no-start] [--no-token] [--no-watch] [--marimo-port PORT] [NOTEBOOK.py] [PI_ARGS...]"
         echo
         echo "Options:"
         echo "  -h, --help             Show this help."
         echo "      --no-start         Do not start marimo; only launch Pi with marimo-pair loaded."
         echo "      --no-token         Start marimo without auth and rely on marimo auto-discovery."
+        echo "      --no-watch         Do not pass --watch to marimo edit (disable live external-edit reload)."
         echo "      --marimo-port PORT Pass --port PORT to marimo edit."
+        echo
+        echo "By default marimo runs with --watch so edits made by Pi (or any editor) reload live;"
+        echo "combined with runtime.watcher_on_save/auto_reload = \"autorun\" in marimo.toml, affected cells"
+        echo "re-run automatically without a browser refresh or kernel restart. Use --no-watch to opt out."
         echo
         echo "Starts a token-protected marimo notebook, then runs pi with marimo-pair loaded via --skill."
         echo "If MARIMO_TOKEN is set, it is reused; otherwise an 8-character random token is generated."
@@ -128,6 +133,9 @@ function pi-marimo --description 'Start marimo and Pi with the opt-in marimo-pai
         set marimo_url "http://$marimo_host:$marimo_port"
 
         set -l marimo_args edit --host $marimo_host --port $marimo_port
+        if not set -q _flag_no_watch
+            set -a marimo_args --watch
+        end
         if set -q _flag_no_token
             set -a marimo_args --no-token
         else
