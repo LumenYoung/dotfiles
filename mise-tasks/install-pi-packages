@@ -21,7 +21,7 @@ pi install npm:pi-goal-x
 # Keep the native single-port Tau fork pinned to the same release declared in
 # pi-agent/settings.json. This ensures a fresh machine clones the Git package
 # and installs its runtime dependencies during bootstrap.
-pi install git:github.com/LumenYoung/tau@v1.1.1-native.0
+pi install git:github.com/LumenYoung/tau@v1.2.0-native.0
 
 visual_explainer_dir="${REPO_ROOT}/skills/vendor/visual-explainer"
 if [[ -f "${visual_explainer_dir}/package.json" ]]; then
