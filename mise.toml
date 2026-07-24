@@ -14,6 +14,7 @@ zellij = "latest"
 yazi = "latest"
 btop = "latest"
 lazygit = "latest"
+"github:filebrowser/filebrowser" = "latest"
 
 # Editors and language runtimes
 neovim = "latest"
