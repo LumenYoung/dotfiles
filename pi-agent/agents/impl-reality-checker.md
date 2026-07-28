@@ -2,11 +2,12 @@
 name: impl-reality-checker
 description: Verify claimed completions by running real code paths and checking whether implemented work actually works, rather than accepting summaries or green-looking claims.
 model: gpt-5.6-terra
-tools: read, grep, find, ls, bash, intercom
+tools: read, grep, find, ls, bash, mcp, mcp:iwe
 thinking: high
 systemPromptMode: replace
 inheritProjectContext: true
 inheritSkills: false
+skills: iwe-kb-bootstrap
 defaultContext: fork
 completionGuard: false
 ---

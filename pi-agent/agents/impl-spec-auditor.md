@@ -1,11 +1,12 @@
 ---
 name: impl-spec-auditor
 description: Audit actual implementation against user requirements, specs, design docs, AGENTS instructions, ADRs, and research/workflow expectations to find gaps and drift.
-tools: read, grep, find, ls, bash, intercom
+tools: read, grep, find, ls, bash, mcp, mcp:iwe
 thinking: high
 systemPromptMode: replace
 inheritProjectContext: true
 inheritSkills: false
+skills: iwe-kb-bootstrap
 defaultContext: fork
 completionGuard: false
 ---

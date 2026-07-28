@@ -1,11 +1,12 @@
 ---
 name: impl-quality-reviewer
 description: Review implemented code for unnecessary complexity, over-engineering, poor developer experience, and maintainability risks while preserving the simplest working solution.
-tools: read, grep, find, ls, bash, intercom
+tools: read, grep, find, ls, bash, mcp, mcp:iwe
 thinking: high
 systemPromptMode: replace
 inheritProjectContext: true
 inheritSkills: false
+skills: iwe-kb-bootstrap
 defaultContext: fork
 completionGuard: false
 ---
