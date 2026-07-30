@@ -35,5 +35,135 @@
     "clipboardMirror": "never"
   },
   "lastChangelogVersion": "0.80.6",
-  "theme": "dark"
+  "theme": "dark",
+  "subagents": {
+    "agentOverrides": {
+      "advisor": {
+        "disabled": true
+      },
+      "reviewer": {
+        "disabled": true
+      },
+      "oracle": {
+        "tools": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "bash",
+          "intercom",
+          "mcp:iwe/iwe_retrieve",
+          "mcp:iwe/iwe_tree"
+        ],
+        "inheritSkills": false,
+        "skills": [
+          "iwe-kb-bootstrap"
+        ]
+      },
+      "planner": {
+        "tools": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "intercom",
+          "mcp:iwe/iwe_retrieve",
+          "mcp:iwe/iwe_tree"
+        ],
+        "inheritSkills": false,
+        "skills": [
+          "iwe-kb-bootstrap"
+        ]
+      },
+      "context-builder": {
+        "tools": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "bash",
+          "write",
+          "web_search",
+          "intercom",
+          "mcp:iwe/iwe_retrieve",
+          "mcp:iwe/iwe_tree"
+        ],
+        "inheritSkills": false,
+        "skills": [
+          "iwe-kb-bootstrap"
+        ]
+      },
+      "worker": {
+        "tools": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "bash",
+          "edit",
+          "write",
+          "contact_supervisor",
+          "mcp:iwe/iwe_retrieve",
+          "mcp:iwe/iwe_tree"
+        ],
+        "inheritSkills": false,
+        "skills": [
+          "iwe-kb-bootstrap"
+        ]
+      },
+      "delegate": {
+        "tools": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "bash",
+          "edit",
+          "write",
+          "contact_supervisor",
+          "mcp:iwe/iwe_retrieve",
+          "mcp:iwe/iwe_tree"
+        ],
+        "inheritSkills": false,
+        "skills": [
+          "iwe-kb-bootstrap"
+        ]
+      },
+      "researcher": {
+        "tools": [
+          "read",
+          "write",
+          "web_search",
+          "fetch_content",
+          "get_search_content",
+          "intercom",
+          "mcp:iwe/iwe_find",
+          "mcp:iwe/iwe_retrieve",
+          "mcp:iwe/iwe_tree"
+        ],
+        "inheritSkills": false,
+        "skills": [
+          "iwe-kb-bootstrap"
+        ]
+      },
+      "scout": {
+        "tools": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "bash",
+          "write",
+          "intercom",
+          "mcp:iwe/iwe_find",
+          "mcp:iwe/iwe_retrieve",
+          "mcp:iwe/iwe_tree"
+        ],
+        "inheritSkills": false,
+        "skills": [
+          "iwe-kb-bootstrap"
+        ]
+      }
+    }
+  }
 }
