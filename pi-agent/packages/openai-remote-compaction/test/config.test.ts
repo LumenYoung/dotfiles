@@ -13,9 +13,23 @@ test("requires provider, Responses API, and model pattern", () => {
   assert.equal(isEligibleModel({ provider: "lumeny-openai", api: "openai-responses", id: "claude-opus" }, DEFAULT_CONFIG), false);
 });
 
-test("parses overrides and rejects invalid regular expressions", () => {
-  const config = parseConfig({ providers: ["Custom"], modelPattern: "^gpt-5\\." });
+test("parses V2 overrides and rejects invalid values", () => {
+  const config = parseConfig({
+    providers: ["Custom"],
+    modelPattern: "^gpt-5\\.",
+    v2UserMessageRetention: 32,
+  });
   assert.deepEqual(config.providers, ["custom"]);
   assert.equal(config.modelPattern, "^gpt-5\\.");
+  assert.equal(config.v2UserMessageRetention, 32);
+  assert.equal(parseConfig({ v2UserMessageRetention: 8 }).v2UserMessageRetention, 64);
   assert.throws(() => parseConfig({ modelPattern: "[" }));
+});
+
+test("ignores obsolete V1 helper-model settings", () => {
+  const config = parseConfig({
+    compactionModel: "gpt-5.5",
+    compactionReasoning: "high",
+  });
+  assert.deepEqual(config, DEFAULT_CONFIG);
 });

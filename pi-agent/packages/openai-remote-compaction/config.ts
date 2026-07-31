@@ -1,12 +1,13 @@
 import { readFileSync } from "node:fs";
 
+export type V2UserMessageRetention = 16 | 32 | 64;
+
 export type RemoteCompactionConfig = {
   enabled: boolean;
   providers: string[];
   apis: string[];
   modelPattern: string;
-  compactionModel: string;
-  compactionReasoning: string;
+  v2UserMessageRetention: V2UserMessageRetention;
   fallbackToPi: boolean;
 };
 
@@ -15,8 +16,7 @@ export const DEFAULT_CONFIG: RemoteCompactionConfig = {
   providers: ["openai", "openai-codex", "lumeny-openai"],
   apis: ["openai-responses", "openai-codex-responses"],
   modelPattern: "^gpt-",
-  compactionModel: "gpt-5.5",
-  compactionReasoning: "current",
+  v2UserMessageRetention: 64,
   fallbackToPi: true,
 };
 
@@ -27,6 +27,12 @@ function stringArray(value: unknown, fallback: string[]): string[] {
     .map((entry) => entry.trim().toLowerCase())
     .filter(Boolean);
   return normalized.length > 0 ? [...new Set(normalized)] : fallback;
+}
+
+function v2UserMessageRetention(value: unknown): V2UserMessageRetention {
+  return value === 16 || value === 32 || value === 64
+    ? value
+    : DEFAULT_CONFIG.v2UserMessageRetention;
 }
 
 export function parseConfig(value: unknown): RemoteCompactionConfig {
@@ -45,12 +51,7 @@ export function parseConfig(value: unknown): RemoteCompactionConfig {
     providers: stringArray(input.providers, DEFAULT_CONFIG.providers),
     apis: stringArray(input.apis, DEFAULT_CONFIG.apis),
     modelPattern,
-    compactionModel: typeof input.compactionModel === "string" && input.compactionModel.trim()
-      ? input.compactionModel.trim()
-      : DEFAULT_CONFIG.compactionModel,
-    compactionReasoning: typeof input.compactionReasoning === "string" && input.compactionReasoning.trim()
-      ? input.compactionReasoning.trim()
-      : DEFAULT_CONFIG.compactionReasoning,
+    v2UserMessageRetention: v2UserMessageRetention(input.v2UserMessageRetention),
     fallbackToPi: typeof input.fallbackToPi === "boolean" ? input.fallbackToPi : DEFAULT_CONFIG.fallbackToPi,
   };
 }

@@ -10,7 +10,6 @@
     "openai-codex-responses"
   ],
   "modelPattern": "^gpt-",
-  "compactionModel": "gpt-5.5",
-  "compactionReasoning": "current",
+  "v2UserMessageRetention": 64,
   "fallbackToPi": true
 }
