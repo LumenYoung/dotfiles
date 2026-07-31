@@ -30,7 +30,6 @@ make = "latest"
 
 # Agent-facing CLIs
 opencode = "latest"
-"npm:t3" = "latest"
 "npm:@earendil-works/pi-coding-agent" = "latest"
 "github:iwe-org/iwe" = { version = "latest", version_prefix = "iwe-v" }
 
@@ -295,7 +294,7 @@ run = '''
 #!/usr/bin/env bash
 set -euo pipefail
 
-SKILL_URL="https://raw.githubusercontent.com/ogulcancelik/herdr/master/SKILL.md"
+SKILL_URL="https://raw.githubusercontent.com/herdrdev/herdr/master/skills/herdr/SKILL.md"
 AGENTS_SKILL_DIR="$HOME/.agents/skills/herdr"
 CODEX_SKILL_DIR="${CODEX_HOME:-$HOME/.codex}/skills/herdr"
 
@@ -476,7 +475,6 @@ declare -a TOOL_BIN_ALLOWLIST=(
   'bun|bun bunx'
   'codex|codex'
   'opencode|opencode'
-  'npm:t3|t3'
   'npm:@earendil-works/pi-coding-agent|pi'
   'github:iwe-org/iwe|iwe iwes iwec'
   'aqua:rtk-ai/rtk|rtk'
@@ -567,6 +565,9 @@ run = """
 set -euo pipefail
 
 mise run ensure-submodules
+# Refresh the global manifest before installation so tools removed from this
+# repo do not remain active through a stale ~/.config/mise/config.toml.
+mise run sync-global-mise-tools
 mise install
 mise run remove-obsolete-codex
 
@@ -598,7 +599,6 @@ trap - EXIT
 if ! mise run clean-user-tools -- --interactive; then
   echo "WARN: legacy user-space tool cleanup skipped or unavailable; continuing setup." >&2
 fi
-mise run sync-global-mise-tools
 mise run ensure-iwe-notes
 mise run ensure-local-fish
 mise run propagate-core
