@@ -1,7 +1,11 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { DEFAULT_CONFIG } from "../config.ts";
-import { buildAdapterConfig, EXPECTED_CODEX_VERSION } from "../upstream/codex-3.0.5.ts";
+import {
+  buildAdapterConfig,
+  EXPECTED_CODEX_VERSION,
+  withCompactionStreamRegistryFallback,
+} from "../upstream/codex-3.0.5.ts";
 
 const BASE_CONFIG = {
   voiceFeaturesOnly: false,
@@ -58,4 +62,51 @@ test("enables only native V2 compaction in the synthetic adapter config", () => 
   assert.equal(config.openai.fast, false);
   assert.equal(config.openai.forceCachedWebSockets, false);
   assert.equal(config.openai.harnessIdentifierHeader, false);
+});
+
+test("exposes the compaction-only stream to upstream V2 without mutating registration", () => {
+  const registered = { api: "openai-responses", baseUrl: "https://proxy.example/v1" };
+  const compactionStream = () => "raw-output-aware-stream" as any;
+  const modelRegistry = {
+    getRegisteredProviderConfig(providerId: string) {
+      return providerId === "openai" ? registered : undefined;
+    },
+  };
+  const ctx = {
+    model: { provider: "openai", api: "openai-responses" },
+    modelRegistry,
+  } as any;
+
+  const view = withCompactionStreamRegistryFallback(ctx, compactionStream);
+  const exposed = view.modelRegistry.getRegisteredProviderConfig("openai") as {
+    api: string;
+    streamSimple: () => string;
+  };
+
+  assert.notEqual(view, ctx);
+  assert.equal(exposed.api, "openai-responses");
+  assert.equal(exposed.streamSimple(), "raw-output-aware-stream");
+  assert.equal("streamSimple" in registered, false);
+  assert.equal(modelRegistry.getRegisteredProviderConfig("openai"), registered);
+});
+
+test("preserves an explicitly registered compaction stream", () => {
+  const registeredStream = () => "registered";
+  const ctx = {
+    model: { provider: "openai", api: "openai-responses" },
+    modelRegistry: {
+      getRegisteredProviderConfig: () => ({ api: "openai-responses", streamSimple: registeredStream }),
+    },
+  } as any;
+
+  assert.equal(withCompactionStreamRegistryFallback(ctx, (() => "fallback") as any), ctx);
+});
+
+test("does not install the generic Responses stream for Codex-authenticated models", () => {
+  const ctx = {
+    model: { provider: "openai-codex", api: "openai-codex-responses" },
+    modelRegistry: { getRegisteredProviderConfig: () => undefined },
+  } as any;
+
+  assert.equal(withCompactionStreamRegistryFallback(ctx, (() => "fallback") as any), ctx);
 });
