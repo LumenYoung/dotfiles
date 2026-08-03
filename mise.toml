@@ -136,6 +136,98 @@ run = "uv run --with pyyaml python propogate_dotfiles.py --core"
 description = "Symlink Codex, OpenCode, T3 Code, and related user units"
 run = "uv run --with pyyaml python propogate_dotfiles.py --agents"
 
+[tasks.t3-code-update]
+description = "Opt in to install/update T3 Code, then restart its active user service"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+
+version="${T3CODE_VERSION:-latest}"
+install_dir="$HOME/.local/share/t3-code-cli"
+npm_cache="${T3CODE_NPM_CACHE:-${T3CODE_HOME:-$HOME/.t3}/npm-cache}"
+restart_service=true
+
+if [[ "${1:-}" == "--no-restart" ]]; then
+  restart_service=false
+  shift
+fi
+if [[ $# -gt 0 ]]; then
+  echo "Unknown argument: $1" >&2
+  echo "Usage: mise run t3-code-update -- [--no-restart]" >&2
+  echo "Set T3CODE_VERSION to install an exact release instead of latest." >&2
+  exit 2
+fi
+
+if ! command -v node >/dev/null 2>&1 || ! command -v npm >/dev/null 2>&1; then
+  echo "ERROR: compatible Node.js and npm are required. Run 'mise install node' first." >&2
+  exit 1
+fi
+
+node - <<'NODE'
+const [major, minor] = process.versions.node.split(".").map(Number);
+const supported =
+  (major === 22 && minor >= 16) ||
+  (major === 23 && minor >= 11) ||
+  (major === 24 && minor >= 10) ||
+  major > 24;
+if (!supported) {
+  console.error(`T3 Code requires Node ^22.16 || ^23.11 || >=24.10; current Node is ${process.version}.`);
+  process.exit(1);
+}
+NODE
+
+resolved_version="$(npm view "t3@${version}" version)"
+mkdir -p "$install_dir" "$npm_cache"
+
+# npm 11 can restrict dependency lifecycle scripts. Keep the allowlist aligned
+# with T3 Code upstream's pnpm allowBuilds entries so native terminal and
+# MessagePack helpers are built without permitting arbitrary dependency scripts.
+cat > "$install_dir/package.json" <<'JSON'
+{
+  "private": true,
+  "allowScripts": {
+    "msgpackr-extract": true,
+    "node-pty": true
+  }
+}
+JSON
+
+npm_major="$(npm --version | cut -d. -f1)"
+npm_args=(
+  install
+  --prefix "$install_dir"
+  --no-save
+  --no-package-lock
+  --omit=dev
+  --no-audit
+  --no-fund
+  "t3@${resolved_version}"
+)
+if [[ "$npm_major" =~ ^[0-9]+$ ]] && (( npm_major >= 11 )); then
+  npm_args=(install --strict-allow-scripts "${npm_args[@]:1}")
+fi
+
+npm_config_cache="$npm_cache" npm "${npm_args[@]}"
+
+t3_bin="$install_dir/node_modules/.bin/t3"
+if [[ ! -x "$t3_bin" ]]; then
+  echo "ERROR: T3 Code binary was not installed at $t3_bin" >&2
+  exit 1
+fi
+
+installed_version="$($t3_bin --version)"
+echo "Installed $installed_version at $t3_bin"
+
+if [[ "$restart_service" == "true" ]] && systemctl --user is-active --quiet t3-code.service; then
+  echo "Restarting active t3-code.service..."
+  mise run t3-code-restart
+elif [[ "$restart_service" == "true" ]]; then
+  echo "t3-code.service is not active; installation updated without starting it."
+else
+  echo "Restart skipped. Run 'mise run t3-code-restart' when active work has finished."
+fi
+'''
+
 [tasks.t3-code-restart]
 description = "Resolve Lumeny env from current shell/fallback fish env, then restart T3 Code user service"
 run = '''
