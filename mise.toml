@@ -2,6 +2,7 @@
 # CLI essentials — daily shell/navigation/search primitives
 fd = "latest"
 ripgrep = "latest"
+jq = "latest"
 fzf = "latest"
 zoxide = "latest"
 eza = "latest"
