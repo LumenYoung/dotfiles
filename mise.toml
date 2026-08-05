@@ -15,6 +15,9 @@ zellij = "latest"
 yazi = "latest"
 btop = "latest"
 lazygit = "latest"
+# diffnav renders diffs through delta, so delta must stay installed alongside it
+delta = "latest"
+"aqua:dlvhdr/diffnav" = "latest"
 "github:filebrowser/filebrowser" = "latest"
 
 # Editors and language runtimes
@@ -446,10 +449,6 @@ fi
 description = "Initialize and update git submodules to pinned commits"
 run = "bash mise-tasks/ensure-submodules"
 
-[tasks.install-pi-packages]
-description = "Install Pi packages/extensions"
-run = "bash mise-tasks/install-pi-packages"
-
 [tasks.install-coms-net-deps]
 description = "Install dependencies for the Pi coms-net scripts"
 run = "cd pi-agent/scripts && bun install"
@@ -555,6 +554,8 @@ declare -a TOOL_BIN_ALLOWLIST=(
   'fd|fd'
   'ripgrep|rg'
   'lazygit|lazygit'
+  'delta|delta'
+  'aqua:dlvhdr/diffnav|diffnav'
   'zellij|zellij'
   'zoxide|zoxide'
   'fzf|fzf'
@@ -697,7 +698,6 @@ mise run ensure-local-fish
 mise run propagate-core
 mise run propagate-agents
 mise run install-rtk-integrations
-mise run install-pi-packages
 mise run install-coms-net-deps
 mise run install-herdr-agent-skill
 mise run install-herdr-integrations
