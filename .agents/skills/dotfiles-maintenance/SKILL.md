@@ -45,6 +45,7 @@ Use for portable skills that should be available outside this repo and governed 
 Current examples:
 - `skills/global/html-artifacts/`
 - `skills/global/iwe-kb-bootstrap/`
+- `skills/global/wayfinder/` (governed adaptation of an upstream skill, integrated with the existing `grill-with-docs` workflow)
 
 Exposure to agents is through repo-internal relative symlinks:
 - `codex/skills/global -> ../../skills/global`
@@ -54,6 +55,7 @@ Exposure to agents is through repo-internal relative symlinks:
 Rules:
 - Maintain shared skill content under `skills/global/`, not under an agent-specific directory.
 - Keep the relative symlinks intact; do not replace them with copied directories or absolute home-directory symlinks.
+- Prefer direct exposure of an upstream vendored skill. When a material local adaptation is required, keep the adapted skill under `skills/global/`, preserve upstream source and license metadata, document the local integration differences, and avoid exposing a second skill with the same name.
 - If an agent cannot discover nested symlinked skills, add an explicit agent-specific link/config for that agent instead of duplicating source content.
 
 ### 3. Externally maintained vendored skills/packages

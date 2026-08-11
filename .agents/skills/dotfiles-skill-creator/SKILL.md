@@ -48,6 +48,8 @@ Current relative links:
 - `pi-agent/skills/global -> ../../skills/global`
 - `claude/skills/global -> ../../skills/global`
 
+An upstream-derived skill that needs material local integration changes may be maintained as a governed adaptation here instead of a direct vendor symlink. Preserve its upstream URL/commit and license in the skill, document the overrides, and do not expose both adapted and unadapted copies under the same name.
+
 ### 3. Externally maintained vendored skill/package
 
 Use `skills/vendor/<upstream-name>/` for upstream repositories tracked as submodules or otherwise maintained outside this repo. Expose the actual skill directory through `skills/global/<skill-name>` when it should be available through the governed global skill symlink model.
