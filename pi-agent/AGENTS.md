@@ -12,6 +12,12 @@ Coordinate with other local pi sessions on related codebases. Use `/skill:pi-int
 
 After substantial implementation work, use `impl-reality-checker` and `impl-quality-reviewer` to verify that the work is actually implemented and not over-engineered. For small, localized code changes, test and inspect the change yourself instead of launching subagents when direct validation is faster and sufficient.
 
+## Documentation writing
+
+Delegate substantial creation or revision of local durable documentation—including READMEs, tutorials, how-to guides, references, explanations, ADRs, and migration guides—to `document-writer` in foreground/blocking mode with forked context. Give it the intended artifact and target files rather than a scripted rewrite. Small, localized documentation fixes may be handled directly. 
+
+Use `iwe-page-editor` for IWE updates.
+
 ## IWE knowledge-base workflow
 
 Delegate broad, unfamiliar, or cross-note discovery to the `iwe-searcher` subagent in foreground/blocking mode. Do not launch it asynchronously unless instructed. Once the relevant keys and context are known, use IWE directly for targeted retrieval rather than delegating repeatedly.

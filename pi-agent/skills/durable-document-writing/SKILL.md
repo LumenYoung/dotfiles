@@ -1,6 +1,7 @@
 ---
 name: durable-document-writing
 description: Write or revise durable documentation, tutorials, how-to guides, references, explanations, ADRs, and migration guides from rich implementation context. Use when the author must separate reader-relevant instructions and stable facts from transient implementation history, debugging evidence, internal process, and AI-agent narration.
+disable-model-invocation: true
 ---
 
 # Durable Document Writing
