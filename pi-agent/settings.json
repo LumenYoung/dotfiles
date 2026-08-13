@@ -34,7 +34,7 @@
   "piVim": {
     "clipboardMirror": "never"
   },
-  "lastChangelogVersion": "0.80.6",
+  "lastChangelogVersion": "0.84.1",
   "theme": "dark",
   "subagents": {
     "agentOverrides": {

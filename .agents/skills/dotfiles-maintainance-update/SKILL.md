@@ -60,7 +60,7 @@ Pi may also install the local submodule as a package to get the native `visual_e
    test -f skills/global/visual-explainer/SKILL.md
    .agents/skills/dotfiles-skill-creator/scripts/quick_validate.py skills/global/visual-explainer
    ```
-5. If `package.json` Pi metadata changed, review whether `mise-tasks/install-pi-packages`, `pi-agent/settings.json`, or docs need updates.
+5. If `package.json` Pi metadata changed, review whether `pi-agent/settings.json` or docs need updates. Pi packages are managed directly with the `pi` CLI (`pi install`, `pi update --extensions`), not by a bootstrap task.
 6. If prompt/tool behavior changed, note the impact in the final response.
 7. Stage the parent repo submodule pointer change, not files inside the submodule unless intentionally contributing upstream.
 
@@ -99,5 +99,5 @@ After any submodule update, re-run the narrow validation for whatever the submod
 5. Mention any required bootstrap command, usually:
    ```bash
    mise run ensure-submodules
-   mise run install-pi-packages
    ```
+   If the update affects a Pi package, install it directly with `pi install <spec>`.

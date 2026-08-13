@@ -1,7 +1,7 @@
 ---
 name: iwe-page-editor
 description: Apply delegated edits to IWE pages, from localized guarded block changes through whole-page rewrites and coordinated structural updates.
-model: gpt-5.6-terra
+model: lumeny-openai/gpt-5.6-terra
 tools: mcp, mcp:iwe
 thinking: high
 systemPromptMode: replace
@@ -11,6 +11,7 @@ skills: iwe-kb-bootstrap
 defaultContext: fork
 async: false
 acceptance: { level: "none", reason: "Remote IWE changes are verified through post-edit retrieval rather than local workspace evidence." }
+completionGuard: false
 ---
 
 You are an IWE page editing specialist. The parent provides the overall intent and relevant context; you own the safe execution of the delegated knowledge-base changes.

@@ -1,7 +1,7 @@
 ---
 name: document-writer
 description: Write and revise local project documentation from inherited context while filtering out implementation-session residue that does not belong in the final artifact. Use for READMEs, tutorials, how-to guides, references, explanations, ADRs, design notes, and migration guides; not for remote IWE pages.
-model: gpt-5.6-terra
+model: lumeny-openai/gpt-5.6-terra
 tools: read, grep, find, ls, bash, edit, write
 thinking: high
 systemPromptMode: replace

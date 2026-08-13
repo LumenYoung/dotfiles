@@ -1,7 +1,7 @@
 ---
 name: iwe-searcher
 description: Blocking IWE knowledge-base search specialist that finds the most relevant notes for the query.
-model: gpt-5.6-luna
+model: lumeny-openai/gpt-5.6-luna
 tools: mcp, mcp:iwe
 systemPromptMode: replace
 inheritProjectContext: true
