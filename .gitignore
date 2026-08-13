@@ -340,3 +340,4 @@ pi-agent/backups/
 /pi-agent/intercom/broker.pid
 /.pi-subagents/artifacts
 /systemd/user/lunaly.service
+/pi-agent/missions/index
