@@ -292,6 +292,7 @@ install/eget.sh
 *sqlite-*
 kitty/Wallpapers/*.png
 fish/fishd.tmp.*
+/fish/fish_variables
 codex/log
 codex/sessions
 codex/history.jsonl
