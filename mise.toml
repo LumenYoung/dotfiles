@@ -35,7 +35,6 @@ make = "latest"
 # Agent-facing CLIs
 opencode = "latest"
 "npm:@earendil-works/pi-coding-agent" = "latest"
-"github:iwe-org/iwe" = { version = "latest", version_prefix = "iwe-v" }
 
 # Agent support tools / integrations
 "aqua:rtk-ai/rtk" = "latest"
