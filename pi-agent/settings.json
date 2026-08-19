@@ -25,7 +25,7 @@
     "npm:pi-subagents",
     "npm:pi-intercom",
     "npm:pi-prompt-template-model",
-    "npm:pi-btw",
+    "git:github.com/LumenYoung/pi-btw@605a366cbed6cbc1c5a471801806c04562532f9e",
     "npm:pi-goal-x",
     "git:github.com/LumenYoung/tau@v1.2.0-native.0",
     "../../dotfiles/skills/vendor/visual-explainer",
