@@ -81,6 +81,9 @@ Paths:
 
 Use only when a skill depends on non-portable behavior of that agent, such as an agent-specific tool, plugin system, prompt format, or runtime convention.
 
+Current Pi-specific example:
+- `pi-agent/skills/teach/` because Pi's `disable-model-invocation` behavior and its `/teach` prompt wrapper make the workflow explicitly invoked rather than model-advertised.
+
 Rules:
 - Add a short note in the skill explaining why it is agent-specific.
 - Do not treat `codex/skills/` as the governed shared-skill source; Codex may also contain system/user-installed skills.
