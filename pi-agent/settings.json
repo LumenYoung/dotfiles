@@ -29,7 +29,7 @@
     "npm:pi-goal-x",
     "git:github.com/LumenYoung/tau@v1.2.0-native.0",
     "../../dotfiles/skills/vendor/visual-explainer",
-    "npm:pi-vim"
+    "git:github.com/LumenYoung/pi-vim"
   ],
   "piVim": {
     "clipboardMirror": "never"
