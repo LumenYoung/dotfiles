@@ -43,7 +43,6 @@ Source of truth: `skills/global/<skill-name>/SKILL.md`
 Use for portable skills that should be available outside this repo and governed from this dotfiles repository.
 
 Current examples:
-- `skills/global/html-artifacts/`
 - `skills/global/iwe-kb-bootstrap/`
 - `skills/global/wayfinder/` (governed adaptation of an upstream skill, integrated with the existing `grill-with-docs` workflow)
 
