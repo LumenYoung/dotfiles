@@ -66,10 +66,12 @@ Use for upstream repositories tracked as git submodules or otherwise maintained 
 Current examples:
 - `skills/vendor/visual-explainer/`
 - `skills/global/visual-explainer -> ../vendor/visual-explainer/plugins/visual-explainer`
+- `skills/vendor/effective-html/`, whose canonical workflows are exposed only through Pi-specific adapters
 
 Rules:
 - Do not edit vendored upstream content casually; prefer updating the submodule pointer.
-- Expose only the actual skill directory through `skills/global/`.
+- Expose only the actual skill directory through `skills/global/` when the skill is meant to be globally available.
+- `effective-html` is intentionally not global: `pi-agent/skills/effective-html/` contains thin adapters for its six upstream workflows. They use Pi's `disable-model-invocation` behavior so users invoke `/skill:<name>` explicitly; each adapter reads the matching canonical vendored `SKILL.md`. Keep this visibility boundary local and do not copy or modify upstream workflow content in the adapters.
 - If the upstream package also provides Pi extensions/prompts, Pi package install may be used, but point it at the same local submodule path to avoid duplicate skill-name collisions from different real paths.
 
 ### 4. Agent-specific skills
@@ -81,8 +83,9 @@ Paths:
 
 Use only when a skill depends on non-portable behavior of that agent, such as an agent-specific tool, plugin system, prompt format, or runtime convention.
 
-Current Pi-specific example:
+Current Pi-specific examples:
 - `pi-agent/skills/teach/` because Pi's `disable-model-invocation` behavior and its `/teach` prompt wrapper make the workflow explicitly invoked rather than model-advertised.
+- `pi-agent/skills/effective-html/`, whose adapters apply the same user-only visibility policy to canonical workflows vendored from Effective HTML.
 
 Rules:
 - Add a short note in the skill explaining why it is agent-specific.

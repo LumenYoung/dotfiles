@@ -64,6 +64,41 @@ Pi may also install the local submodule as a package to get the native `visual_e
 6. If prompt/tool behavior changed, note the impact in the final response.
 7. Stage the parent repo submodule pointer change, not files inside the submodule unless intentionally contributing upstream.
 
+## Updating effective-html
+
+`effective-html` is maintained upstream and vendored as a git submodule under:
+
+```text
+skills/vendor/effective-html
+```
+
+It is intentionally not exposed through `skills/global/`. Its six canonical workflows are available in Pi only through thin, hidden adapters at `pi-agent/skills/effective-html/<skill-name>/`. The adapters are a local visibility boundary and should normally remain unchanged when upstream updates.
+
+### Update procedure
+
+1. Move the submodule to its tracked upstream commit and inspect the change:
+   ```bash
+   git submodule update --remote skills/vendor/effective-html
+   git -C skills/vendor/effective-html log --oneline --decorate -10
+   git -C skills/vendor/effective-html diff --stat HEAD@{1}..HEAD || true
+   ```
+2. Review the upstream workflow files, especially any changed names, sibling references, or delivery requirements:
+   ```bash
+   find skills/vendor/effective-html/skills -mindepth 2 -maxdepth 2 -name SKILL.md -print | sort
+   git -C skills/vendor/effective-html diff HEAD@{1}..HEAD -- skills || true
+   ```
+3. Verify every adapter still points to an existing matching canonical workflow and validates as a Pi skill:
+   ```bash
+   for name in html design-artifact html-diagram html-plan html-prototype html-wireframe; do
+     adapter="pi-agent/skills/effective-html/$name/SKILL.md"
+     upstream="skills/vendor/effective-html/skills/$name/SKILL.md"
+     test -f "$adapter" && test -f "$upstream"
+     grep -Fq "../../../../skills/vendor/effective-html/skills/$name/SKILL.md" "$adapter"
+     .agents/skills/dotfiles-skill-creator/scripts/quick_validate.py "${adapter%/SKILL.md}"
+   done
+   ```
+4. Change an adapter only when upstream renames or relocates its corresponding workflow, or when Pi's explicit-invocation integration changes. Stage the parent repository's submodule pointer, not upstream files inside the submodule.
+
 ## Pi duplicate-skill rule
 
 Pi warns on duplicate skill names from different real paths and keeps the first skill found. Pi silently deduplicates symlink aliases that resolve to the same canonical `SKILL.md` path.

@@ -18,7 +18,10 @@ This repo has four distinct skill roles:
    repo-internal relative symlinks, e.g. `codex/skills/global -> ../../skills/global`.
 3. **Externally maintained vendored skills/packages** live under `skills/vendor/`. Use this
    for upstream repos tracked as submodules. Expose the actual skill directory through
-   `skills/global/` when it should be globally available.
+   `skills/global/` when it should be globally available. A vendor may instead have thin,
+   Pi-only adapters under `pi-agent/skills/` when Pi-specific explicit-invocation behavior is
+   required; the adapters keep visibility policy local while canonical workflow content remains
+   upstream.
 4. **Opt-in skills** live under `optin-skills/<project>/`. These are intentionally outside auto-discovered
    agent skill roots and are mapped to `~/.config/optin-skills` for explicit CLI use such as
    `pi --skill ~/.config/optin-skills/<project>/...` or wrapper functions like `pi-marimo`.
@@ -57,6 +60,9 @@ symlink/configure as needed. Agent-specific skills stay in that agent’s own di
 - Project-local skills: `dotfiles/.agents/skills`
 - Governed global skills source: `dotfiles/skills/global`
 - Vendored upstream skill/package source: `dotfiles/skills/vendor`
+- Pi-only Effective HTML adapters: `dotfiles/pi-agent/skills/effective-html/` → canonical
+  workflows in `dotfiles/skills/vendor/effective-html/skills/`; they are hidden from Pi's
+  model-advertised skills and run only through explicit `/skill:<name>` commands.
 - Opt-in skill source: `dotfiles/optin-skills` → `~/.config/optin-skills`
 - Relative shared-skill links:
   - `codex/skills/global` → `../../skills/global`

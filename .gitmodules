@@ -10,3 +10,6 @@
 [submodule "optin-skills/marimo/marimo-pair"]
 	path = optin-skills/marimo/marimo-pair
 	url = https://github.com/marimo-team/marimo-pair
+[submodule "skills/vendor/effective-html"]
+	path = skills/vendor/effective-html
+	url = https://github.com/plannotator/effective-html.git
