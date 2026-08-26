@@ -1,5 +1,5 @@
 function pi-marimo --description 'Start marimo and Pi with the opt-in marimo-pair skill'
-    argparse --ignore-unknown 'h/help' 'no-start' 'no-token' 'no-watch' 'marimo-port=' -- $argv
+    argparse --ignore-unknown 'h/help' 'no-start' 'no-token' 'no-watch' 'bind-all' 'marimo-port=' -- $argv
     or return 2
 
     if set -q _flag_help
@@ -10,6 +10,8 @@ function pi-marimo --description 'Start marimo and Pi with the opt-in marimo-pai
         echo "      --no-start         Do not start marimo; only launch Pi with marimo-pair loaded."
         echo "      --no-token         Start marimo without auth and rely on marimo auto-discovery."
         echo "      --no-watch         Do not pass --watch to marimo edit (disable live external-edit reload)."
+        echo "      --bind-all         With IP_PREFIX: bind 0.0.0.0 instead of the matched IP, so"
+        echo "                         localhost and the matched IP both work (listens on ALL interfaces)."
         echo "      --marimo-port PORT Pass --port PORT to marimo edit."
         echo
         echo "By default marimo runs with --watch so edits made by Pi (or any editor) reload live;"
@@ -94,6 +96,7 @@ function pi-marimo --description 'Start marimo and Pi with the opt-in marimo-pai
         end
 
         set -l marimo_host 127.0.0.1
+        set -l marimo_bind_host 127.0.0.1
         if set -q IP_PREFIX; and test -n "$IP_PREFIX"
             if not command -q ip
                 echo "IP_PREFIX is set, but ip(8) was not found on PATH" >&2
@@ -116,6 +119,12 @@ function pi-marimo --description 'Start marimo and Pi with the opt-in marimo-pai
             if test (count $matched_ips) -gt 1
                 echo "Multiple IPv4 addresses matched IP_PREFIX=$IP_PREFIX; using $marimo_host" >&2
             end
+
+            if set -q _flag_bind_all
+                set marimo_bind_host 0.0.0.0
+            else
+                set marimo_bind_host $marimo_host
+            end
         end
 
         set -l marimo_port
@@ -126,13 +135,13 @@ function pi-marimo --description 'Start marimo and Pi with the opt-in marimo-pai
                 echo "python not found; pass --marimo-port PORT or make python available on PATH" >&2
                 return 127
             end
-            set marimo_port (python -c 'import socket, sys; host = sys.argv[1]; s=socket.socket(); s.bind((host, 0)); print(s.getsockname()[1]); s.close()' $marimo_host)
+            set marimo_port (python -c 'import socket, sys; host = sys.argv[1]; s=socket.socket(); s.bind((host, 0)); print(s.getsockname()[1]); s.close()' $marimo_bind_host)
             or return $status
         end
 
         set marimo_url "http://$marimo_host:$marimo_port"
 
-        set -l marimo_args edit --host $marimo_host --port $marimo_port
+        set -l marimo_args edit --host $marimo_bind_host --port $marimo_port
         if not set -q _flag_no_watch
             set -a marimo_args --watch
         end
