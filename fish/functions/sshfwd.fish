@@ -16,7 +16,7 @@ function sshfwd --description "SSH with local port forwarding"
     end
 
     if test -z "$ports"
-        read -l -P "Ports to forward (e.g. 5432 or 8000,8080): " ports
+        read -f -P "Ports to forward (e.g. 5432 or 8000,8080): " ports
     end
 
     if test -z "$ports"
