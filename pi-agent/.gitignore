@@ -1,5 +1,6 @@
 # Runtime/generated Pi agent state kept in the symlinked directory but not committed.
 auth.json
+models.json
 trust.json
 mcp-cache.json
 run-history.jsonl
