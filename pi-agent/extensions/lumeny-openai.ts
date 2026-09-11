@@ -20,6 +20,7 @@ type RemoteModelsPayload = {
 };
 
 const MODEL_CONTEXT_WINDOWS: Record<string, number> = {
+  "gpt-6-astra": 260000,
   "gpt-5.6-sol": 256000,
   "gpt-5.6-luna": 256000,
   "gpt-5.6-terra": 256000,

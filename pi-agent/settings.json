@@ -4,7 +4,7 @@
   "defaultThinkingLevel": "high",
   "transport": "sse",
   "compaction": {
-    "enabled": true,
+    "enabled": false,
     "reserveTokens": 38400,
     "keepRecentTokens": 20000
   },
@@ -19,10 +19,11 @@
       "source": "npm:@howaboua/pi-codex-conversion@3.0.5",
       "extensions": []
     },
-    "./packages/openai-remote-compaction",
+    "/home/yang/Documents/git/billion-context-pi",
+    "git:github.com/LumenYoung/pi-advisor@feat/acp-advisor-retrieval",
     "npm:pi-web-access",
     "npm:pi-mcp-adapter",
-    "npm:pi-subagents",
+    "git:github.com/LumenYoung/pi-subagents@fix/explicit-extension-tools",
     "npm:pi-intercom",
     "npm:pi-prompt-template-model",
     "git:github.com/LumenYoung/pi-btw@605a366cbed6cbc1c5a471801806c04562532f9e",
@@ -33,7 +34,7 @@
   "piVim": {
     "clipboardMirror": "never"
   },
-  "lastChangelogVersion": "0.84.1",
+  "lastChangelogVersion": "0.85.1",
   "theme": "dark",
   "subagents": {
     "agentOverrides": {
@@ -52,11 +53,21 @@
           "bash",
           "intercom",
           "mcp:iwe/iwe_retrieve",
-          "mcp:iwe/iwe_tree"
+          "mcp:iwe/iwe_tree",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
         ],
         "inheritSkills": false,
         "skills": [
           "iwe-kb-bootstrap"
+        ],
+        "subagentOnlyExtensions": [
+          "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
+          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts",
+          "/home/yang/.pi/agent/npm/node_modules/pi-intercom/index.ts"
         ]
       },
       "planner": {
@@ -67,11 +78,21 @@
           "ls",
           "intercom",
           "mcp:iwe/iwe_retrieve",
-          "mcp:iwe/iwe_tree"
+          "mcp:iwe/iwe_tree",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
         ],
         "inheritSkills": false,
         "skills": [
           "iwe-kb-bootstrap"
+        ],
+        "subagentOnlyExtensions": [
+          "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
+          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts",
+          "/home/yang/.pi/agent/npm/node_modules/pi-intercom/index.ts"
         ]
       },
       "context-builder": {
@@ -85,11 +106,22 @@
           "web_search",
           "intercom",
           "mcp:iwe/iwe_retrieve",
-          "mcp:iwe/iwe_tree"
+          "mcp:iwe/iwe_tree",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
         ],
         "inheritSkills": false,
         "skills": [
           "iwe-kb-bootstrap"
+        ],
+        "subagentOnlyExtensions": [
+          "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
+          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts",
+          "/home/yang/.pi/agent/npm/node_modules/pi-intercom/index.ts",
+          "/home/yang/.pi/agent/npm/node_modules/pi-web-access/index.ts"
         ]
       },
       "worker": {
@@ -103,11 +135,20 @@
           "write",
           "contact_supervisor",
           "mcp:iwe/iwe_retrieve",
-          "mcp:iwe/iwe_tree"
+          "mcp:iwe/iwe_tree",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
         ],
         "inheritSkills": false,
         "skills": [
           "iwe-kb-bootstrap"
+        ],
+        "subagentOnlyExtensions": [
+          "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
+          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts"
         ]
       },
       "delegate": {
@@ -121,11 +162,20 @@
           "write",
           "contact_supervisor",
           "mcp:iwe/iwe_retrieve",
-          "mcp:iwe/iwe_tree"
+          "mcp:iwe/iwe_tree",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
         ],
         "inheritSkills": false,
         "skills": [
           "iwe-kb-bootstrap"
+        ],
+        "subagentOnlyExtensions": [
+          "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
+          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts"
         ]
       },
       "researcher": {
@@ -138,11 +188,22 @@
           "intercom",
           "mcp:iwe/iwe_find",
           "mcp:iwe/iwe_retrieve",
-          "mcp:iwe/iwe_tree"
+          "mcp:iwe/iwe_tree",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
         ],
         "inheritSkills": false,
         "skills": [
           "iwe-kb-bootstrap"
+        ],
+        "subagentOnlyExtensions": [
+          "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
+          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts",
+          "/home/yang/.pi/agent/npm/node_modules/pi-intercom/index.ts",
+          "/home/yang/.pi/agent/npm/node_modules/pi-web-access/index.ts"
         ]
       },
       "scout": {
@@ -156,11 +217,39 @@
           "intercom",
           "mcp:iwe/iwe_find",
           "mcp:iwe/iwe_retrieve",
-          "mcp:iwe/iwe_tree"
+          "mcp:iwe/iwe_tree",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
         ],
         "inheritSkills": false,
         "skills": [
           "iwe-kb-bootstrap"
+        ],
+        "subagentOnlyExtensions": [
+          "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
+          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts",
+          "/home/yang/.pi/agent/npm/node_modules/pi-intercom/index.ts"
+        ]
+      },
+      "evidence-auditor": {
+        "tools": [
+          "read",
+          "web_search",
+          "fetch_content",
+          "get_search_content",
+          "source_check",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
+        ],
+        "subagentOnlyExtensions": [
+          "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
+          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/npm/node_modules/pi-web-access/index.ts"
         ]
       }
     }

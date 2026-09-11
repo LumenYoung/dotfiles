@@ -2,7 +2,8 @@
 name: impl-reality-checker
 description: Verify claimed completions by running real code paths and checking whether implemented work actually works, rather than accepting summaries or green-looking claims.
 model: lumeny-openai/gpt-5.6-terra
-tools: read, grep, find, ls, bash, mcp, mcp:iwe
+tools: read, grep, find, ls, bash, mcp, mcp:iwe, compress, decompress, search_context, acp_status
+subagentOnlyExtensions: /home/yang/.pi/agent/extensions/lumeny-openai.ts, /home/yang/Documents/git/billion-context-pi/dist/index.js, /home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts
 thinking: high
 systemPromptMode: replace
 inheritProjectContext: true

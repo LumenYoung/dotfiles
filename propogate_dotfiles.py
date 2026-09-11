@@ -54,6 +54,7 @@ agent_configs = [
     "systemd",
     "codex-session-stream",
     "pi-agent",
+    "pi-acp.json",
     "optin-skills",
 ]
 

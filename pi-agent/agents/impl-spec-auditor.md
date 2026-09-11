@@ -1,7 +1,8 @@
 ---
 name: impl-spec-auditor
 description: Audit actual implementation against user requirements, specs, design docs, AGENTS instructions, ADRs, and research/workflow expectations to find gaps and drift.
-tools: read, grep, find, ls, bash, mcp, mcp:iwe
+tools: read, grep, find, ls, bash, mcp, mcp:iwe, compress, decompress, search_context, acp_status
+subagentOnlyExtensions: /home/yang/.pi/agent/extensions/lumeny-openai.ts, /home/yang/Documents/git/billion-context-pi/dist/index.js, /home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts
 thinking: high
 systemPromptMode: replace
 inheritProjectContext: true

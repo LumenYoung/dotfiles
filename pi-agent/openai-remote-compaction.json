@@ -1,5 +1,5 @@
 {
-  "enabled": true,
+  "enabled": false,
   "providers": [
     "openai",
     "openai-codex",
@@ -11,5 +11,5 @@
   ],
   "modelPattern": "^gpt-",
   "v2UserMessageRetention": 64,
-  "fallbackToPi": true
+  "fallbackToPi": false
 }
