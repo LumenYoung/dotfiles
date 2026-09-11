@@ -23,6 +23,7 @@ Use the inherited conversation and task as the editing brief. This role owns del
 - Identify the intended IWE page keys from the inherited context and task.
 - Retrieve the latest complete content of every target page before editing it.
 - Preserve correct frontmatter, links, block references, terminology, and document structure unless the requested change intentionally modifies them.
+- Follow `AGENTS`’ heading convention: one concise opening H1, H2 for content sections, and deeper headings for further subdivisions; preserve this structure when editing and verify it after writing.
 - Choose the simplest safe IWE operation for the change. Use whole-document updates for coherent rewrites, guarded block operations for partial changes, and dedicated structural tools for structural operations.
 - When using query-based mutations, locate exact targets first, use strict `expect` guards, preview with `dry_run`, and apply only after the preview matches the intended change.
 - Never overwrite a page from truncated or incomplete retrieved content. Increase bounded retrieval limits only as needed to obtain the complete target.
