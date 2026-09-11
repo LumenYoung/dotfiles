@@ -28,12 +28,9 @@ This repo has four distinct skill roles:
 
 Keep **agent-specific skills separate**. Codex keeps its own skills under `codex/skills/`
 and may install additional Codex system/user skills there; do not treat `codex/skills/` as
-the governed shared-skill source of truth. Pi-specific skills that should be normally discovered
-can live under `pi-agent/skills/`. Invocation-private skills used only by named Pi subagents live
-under `pi-agent/subagent-skills/` and are selected through the agent definition's `skillPath` plus
-`skills`; this keeps them out of the parent/global skill catalog. The whole Pi agent directory is
-managed at `pi-agent/`, including global instructions, subagent definitions, MCP config, settings,
-extensions, scripts, and ignored runtime state.
+the governed shared-skill source of truth. Pi-specific skills can live under `pi-agent/skills/`.
+The whole Pi agent directory is managed at `pi-agent/`, including global instructions,
+subagent definitions, MCP config, settings, extensions, scripts, and ignored runtime state.
 
 If we introduce additional shared skill packs in the future, add them under `skills/` and
 symlink/configure as needed. Agent-specific skills stay in that agent’s own directory.
@@ -48,8 +45,6 @@ symlink/configure as needed. Agent-specific skills stay in that agent’s own di
 - `.agents/skills/` is intentionally not propagated globally; it is project-local.
 - `skills/global/` is intentionally not propagated directly to a home-directory path; it is
   exposed through relative symlinks inside each agent's skill root.
-- `pi-agent/subagent-skills/` is propagated as part of the whole Pi agent directory but is not a
-  default skill-discovery root; named agents opt into these skills through `skillPath` and `skills`.
 - `skills/vendor/` is for externally maintained upstream repos/submodules. Governed exposure
   still happens through `skills/global/` symlinks.
 - `optin-skills/` is propagated to `~/.config/optin-skills` and can be included by both `--core`
@@ -68,8 +63,6 @@ symlink/configure as needed. Agent-specific skills stay in that agent’s own di
 - Pi-only Effective HTML adapters: `dotfiles/pi-agent/skills/effective-html/` → canonical
   workflows in `dotfiles/skills/vendor/effective-html/skills/`; they are hidden from Pi's
   model-advertised skills and run only through explicit `/skill:<name>` commands.
-- Pi invocation-private subagent skills: `dotfiles/pi-agent/subagent-skills/` (selected by an
-  agent's `skillPath`; not advertised to the parent/global skills catalog)
 - Opt-in skill source: `dotfiles/optin-skills` → `~/.config/optin-skills`
 - Relative shared-skill links:
   - `codex/skills/global` → `../../skills/global`
