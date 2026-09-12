@@ -1,0 +1,29 @@
+{
+  "enabled": true,
+  "autoUpdate": false,
+  "delegate": {
+    "enabled": false
+  },
+  "throttleRetry": false,
+  "compress": {
+    "maxContextLimit": "75%",
+    "emergencyThresholdPercent": "95%",
+    "providers": {
+      "openai": {
+        "reasoning": {
+          "drop": false
+        }
+      },
+      "openai-codex": {
+        "reasoning": {
+          "drop": false
+        }
+      },
+      "lumeny-openai": {
+        "reasoning": {
+          "drop": false
+        }
+      }
+    }
+  }
+}
