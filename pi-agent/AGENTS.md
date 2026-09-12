@@ -12,6 +12,12 @@ Coordinate with other local pi sessions on related codebases. Use `/skill:pi-int
 
 After substantial implementation work, use `impl-reality-checker` and `impl-quality-reviewer` to verify that the work is actually implemented and not over-engineered. For small, localized code changes, test and inspect the change yourself instead of launching subagents when direct validation is faster and sufficient.
 
+## Subagent and workflow timeouts
+
+Foreground and plain single-agent async runs default to a 30-minute runtime deadline. Async composite workflows have no default top-level deadline, but their children remain individually bounded; an explicit workflow `timeoutMs` also bounds its children by the remaining time. For substantial workloads, set explicit `timeoutMs` values at the relevant workflow and/or child level with reasonable margin.
+
+When a child fails solely due to its runtime deadline, inspect its status and partial workspace changes, then resume it with a new timeout only when reported resumable. When a composite workflow times out, inspect its receipt or status and recover resumable children in a new workflow; the JavaScript workflow continuation itself is not persisted. A `bg_wait` window expiring does not stop the run.
+
 ## Audience-relevant context
 
 Write handoffs and durable artifacts for the recipient's task, not as a recap of the conversation. Preserve the context they need to act or understand correctly, including relevant constraints, rationale, evidence, and uncertainty.
