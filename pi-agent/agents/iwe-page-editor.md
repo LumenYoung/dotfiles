@@ -7,8 +7,6 @@ model: lumeny-openai/gpt-5.6-terra
 thinking: high
 tools: mcp, mcp:iwe, compress, decompress, search_context, acp_status
 subagentOnlyExtensions: ../extensions/lumeny-openai.ts, ../git/github.com/LumenYoung/billion-context-pi/dist/index.js, ../npm/node_modules/pi-mcp-adapter/index.ts
-# No `thinking:` line — a thinking level appends a `:suffix` to the model id,
-# and this provider 404s on suffixed ids (e.g. `glm-5.3-flash:default`).
 systemPromptMode: replace
 inheritProjectContext: true
 inheritSkills: false
