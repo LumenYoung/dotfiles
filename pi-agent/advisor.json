@@ -5,7 +5,7 @@
   "alwaysOn": false,
   "advisorScoutEnabled": false,
   "advisorHerdrIntegration": false,
-  "advisor": "lumeny-openai/gpt-5.6-sol",
+  "advisor": "lumeny-openai/gpt-6-astra",
   "advisorAutoLoopGate": true,
   "advisorBlockOnBlocked": true,
   "advisorCollapseResponses": false,
@@ -25,5 +25,7 @@
   "advisorUntrackedContent": false,
   "gateFailureMode": "block-session",
   "showUsageDetails": true,
-  "showUsageFooter": false
+  "showUsageFooter": false,
+  "advisorEffort": "high",
+  "executorEffort": "high"
 }
