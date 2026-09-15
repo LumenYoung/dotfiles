@@ -3,7 +3,7 @@ name: iwe-searcher
 description: Blocking IWE knowledge-base search specialist that finds the most relevant notes for the query.
 model: lumeny-openai/gpt-5.6-luna
 tools: mcp, mcp:iwe, compress, decompress, search_context, acp_status
-subagentOnlyExtensions: /home/yang/.pi/agent/extensions/lumeny-openai.ts, /home/yang/Documents/git/billion-context-pi/dist/index.js, /home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts
+subagentOnlyExtensions: /home/yang/.pi/agent/extensions/lumeny-openai.ts, /home/yang/.pi/agent/git/github.com/LumenYoung/billion-context-pi/dist/index.js, /home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts
 systemPromptMode: replace
 inheritProjectContext: true
 inheritSkills: false

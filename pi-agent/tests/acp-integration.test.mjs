@@ -21,12 +21,17 @@ const upstream = realpathSync(subagentsSource.startsWith("git:")
   ? join(repo, "pi-agent/git/github.com/LumenYoung/pi-subagents") : subagentsSource);
 const acpTools = ["compress", "decompress", "search_context", "acp_status"];
 const acpSources = settings.packages.filter(p => typeof p === "string" &&
-  (p === "npm:billion-context-pi@0.1.65" || p.endsWith("/Documents/git/billion-context-pi")));
+  (p === "npm:billion-context-pi@0.1.65" ||
+    p.startsWith("git:github.com/LumenYoung/billion-context-pi@") ||
+    p.endsWith("/Documents/git/billion-context-pi")));
 assert.equal(acpSources.length, 1, "Select exactly one ACP package source");
 const acpSource = acpSources[0];
-const acpPath = realpathSync(acpSource.startsWith("npm:")
-  ? join(repo, "pi-agent/npm/node_modules/billion-context-pi/dist/index.js")
-  : join(acpSource, "dist/index.js"));
+const acpRoot = acpSource.startsWith("npm:")
+  ? join(repo, "pi-agent/npm/node_modules/billion-context-pi")
+  : acpSource.startsWith("git:")
+    ? join(repo, "pi-agent/git/github.com/LumenYoung/billion-context-pi")
+    : acpSource;
+const acpPath = realpathSync(join(acpRoot, "dist/index.js"));
 const advisorPackage = settings.packages.find(p => typeof p === "string" &&
   (p.endsWith("/Documents/git/pi-advisor") || p.startsWith("git:github.com/LumenYoung/pi-advisor@")));
 const advisorSource = advisorPackage?.startsWith("git:")
@@ -120,8 +125,8 @@ async function open({ built, sessionManager, main = false } = {}) {
 }
 const textOf = result => result.content.filter(c => c.type === "text").map(c => c.text).join("\n");
 
-test("candidate selects one ACP manager and the committed subagents fork", () => {
-  for (const [source, directory] of [[subagentsSource, upstream], [advisorPackage, advisorSource]]) {
+test("candidate selects one ACP manager and the committed remote forks", () => {
+  for (const [source, directory] of [[subagentsSource, upstream], [advisorPackage, advisorSource], [acpSource, acpRoot]]) {
     if (!source?.startsWith("git:")) continue;
     const revision = source.slice(source.lastIndexOf("@") + 1);
     const target = /^[0-9a-f]{40}$/.test(revision) ? revision : `refs/remotes/origin/${revision}`;
@@ -130,6 +135,8 @@ test("candidate selects one ACP manager and the committed subagents fork", () =>
       "Installed fork must match the configured commit or fetched feature-branch tip");
   }
   assert.equal(acpSources.length, 1);
+  assert.ok(acpSource.startsWith("git:github.com/LumenYoung/billion-context-pi@"));
+  assert.ok(!settings.packages.some(p => typeof p === "string" && p.includes("/Documents/git/")));
   assert.ok(!settings.packages.includes("npm:pi-subagents"));
   assert.ok(!settings.packages.includes("./packages/openai-remote-compaction"));
   assert.equal(settings.compaction.enabled, false);
@@ -182,7 +189,8 @@ test("actual package discovery loads the selected forks and ACP once, before pro
 });
 
 test("Advisor rollout is paired and requires manual activation even with saved model choices", { skip: !advisorSource }, () => {
-  assert.ok(!acpSource.startsWith("npm:"), "Advisor retrieval requires the paired local ACP API");
+  assert.ok(acpSource.startsWith("git:github.com/LumenYoung/billion-context-pi@"),
+    "Advisor retrieval requires the paired ACP fork");
   const advisor = JSON.parse(readFileSync(join(configRoot, "pi-agent/advisor.json")));
   assert.equal(advisor.advisorAcpContext, true);
   assert.equal(advisor.contextMaxChars, Number.MAX_SAFE_INTEGER);

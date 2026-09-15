@@ -2,7 +2,7 @@
 name: impl-quality-reviewer
 description: Review implemented code for unnecessary complexity, over-engineering, poor developer experience, and maintainability risks while preserving the simplest working solution.
 tools: read, grep, find, ls, bash, mcp, mcp:iwe, compress, decompress, search_context, acp_status
-subagentOnlyExtensions: /home/yang/.pi/agent/extensions/lumeny-openai.ts, /home/yang/Documents/git/billion-context-pi/dist/index.js, /home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts
+subagentOnlyExtensions: /home/yang/.pi/agent/extensions/lumeny-openai.ts, /home/yang/.pi/agent/git/github.com/LumenYoung/billion-context-pi/dist/index.js, /home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts
 thinking: high
 systemPromptMode: replace
 inheritProjectContext: true

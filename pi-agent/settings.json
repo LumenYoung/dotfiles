@@ -19,7 +19,7 @@
       "source": "npm:@howaboua/pi-codex-conversion@3.0.5",
       "extensions": []
     },
-    "/home/yang/Documents/git/billion-context-pi",
+    "git:github.com/LumenYoung/billion-context-pi@2026-09-10_advisor-readonly-context",
     "git:github.com/LumenYoung/pi-advisor@feat/acp-advisor-retrieval",
     "npm:pi-web-access",
     "npm:pi-mcp-adapter",
@@ -65,7 +65,7 @@
         ],
         "subagentOnlyExtensions": [
           "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
-          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/git/github.com/LumenYoung/billion-context-pi/dist/index.js",
           "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts",
           "/home/yang/.pi/agent/npm/node_modules/pi-intercom/index.ts"
         ]
@@ -90,7 +90,7 @@
         ],
         "subagentOnlyExtensions": [
           "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
-          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/git/github.com/LumenYoung/billion-context-pi/dist/index.js",
           "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts",
           "/home/yang/.pi/agent/npm/node_modules/pi-intercom/index.ts"
         ]
@@ -118,7 +118,7 @@
         ],
         "subagentOnlyExtensions": [
           "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
-          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/git/github.com/LumenYoung/billion-context-pi/dist/index.js",
           "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts",
           "/home/yang/.pi/agent/npm/node_modules/pi-intercom/index.ts",
           "/home/yang/.pi/agent/npm/node_modules/pi-web-access/index.ts"
@@ -147,7 +147,7 @@
         ],
         "subagentOnlyExtensions": [
           "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
-          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/git/github.com/LumenYoung/billion-context-pi/dist/index.js",
           "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts"
         ]
       },
@@ -174,7 +174,7 @@
         ],
         "subagentOnlyExtensions": [
           "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
-          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/git/github.com/LumenYoung/billion-context-pi/dist/index.js",
           "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts"
         ]
       },
@@ -200,7 +200,7 @@
         ],
         "subagentOnlyExtensions": [
           "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
-          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/git/github.com/LumenYoung/billion-context-pi/dist/index.js",
           "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts",
           "/home/yang/.pi/agent/npm/node_modules/pi-intercom/index.ts",
           "/home/yang/.pi/agent/npm/node_modules/pi-web-access/index.ts"
@@ -229,7 +229,7 @@
         ],
         "subagentOnlyExtensions": [
           "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
-          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/git/github.com/LumenYoung/billion-context-pi/dist/index.js",
           "/home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts",
           "/home/yang/.pi/agent/npm/node_modules/pi-intercom/index.ts"
         ]
@@ -248,7 +248,7 @@
         ],
         "subagentOnlyExtensions": [
           "/home/yang/.pi/agent/extensions/lumeny-openai.ts",
-          "/home/yang/Documents/git/billion-context-pi/dist/index.js",
+          "/home/yang/.pi/agent/git/github.com/LumenYoung/billion-context-pi/dist/index.js",
           "/home/yang/.pi/agent/npm/node_modules/pi-web-access/index.ts"
         ]
       }
