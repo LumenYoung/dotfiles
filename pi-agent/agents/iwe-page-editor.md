@@ -2,9 +2,13 @@
 name: iwe-page-editor
 description: Apply delegated edits to IWE pages, from localized guarded block changes through whole-page rewrites and coordinated structural updates.
 model: lumeny-openai/gpt-5.6-terra
-tools: mcp, mcp:iwe, compress, decompress, search_context, acp_status
-subagentOnlyExtensions: /home/yang/.pi/agent/extensions/lumeny-openai.ts, /home/yang/.pi/agent/git/github.com/LumenYoung/billion-context-pi/dist/index.js, /home/yang/.pi/agent/npm/node_modules/pi-mcp-adapter/index.ts
+# Verified working on pi 0.85.1; the suffixed id `gpt-5.6-terra:high` only
+# failed on pi 0.84.2 (same era as the @earendil-works/chord launch bug).
 thinking: high
+tools: mcp, mcp:iwe, compress, decompress, search_context, acp_status
+subagentOnlyExtensions: ../extensions/lumeny-openai.ts, ../git/github.com/LumenYoung/billion-context-pi/dist/index.js, ../npm/node_modules/pi-mcp-adapter/index.ts
+# No `thinking:` line — a thinking level appends a `:suffix` to the model id,
+# and this provider 404s on suffixed ids (e.g. `glm-5.3-flash:default`).
 systemPromptMode: replace
 inheritProjectContext: true
 inheritSkills: false
