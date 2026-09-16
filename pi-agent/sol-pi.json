@@ -2,6 +2,8 @@
   "version": 1,
   "actionFusion": true,
   "observationPack": true,
-  "evidencePreservingReducer": false,
+  "evidencePreservingReducer": true,
+  "evidencePreservingReducerProvider": "openai",
+  "evidencePreservingReducerModel": "gpt-5.6-luna",
   "onlineContextCompact": false
 }
