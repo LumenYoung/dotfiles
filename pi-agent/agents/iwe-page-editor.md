@@ -1,11 +1,8 @@
 ---
 name: iwe-page-editor
 description: Apply delegated edits to IWE pages, from localized guarded block changes through whole-page rewrites and coordinated structural updates.
-model: glm-vllm/glm-5.3-flash
-# Switched from lumeny-openai/gpt-5.6-terra at owner request (2026-09-16):
-# glm-5.3 is much faster for page editing; prior terra note: the suffixed
-# id `gpt-5.6-terra:high` only failed on pi 0.84.2 (chord launch bug era).
-thinking: high
+model: lumeny-openai/gpt-5.6-terra
+thinking: medium
 tools: mcp, mcp:iwe, compress, decompress, search_context, acp_status
 subagentOnlyExtensions: ../extensions/lumeny-openai.ts, ../git/github.com/LumenYoung/billion-context-pi/dist/index.js, ../npm/node_modules/pi-mcp-adapter/index.ts
 systemPromptMode: replace
