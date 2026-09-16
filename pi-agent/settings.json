@@ -29,7 +29,8 @@
     "git:github.com/LumenYoung/pi-btw@605a366cbed6cbc1c5a471801806c04562532f9e",
     "npm:pi-goal-x",
     "../../dotfiles/skills/vendor/visual-explainer",
-    "git:github.com/LumenYoung/pi-vim"
+    "git:github.com/LumenYoung/pi-vim",
+    "git:github.com/NVlabs/SoL-Pi"
   ],
   "piVim": {
     "clipboardMirror": "never"
