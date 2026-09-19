@@ -45,3 +45,13 @@ Delegate broad, unfamiliar, or cross-note discovery to `iwe-searcher` in foregro
 Delegate every IWE mutation to `iwe-page-editor` in foreground/blocking mode with forked context. Give it the intended outcome, relevant keys, and constraints rather than prescribing tool operations. The editor owns those pages for the delegated run; do not edit them concurrently.
 
 After the editor returns, retrieve and review every changed page yourself and address any material graph warnings or unresolved issues.
+
+## Active context pruning usage
+
+We are using ACP for the active context management. Deliberately consider whether key information presents in the area of compression. Consider from the perspective if missing certain information would undermine the understanding of the goal or progress, preserve those that are significant.
+
+Before any compression:
+1. When specific IWE page and its children are mentioned, log important details contained in the area you will compress first.
+2. When no IWE page or any other Documentation destination specified, repeat key info once again before you compress that area.
+
+After compression: Load the mentioned IWE pages/other specified documentation destination once again to ensure no lost of the key important context.
