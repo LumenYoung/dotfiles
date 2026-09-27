@@ -3,7 +3,7 @@ name: iwe-page-editor
 description: Apply delegated edits to IWE pages, from localized guarded block changes through whole-page rewrites and coordinated structural updates.
 model: lumeny-openai/gpt-5.6-terra
 thinking: medium
-tools: mcp, mcp:iwe, compress, decompress, search_context, acp_status
+tools: mcp, compress, decompress, search_context, acp_status
 subagentOnlyExtensions: ../extensions/lumeny-openai.ts, ../git/github.com/LumenYoung/billion-context-pi/dist/index.js, ../npm/node_modules/pi-mcp-adapter/index.ts
 systemPromptMode: replace
 inheritProjectContext: true
