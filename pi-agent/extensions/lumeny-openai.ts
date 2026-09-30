@@ -19,6 +19,8 @@ type RemoteModelsPayload = {
   models?: Array<{ id?: unknown; owned_by?: unknown; name?: unknown }>;
 };
 
+const DEFAULT_CONTEXT_WINDOW = 256000;
+
 const MODEL_CONTEXT_WINDOWS: Record<string, number> = {
   "gpt-6-astra": 260000,
   "gpt-5.6-sol": 256000,
@@ -162,7 +164,7 @@ export default async function lumenyOpenAI(pi: ExtensionAPI) {
       name: modelName(id),
       reasoning: true,
       input: ["text", "image"],
-      contextWindow: MODEL_CONTEXT_WINDOWS[id] ?? 200000,
+      contextWindow: MODEL_CONTEXT_WINDOWS[id] ?? DEFAULT_CONTEXT_WINDOW,
       maxTokens: MODEL_MAX_TOKENS[id] ?? 32768,
       cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
       thinkingLevelMap: {
@@ -205,7 +207,7 @@ export default async function lumenyOpenAI(pi: ExtensionAPI) {
         name: modelName(id),
         reasoning: true,
         input: ["text", "image"],
-        contextWindow: MODEL_CONTEXT_WINDOWS[id] ?? 200000,
+        contextWindow: MODEL_CONTEXT_WINDOWS[id] ?? DEFAULT_CONTEXT_WINDOW,
         maxTokens: MODEL_MAX_TOKENS[id] ?? 32000,
         cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
       })),
