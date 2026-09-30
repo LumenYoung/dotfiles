@@ -35,7 +35,7 @@
   "piVim": {
     "clipboardMirror": "never"
   },
-  "lastChangelogVersion": "0.85.1",
+  "lastChangelogVersion": "0.87.1",
   "theme": "dark",
   "subagents": {
     "agentOverrides": {
@@ -43,7 +43,18 @@
         "disabled": true
       },
       "reviewer": {
-        "disabled": true
+        "disabled": true,
+        "tools": [
+          "read",
+          "grep",
+          "find",
+          "ls",
+          "contact_supervisor",
+          "compress",
+          "decompress",
+          "search_context",
+          "acp_status"
+        ]
       },
       "oracle": {
         "tools": [
