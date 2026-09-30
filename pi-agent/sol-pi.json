@@ -4,6 +4,6 @@
   "observationPack": true,
   "evidencePreservingReducer": true,
   "evidencePreservingReducerProvider": "openai",
-  "evidencePreservingReducerModel": "gpt-5.6-luna",
+  "evidencePreservingReducerModel": "gpt-6-luna",
   "onlineContextCompact": false
 }

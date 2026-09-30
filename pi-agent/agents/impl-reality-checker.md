@@ -1,7 +1,7 @@
 ---
 name: impl-reality-checker
 description: Verify claimed completions by running real code paths and checking whether implemented work actually works, rather than accepting summaries or green-looking claims.
-model: lumeny-openai/gpt-5.6-terra
+model: lumeny-openai/gpt-6.1-sol
 tools: read, grep, find, ls, bash, mcp, mcp:iwe, compress, decompress, search_context, acp_status
 subagentOnlyExtensions: ../extensions/lumeny-openai.ts, ../git/github.com/LumenYoung/billion-context-pi/dist/index.js, ../npm/node_modules/pi-mcp-adapter/index.ts
 thinking: high
