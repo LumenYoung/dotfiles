@@ -37,6 +37,19 @@ function __sync_notes_setup_directories
     
     # Create destination directory if it doesn't exist
     mkdir -p $DEST_DIR
+
+    # Keep synchronization state outside /tmp, where age-based cleanup can
+    # silently remove the change marker from a long-running service.
+    set -l state_home "$HOME/.local/state"
+    if set -q XDG_STATE_HOME; and test -n "$XDG_STATE_HOME"
+        set state_home "$XDG_STATE_HOME"
+    end
+    set -g SYNC_NOTES_STATE_DIR "$state_home/notes-sync"
+    set -g SYNC_NOTES_TIMESTAMP "$SYNC_NOTES_STATE_DIR/last-successful-scan"
+    mkdir -p "$SYNC_NOTES_STATE_DIR"; or begin
+        echo "Error: Could not create sync state directory '$SYNC_NOTES_STATE_DIR'"
+        return 1
+    end
     
     # Determine git repo root (parent of content directory)
     set -g GIT_ROOT (dirname $DEST_DIR)
@@ -55,17 +68,26 @@ function __sync_notes_perform_initial_sync
     echo "Starting sync from '$SOURCE_DIR' to '$DEST_DIR'"
     echo "Performing initial sync..."
 
+    # Capture the scan boundary before examining the source. Changes made after
+    # this point remain newer than the promoted marker and are handled by the
+    # next polling cycle.
+    __sync_notes_prepare_scan_cutoff; or return 1
+
     # If the service was restarted, close embeds for files changed since the
-    # previous polling timestamp before the initial rsync.
+    # previous successful scan. A missing marker deliberately selects all
+    # publish files so lost state causes reconciliation rather than a stall.
     __sync_notes_collect_changed_files
     __sync_notes_publish_embed_closure
     
     rsync -av --delete --exclude=".well-known/***" --include="*.md" --include="*.png" --include="*.jpg" --include="*.jpeg" --include="*.gif" --include="*.webp" --include="*.svg" --include="*.pdf" --include="*/" --exclude="*" "$SOURCE_DIR" "$DEST_DIR"
+    set -l sync_status $status
     
-    if test $status -eq 0
+    if test $sync_status -eq 0
+        __sync_notes_promote_scan_cutoff; or return 1
         echo "Initial sync completed successfully"
     else
-        echo "Initial sync failed with status: $status"
+        __sync_notes_discard_scan_cutoff
+        echo "Initial sync failed with status: $sync_status"
         return 1
     end
 
@@ -84,15 +106,15 @@ end
 function __sync_notes_start_polling_loop
     echo "Starting polling watcher (checking every 5 seconds)..."
     
-    # Create timestamp file for tracking changes
-    touch /tmp/sync_notes_timestamp
-    
     # Polling loop
     while true
         sleep 5
-        
+
+        __sync_notes_prepare_scan_cutoff; or continue
         if __sync_notes_check_for_changes
             __sync_notes_perform_sync; or continue
+        else
+            __sync_notes_discard_scan_cutoff
         end
         
         # Always check for git operations, regardless of new changes
@@ -101,41 +123,91 @@ function __sync_notes_start_polling_loop
 end
 
 function __sync_notes_check_for_changes
-    # Check if source directory has been modified recently
+    # Check if source directory has been modified recently. Missing state forces
+    # a full reconciliation, including when the source currently has no files.
     __sync_notes_collect_changed_files
-    test (count $SYNC_NOTES_CHANGED_FILES) -gt 0
+    if test "$SYNC_NOTES_MARKER_MISSING" = "true"
+        return 0
+    end
+    test (count $SYNC_NOTES_CHANGED_FILES) -gt 0; or test (count $SYNC_NOTES_CHANGED_DIRECTORIES) -gt 0
 end
 
 function __sync_notes_collect_changed_files
-    if not test -e /tmp/sync_notes_timestamp
-        set -g SYNC_NOTES_CHANGED_FILES
-        set -g SYNC_NOTES_CHANGED_MARKDOWN_FILES
+    set -g SYNC_NOTES_MARKER_MISSING false
+
+    if not test -e "$SYNC_NOTES_TIMESTAMP"
+        echo "Change marker missing; scheduling full reconciliation."
+        set -g SYNC_NOTES_MARKER_MISSING true
+        set -g SYNC_NOTES_CHANGED_FILES (find "$SOURCE_DIR" -type f \( -name "*.md" -o -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.gif" -o -name "*.webp" -o -name "*.svg" -o -name "*.pdf" \) 2>/dev/null)
+        set -g SYNC_NOTES_CHANGED_DIRECTORIES (find "$SOURCE_DIR" -type d 2>/dev/null)
+        set -g SYNC_NOTES_CHANGED_MARKDOWN_FILES (find "$SOURCE_DIR" -type f -name "*.md" 2>/dev/null)
         return 0
     end
 
-    set -g SYNC_NOTES_CHANGED_FILES (find "$SOURCE_DIR" -type f \( -name "*.md" -o -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.gif" -o -name "*.webp" -o -name "*.svg" -o -name "*.pdf" \) -newer /tmp/sync_notes_timestamp 2>/dev/null)
-    set -g SYNC_NOTES_CHANGED_MARKDOWN_FILES (find "$SOURCE_DIR" -type f -name "*.md" -newer /tmp/sync_notes_timestamp 2>/dev/null)
+    set -g SYNC_NOTES_CHANGED_FILES (find "$SOURCE_DIR" -type f \( -name "*.md" -o -name "*.png" -o -name "*.jpg" -o -name "*.jpeg" -o -name "*.gif" -o -name "*.webp" -o -name "*.svg" -o -name "*.pdf" \) -newer "$SYNC_NOTES_TIMESTAMP" 2>/dev/null)
+    set -g SYNC_NOTES_CHANGED_DIRECTORIES (find "$SOURCE_DIR" -type d -newer "$SYNC_NOTES_TIMESTAMP" 2>/dev/null)
+
+    # Moving an old file preserves its file mtime, while creating, moving, or
+    # deleting a directory entry updates the parent directory mtime. On a
+    # structural change, inspect all publish Markdown so moved notes still get
+    # embed-closure handling before rsync reconciles additions and deletions.
+    if test (count $SYNC_NOTES_CHANGED_DIRECTORIES) -gt 0
+        set -g SYNC_NOTES_CHANGED_MARKDOWN_FILES (find "$SOURCE_DIR" -type f -name "*.md" 2>/dev/null)
+    else
+        set -g SYNC_NOTES_CHANGED_MARKDOWN_FILES (find "$SOURCE_DIR" -type f -name "*.md" -newer "$SYNC_NOTES_TIMESTAMP" 2>/dev/null)
+    end
+end
+
+function __sync_notes_prepare_scan_cutoff
+    __sync_notes_discard_scan_cutoff
+    set -g SYNC_NOTES_SCAN_CUTOFF (mktemp "$SYNC_NOTES_STATE_DIR/scan-cutoff.XXXXXX")
+    if test $status -ne 0; or test -z "$SYNC_NOTES_SCAN_CUTOFF"
+        echo "Error: Could not create scan cutoff in '$SYNC_NOTES_STATE_DIR'"
+        set -e SYNC_NOTES_SCAN_CUTOFF
+        return 1
+    end
+end
+
+function __sync_notes_promote_scan_cutoff
+    if not set -q SYNC_NOTES_SCAN_CUTOFF; or not test -e "$SYNC_NOTES_SCAN_CUTOFF"
+        echo "Error: Scan cutoff is missing; refusing to advance sync state"
+        return 1
+    end
+
+    mv -f -- "$SYNC_NOTES_SCAN_CUTOFF" "$SYNC_NOTES_TIMESTAMP"; or begin
+        echo "Error: Could not update sync marker '$SYNC_NOTES_TIMESTAMP'"
+        return 1
+    end
+    set -e SYNC_NOTES_SCAN_CUTOFF
+end
+
+function __sync_notes_discard_scan_cutoff
+    if set -q SYNC_NOTES_SCAN_CUTOFF; and test -n "$SYNC_NOTES_SCAN_CUTOFF"
+        rm -f -- "$SYNC_NOTES_SCAN_CUTOFF"
+    end
+    set -e SYNC_NOTES_SCAN_CUTOFF
 end
 
 function __sync_notes_perform_sync
     # Resolve publish embeds before rsync so newly moved assets/notes are included.
     __sync_notes_publish_embed_closure
 
-    # Update timestamp file and record change time
-    touch /tmp/sync_notes_timestamp
-    set -g LAST_CHANGE_TIME (date +%s)
     echo "Changes detected, syncing..."
     
     rsync -av --delete --exclude=".well-known/***" --include="*.md" --include="*.png" --include="*.jpg" --include="*.jpeg" --include="*.gif" --include="*.webp" --include="*.svg" --include="*.pdf" --include="*/" --exclude="*" "$SOURCE_DIR" "$DEST_DIR"
+    set -l sync_status $status
     
-    if test $status -eq 0
+    if test $sync_status -eq 0
+        __sync_notes_promote_scan_cutoff; or return 1
+        set -g LAST_CHANGE_TIME (date +%s)
         echo "Sync completed successfully"
         if test "$GIT_ENABLED" = "true"
             set DEBOUNCE_MINUTES (math $GIT_DEBOUNCE_INTERVAL / 60)
             echo "Git commit will occur in $DEBOUNCE_MINUTES minutes if no further changes are made."
         end
     else
-        echo "Sync failed (status: $status)"
+        __sync_notes_discard_scan_cutoff
+        echo "Sync failed (status: $sync_status)"
         return 1
     end
 end

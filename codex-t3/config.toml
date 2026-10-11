@@ -22,3 +22,6 @@ name = "OpenAI"
 base_url = "https://api.lumeny.io/v1"
 wire_api = "responses"
 env_key = "OPENAI_API_KEY"
+
+[projects."/home/yang/docker-com"]
+trust_level = "trusted"

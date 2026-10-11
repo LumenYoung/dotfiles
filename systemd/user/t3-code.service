@@ -18,8 +18,10 @@ WorkingDirectory=%h
 # - T3CODE_PORT controls the listening port; default: 4096. This machine sets it
 #   to 14096 in ~/.local.fish because Caddy routes server.lumeny.io there.
 # - T3CODE_HOME controls T3 Code's base dir/userdata/auth state; default: ~/.t3.
-# - T3CODE_NPM_CACHE controls the isolated npm cache for npx t3@latest; default:
-#   $T3CODE_HOME/npm-cache. Keep this separate from ~/.npm to avoid stale npx locks.
+# - The opt-in persistent CLI is installed under ~/.local/share/t3-code-cli.
+#   Install or update it with `mise run t3-code-update`.
+# - T3CODE_NPM_CACHE controls the isolated npm cache used by the update task;
+#   default: $T3CODE_HOME/npm-cache.
 # - LUMENY_OPENAI_BASE_URL and LUMENY_OPENAI_API_KEY may be exported by ~/.local.fish;
 #   server-env.fish maps LUMENY_OPENAI_API_KEY to OPENAI_API_KEY for provider clients.
 # After changing env files, run:

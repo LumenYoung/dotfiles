@@ -45,8 +45,8 @@ if test -d "$HOME/.config/t3-code/bin"
 end
 
 # ~/.local.fish may select an older nvm runtime for interactive shells. Prefer
-# mise for this service after all local env has been sourced so t3@latest runs
-# on the repo-pinned/current Node rather than the interactive nvm default.
+# mise for this service after all local env has been sourced so the persistent
+# T3 Code installation runs on the repo-pinned/current Node.
 if test -x "$HOME/.local/bin/mise"
     "$HOME/.local/bin/mise" activate fish | source
 end
@@ -54,7 +54,7 @@ if test -d "$HOME/.local/share/mise/shims"
     fish_add_path --move --prepend "$HOME/.local/share/mise/shims"
 end
 
-# Avoid leaking an nvm npm prefix into npm/npx when another runtime is selected.
+# Avoid leaking an nvm npm prefix into T3 Code or provider subprocesses.
 set --erase npm_config_prefix
 
 function __t3_node_runtime_is_compatible
@@ -122,7 +122,14 @@ if not test -e "$T3CODE_HOME/userdata/settings.json"; and test -f "$HOME/.config
     cp "$HOME/.config/t3-code/settings.json" "$T3CODE_HOME/userdata/settings.json"
 end
 
-exec npx -y --package t3@latest -- env -u npm_config_prefix t3 serve \
+set -l t3_bin "$HOME/.local/share/t3-code-cli/node_modules/.bin/t3"
+if not test -x "$t3_bin"
+    echo "T3 Code is not installed at $t3_bin." >&2
+    echo "Install it explicitly with: mise run t3-code-update" >&2
+    exit 1
+end
+
+exec env -u npm_config_prefix "$t3_bin" serve \
     --mode web \
     --host "$T3CODE_HOST" \
     --port "$T3CODE_PORT" \

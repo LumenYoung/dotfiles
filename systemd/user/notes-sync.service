@@ -10,7 +10,6 @@ RestartSec=10
 
 # Environment
 Environment=HOME=%h
-Environment=XDG_RUNTIME_DIR=/run/user/%i
 
 # Logging
 StandardOutput=journal
