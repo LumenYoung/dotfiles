@@ -24,7 +24,9 @@ for (const offlineFallback of [false, true]) {
 
     for (const name of ["lumeny-openai", "openai"]) {
       const models = new Map(providers.get(name).models.map((model) => [model.id, model]));
-      for (const id of ["gpt-6.1-sol", "gpt-6-sol", "gpt-6-luna", "gpt-5.6-sol", ...(offlineFallback ? [] : ["gpt-future-test"])]) {
+      assert.equal(models.get("gpt-6.1-sol").contextWindow, 500000, `${name}/gpt-6.1-sol`);
+      assert.equal(models.get("gpt-6.1-sol").maxTokens, 32768);
+      for (const id of ["gpt-6-sol", "gpt-6-luna", "gpt-5.6-sol", ...(offlineFallback ? [] : ["gpt-future-test"])]) {
         assert.equal(models.get(id).contextWindow, 256000, `${name}/${id}`);
         assert.equal(models.get(id).maxTokens, 32768);
       }
