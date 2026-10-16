@@ -49,6 +49,7 @@ symlink/configure as needed. Agent-specific skills stay in that agent’s own di
   still happens through `skills/global/` symlinks.
 - `optin-skills/` is propagated to `~/.config/optin-skills` and can be included by both `--core`
   and `--agents` because shell wrappers may reference it while agent commands consume it.
+- `mcp/` is propagated to `~/.config/mcp` by `--agents`. Keep shared MCP server definitions and adapter policy in `mcp/mcp.json` so Paseo's per-session `--mcp-config` override does not hide them. This file uses the adapter/shared schema, not Pi's native `mcp.json` schema; store credentials only as environment-variable references.
 - `pi-acp.json` is propagated to `~/.pi/acp.json` by `--agents`; ACP reads global settings outside the managed agent directory.
 - Each agent may still have its own skill directory for agent-specific or tool-installed skills.
 
