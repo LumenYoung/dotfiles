@@ -64,9 +64,6 @@ return {
               pattern = "leetcode.nvim",
               callback = function()
                 vim.wo.wrap = true
-                if vim.fn.exists(":Copilot") == 2 then
-                  vim.cmd("Copilot disable")
-                end
               end,
             },
           },
