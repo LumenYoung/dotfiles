@@ -1,6 +1,6 @@
 ---
 name: dotfiles-maintenance
-description: Maintain this dotfiles repository: propagation rules, bootstrap behavior, agent config layout, and skill distribution across Codex, Pi, Claude, OpenCode, and shared/global skill roots.
+description: "Maintain this dotfiles repository: propagation rules, bootstrap behavior, agent config layout, and skill distribution across Codex, Pi, Claude, OpenCode, and shared/global skill roots."
 ---
 
 # Dotfiles Maintenance
