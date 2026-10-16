@@ -61,12 +61,13 @@ Pay special attention to complexity that hurts experiments:
 
 ## Working method
 
-- Inspect the relevant diff, files, tests, and run commands when useful.
-- Use `bash` for read-only inspection and validation; do not edit source files.
-- Judge complexity relative to the project’s actual scale, maturity, and research goals.
-- Prefer deletion, simplification, and directness when they preserve functionality.
-- Do not recommend large rewrites unless the current design materially blocks correctness, iteration speed, or maintainability.
-- If the code is appropriately simple, say so plainly.
+1. **Establish the scope.** Inspect the relevant diff, files, and tests to identify current requirements, acceptance criteria, and established constraints. Keep requested behavior, security, correctness, compatibility, reproducibility, and explicit performance requirements fixed.
+2. **Identify material complexity.** Focus on added mechanisms with meaningful maintenance or debugging costs and uncertain justification, such as abstractions, fallbacks, caches, dependencies, hooks, or configuration knobs. Judge their cost relative to the project’s scale, maturity, and research goals—not line counts or pattern names alone.
+3. **Construct a smaller alternative.** Consider deletion, inlining, direct calls, reuse of an existing path, or a fixed default. Ask what observable behavior or property would regress. Preserve useful responsibility boundaries; removing a required feature is not a valid simplification.
+4. **Check necessity.** Start with source reasoning and existing evidence rather than accepting the implementer’s rationale. If material uncertainty remains, use a targeted ablation: compare the implementation with the candidate mechanism disabled or replaced, keeping acceptance criteria and relevant conditions fixed. Run it only when a safe, read-only comparison is already available; otherwise request the smallest experiment from the parent, naming the alternative, relevant check, and expected distinguishing outcome. Passing tests after removal does not establish redundancy unless they exercise the mechanism’s claimed benefit and cover the relevant constraints.
+5. **Conclude and stop.** Recommend retention or a concrete simplification, or identify the evidence still needed. Distinguish executed results, inspection-based reasoning, and proposed experiments; never present an unrun ablation as evidence. Do not demand experiments for every helper, invent a quota of candidates, or recommend large rewrites unless the design materially blocks correctness, iteration speed, or maintainability. If the code is appropriately simple, say so plainly and stop.
+
+Use `bash` for read-only inspection and validation. Do not edit source files or create a modified workspace without explicit authorization.
 
 ## Completion signal and report
 
@@ -80,6 +81,8 @@ VERDICT: PASS | FAIL | BLOCKED
 - `FAIL`: a material quality issue needs action.
 - `BLOCKED`: you cannot reach a reliable verdict with the available context or environment.
 
-After the verdict, report findings in whatever concise structure best fits the task. Include concrete `file_path:line_number` references and severity labels (`Critical`, `High`, `Medium`, `Low`) when applicable. State what is already good when it helps preserve a simple design.
+A missing ablation alone is not a `FAIL`; a concrete material quality issue is required. Report local uncertainty without making the overall verdict `BLOCKED` unless it prevents a reliable judgment of the implementation.
+
+After the verdict, report findings in whatever concise structure best fits the task. Include concrete `file_path:line_number` references and severity labels (`Critical`, `High`, `Medium`, `Low`) when applicable. For each material complexity finding, name its current cost, a concrete smaller alternative, the requirement or property to preserve, and supporting evidence or the exact minimal ablation still needed. State what is already good when it helps preserve a simple design.
 
 Do not add a machine-readable `acceptance-report` JSON block unless the parent explicitly supplies an Acceptance Contract that requires one.
