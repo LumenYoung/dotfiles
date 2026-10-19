@@ -89,32 +89,6 @@ return {
             desc = "Load nvim-dap.lua",
             function() require("user.project-dap").load_and_apply_config() end,
           },
-          ["<Leader>`"] = {
-            desc = "Debugmaster Mode Toggle",
-            function()
-              require("debugmaster").mode.toggle()
-              local current_status_message
-              if require("debugmaster.debug.mode").is_active() then -- Check the new state
-                current_status_message = "Debug Mode: ON"
-              else
-                current_status_message = "Debug Mode: OFF"
-              end
-              vim.notify(current_status_message, vim.log.levels.INFO)
-            end,
-          },
-          ["<Leader>dd"] = {
-            desc = "Debugmaster Mode Toggle",
-            function()
-              require("debugmaster").mode.toggle()
-              local current_status_message
-              if require("debugmaster.debug.mode").is_active() then -- Check the new state
-                current_status_message = "Debug Mode: ON"
-              else
-                current_status_message = "Debug Mode: OFF"
-              end
-              vim.notify(current_status_message, vim.log.levels.INFO)
-            end,
-          },
           ["<Leader>ds"] = {
             desc = "show dap log",
             function()
@@ -156,49 +130,6 @@ return {
         },
       },
     },
-  },
-  {
-    "rebelot/heirline.nvim",
-    opts = function(_, hl_opts)
-      local status_util = require "astroui.status.utils"
-      local config = assert(require("astroui").config.status)
-      local provider = require "astroui.status.provider"
-      local component_builder = require("astroui.status.component").builder
-
-      ---@class astroui.status.provider
-      provider.debugmode = function(opts)
-        local extend_tbl = require("astrocore").extend_tbl
-        opts = extend_tbl(vim.tbl_get(config, "providers", "debugmode"), opts)
-
-        return function()
-          local text = ""
-          if require("debugmaster.debug.mode").is_active() then text = "DEBUG" end
-
-          status_util.stylize(text, opts)
-        end
-      end
-
-      local component = component_builder(status_util.setup_providers({ debugmode = {} }, { "debugmode" }))
-
-      -- TODO: fix this component. Currently it directly breaks the first mode component.
-      hl_opts.statusline = require("astrocore").extend_tbl(hl_opts.statusline, {})
-    end,
-  },
-  {
-    "rcarriga/nvim-dap-ui",
-    config = function(plugin, opts)
-      -- run default AstroNvim nvim-dap-ui configuration function
-      require "astronvim.plugins.configs.nvim-dap-ui"(plugin, opts)
-
-      -- disable dap events that are created
-      local dap = require "dap"
-      dap.listeners.after.event_initialized.dapui_config = nil
-      dap.listeners.before.event_terminated.dapui_config = nil
-      dap.listeners.before.event_exited.dapui_config = nil
-    end,
-  },
-  {
-    "miroshQa/debugmaster.nvim",
   },
   {
     "mfussenegger/nvim-dap",
