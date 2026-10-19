@@ -342,7 +342,8 @@ pi-agent/backups/
 /.pi-subagents/artifacts
 /systemd/user/lunaly.service
 /pi-agent/missions/index
-/pi-agent/missions/projects/e7d9f0c88ff2bbbb0c1e063a3c5b280c8f4964426f4bdd66afbd8ce5eb580c01
+/pi-agent/missions/projects/*
 /codex/thread-writer-locks
 /pi-agent/web-search-cache
 /pi-agent/missions/projects
+/pi-agent/.billion-context-pi-*
