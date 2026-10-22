@@ -1,0 +1,3 @@
+Temporary GitHub CLI authentication smoke test.
+This file exists only on the test branch to verify repository write and pull request creation permissions.
+Do not merge this test pull request.
