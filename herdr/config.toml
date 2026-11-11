@@ -44,3 +44,7 @@ navigate_pane_up = "up"
 
 [ui]
 agent_panel_scope = "all"
+
+[theme]
+name = "one-dark"
+auto_switch = false
