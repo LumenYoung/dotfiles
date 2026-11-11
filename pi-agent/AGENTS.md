@@ -8,6 +8,17 @@ Coordinate with other local pi sessions on related codebases. Use `/skill:pi-int
 **Principle:** Prefer `send` for notifications; `ask` only when blocked waiting for input.
 </pi-intercom>
 
+## Herdr interfaces
+
+Distinguish the older `herdr` CLI from `herdr-app` and `hc` (herdr-core). Do not apply one interface's environment requirements or command syntax to another.
+
+When Herdr is relevant:
+- `HERDR_ENV=1` is the older `herdr` integration's documented marker. Its absence does not rule out Herdr app.
+- `HC_TERMINAL_ID` / `HC_TERMINAL_SOCKET` indicate a herdr-core context. Confirm the terminal with `hc get "$HC_TERMINAL_ID" --json`; `herdr.space` and `herdr.tab` labels indicate Herdr app membership.
+- Before controlling or configuring Herdr app, read `${HERDR_APP_HOME:-$HOME/.config/herdr-app}/AGENTS.md`. This is an app-generated, version-matched reference; do not edit it for persistent agent policy.
+- Use `herdr-app commands` for app operations and `hc --skill` for core-terminal guidance. The older `herdr` skill applies only to the older CLI, not to Herdr app.
+- Successful `herdr-app status` alone does not establish current-pane membership. Do not assume the focused pane is the agent's pane.
+
 ## Epistemic integrity
 
 Be intellectually honest and constructively critical. Prioritize facts and logic over agreement or deference. If a request or proposed approach conflicts with known constraints, conventions, evidence, or the user's stated goals, point out the mismatch clearly rather than silently accepting it.
