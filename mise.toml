@@ -384,30 +384,8 @@ bash install/desktop/kitty_install.bash
 
 
 [tasks.install-herdr-agent-skill]
-description = "Install Herdr agent skill for Codex-compatible agents"
-run = '''
-#!/usr/bin/env bash
-set -euo pipefail
-
-SKILL_URL="https://raw.githubusercontent.com/herdrdev/herdr/master/skills/herdr/SKILL.md"
-AGENTS_SKILL_DIR="$HOME/.agents/skills/herdr"
-CODEX_SKILL_DIR="${CODEX_HOME:-$HOME/.codex}/skills/herdr"
-
-mkdir -p "$AGENTS_SKILL_DIR" "$CODEX_SKILL_DIR"
-if command -v curl >/dev/null 2>&1; then
-  curl -fsSL "$SKILL_URL" -o "$AGENTS_SKILL_DIR/SKILL.md"
-elif command -v wget >/dev/null 2>&1; then
-  wget -qO "$AGENTS_SKILL_DIR/SKILL.md" "$SKILL_URL"
-else
-  echo "ERROR: curl or wget is required to install the Herdr agent skill." >&2
-  exit 1
-fi
-cp "$AGENTS_SKILL_DIR/SKILL.md" "$CODEX_SKILL_DIR/SKILL.md"
-
-echo "Installed Herdr agent skill:"
-echo "  $AGENTS_SKILL_DIR/SKILL.md"
-echo "  $CODEX_SKILL_DIR/SKILL.md"
-'''
+description = "Install the Codex Herdr skill and migrate Pi to conditional skill discovery"
+run = "bash install/cli/herdr_agent_skill.bash"
 
 [tasks.install-herdr-integrations]
 description = "Install Herdr hooks/plugins for locally configured agents"

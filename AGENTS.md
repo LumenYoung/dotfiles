@@ -25,6 +25,8 @@ This repo has four distinct skill roles:
 4. **Opt-in skills** live under `optin-skills/<project>/`. These are intentionally outside auto-discovered
    agent skill roots and are mapped to `~/.config/optin-skills` for explicit CLI use such as
    `pi --skill ~/.config/optin-skills/<project>/...` or wrapper functions like `pi-marimo`.
+   Pi extensions may conditionally expose adapters from this root after verifying the runtime
+   environment; do not also link these adapters into auto-discovered skill roots.
 
 Keep **agent-specific skills separate**. Codex keeps its own skills under `codex/skills/`
 and may install additional Codex system/user skills there; do not treat `codex/skills/` as
@@ -34,6 +36,24 @@ subagent definitions, MCP config, settings, extensions, scripts, and ignored run
 
 If we introduce additional shared skill packs in the future, add them under `skills/` and
 symlink/configure as needed. Agent-specific skills stay in that agent’s own directory.
+
+## Herdr skill routing
+
+`optin-skills/herdr/` contains thin Pi adapters for Herdr app, herdr-core, and the older
+`herdr` CLI. `pi-agent/extensions/herdr-context.ts` verifies inherited caller context at
+session initialization, injects the matching environment instructions, and exposes only the
+matching adapter through `resources_discover`. Unconfirmed or conflicting context gets no
+Herdr skill. `/reload` repeats detection; inherited terminal context does not establish that
+a nested or headless agent owns a separate visible pane.
+
+The existing `optin-skills` mapping propagates these adapters to
+`~/.config/optin-skills/herdr/`. Keep their detailed guidance in the installed CLI manuals,
+not copied into the adapters or global Pi instructions. `mise run install-herdr-agent-skill`
+installs the upstream older Herdr skill only in Codex's skill root and archives a recognized
+legacy installation at `~/.agents/skills/herdr/` under
+`${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/herdr-skills/` to remove unconditional Pi
+discovery without deleting the skill. An unrecognized shared installation requires manual
+relocation outside skill roots.
 
 ## Propagation behavior
 
