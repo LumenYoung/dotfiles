@@ -40,6 +40,18 @@
   "theme": "dark",
   "subagents": {
     "agentOverrides": {
+      "iwe-page-editor": {
+        "model": "inherit"
+      },
+      "iwe-searcher": {
+        "model": "inherit"
+      },
+      "document-writer": {
+        "model": "inherit"
+      },
+      "impl-reality-checker": {
+        "model": "inherit"
+      },
       "advisor": {
         "disabled": true
       },
@@ -265,6 +277,22 @@
           "/home/yang/.pi/agent/npm/node_modules/pi-web-access/index.ts"
         ]
       }
+    },
+    "agentOverridesByProvider": {
+      "lumeny-openai": {
+        "iwe-page-editor": {
+          "model": "lumeny-openai/gpt-6.1-sol"
+        },
+        "iwe-searcher": {
+          "model": "lumeny-openai/gpt-6-luna"
+        },
+        "document-writer": {
+          "model": "lumeny-openai/gpt-6.1-sol"
+        },
+        "impl-reality-checker": {
+          "model": "lumeny-openai/gpt-6.1-sol"
+        }
+      }
     }
   },
   "extensions": [
@@ -274,8 +302,9 @@
     "{\"source\":\"git:github.com/LumenYoung/billion-context-pi@2026-10-01_pi-production-install\",\"scope\":\"user\"}": "0.1.83",
     "{\"source\":\"npm:pi-web-access\",\"scope\":\"user\"}": "0.47.0",
     "{\"source\":\"npm:pi-mcp-adapter\",\"scope\":\"user\"}": "7.0.1",
-    "{\"source\":\"npm:pi-subagents\",\"scope\":\"user\"}": "0.87.0",
+    "{\"source\":\"npm:pi-subagents\",\"scope\":\"user\"}": "0.88.0",
     "{\"source\":\"npm:pi-prompt-template-model\",\"scope\":\"user\"}": "0.12.3",
-    "{\"source\":\"../../dotfiles/skills/vendor/visual-explainer\",\"scope\":\"user\"}": "0.8.1"
+    "{\"source\":\"../../dotfiles/skills/vendor/visual-explainer\",\"scope\":\"user\"}": "0.8.1",
+    "{\"source\":\"git:github.com/LumenYoung/pi-advisor@fix/production-install-husky\",\"scope\":\"user\"}": "0.9.0"
   }
 }
