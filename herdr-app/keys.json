@@ -41,7 +41,6 @@
     "ctrl-shift-pagedown": "space.next",
     "ctrl-shift-pageup": "space.prev",
     "alt-down": "agent.next",
-    "alt-up": "agent.prev",
     "ctrl-?": "app.help",
     "ctrl-shift-/": "app.help",
     "ctrl-shift-?": "app.help",
@@ -67,7 +66,7 @@
     "alt-v": "pane.split:right",
     "alt-c": "pane.split:down",
     "alt-x": "pane.close",
-    "alt-s": "layout.toggle:sidebar",
+    "alt-s": "mod.open:picker",
     "ctrl-shift-d": "window.close",
     "ctrl-shift-r": "tab.rename"
   },
