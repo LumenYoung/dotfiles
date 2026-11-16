@@ -101,6 +101,8 @@ export function buildHerdrInstructions(context: HerdrContext, home = homedir(), 
       "Use the older `herdr` CLI, not `herdr-app` or `hc`. Before relevant operations, load the herdr-legacy skill and run `herdr --skill` for the installed CLI's manual.",
       "Use `herdr pane current --current` for live caller identity (pane moves can change IDs); target --current or explicit returned IDs, never the UI-focused pane by default.",
       "Do not run bare `herdr` for discovery: it launches/attaches the TUI. Use `herdr --help` or the relevant command group's help.",
+      "Privileged or interactive commands (sudo, password prompts, full-screen TUIs) may be run in a visible pane without an explicit request: open one new pane — or reuse the pane you already opened for this — as a side-by-side split (direction \"right\") of the calling pane, never the focused pane or a new tab; the person completes passwords and other interaction there.",
+      "Split with `herdr pane split --current --direction right --cwd \"$PWD\" --no-focus` and read the new pane from `.result.pane.pane_id`; run commands with `herdr pane run <pane> \"<command>\"` and inspect with `herdr pane wait-output` / `herdr pane read`; reuse that pane for later privileged commands instead of splitting again.",
     );
   } else {
     lines.push(`Core terminal ID: ${JSON.stringify(context.terminalId)}. This is not a desktop pane ID or an older Herdr pane ID.`);
@@ -110,6 +112,8 @@ export function buildHerdrInstructions(context: HerdrContext, home = homedir(), 
         "Use `herdr-app` for desktop spaces/tabs/panes and `hc` for core-terminal operations; do not apply the older `herdr` skill or its HERDR_ENV requirement.",
         "Before relevant operations, load the herdr-app skill; use `herdr-app --skill`, `herdr-app commands`, and `hc --skill` for installed-version guidance.",
         `Before app configuration changes, read ${JSON.stringify(join(appHome || join(home, ".config", "herdr-app"), "AGENTS.md"))}. It is app-generated and overwritten at startup; do not edit it for persistent agent policy.`,
+        "Privileged or interactive commands (sudo, password prompts, full-screen TUIs) may be run in a visible pane without an explicit request: open one new pane — or reuse the pane you already opened for this — as a side-by-side split (direction \"right\") of the pane showing this terminal, never the focused pane or a new tab; the person completes passwords and other interaction there. If no pane shows this terminal, ask the user instead of substituting another target.",
+        "Find your pane with `herdr-app ls` (the terminal entry matching the core terminal ID above); `herdr-app do pane.split --direction right --pane <pane>` returns the new pane and terminal; run commands there with `HC_SOCKET=\"$HC_TERMINAL_SOCKET\" hc send <terminal> \"<command>\"` and read results with `hc read <terminal>`; reuse that terminal for later privileged commands instead of splitting again.",
       );
     } else {
       lines.push(
@@ -119,8 +123,11 @@ export function buildHerdrInstructions(context: HerdrContext, home = homedir(), 
     }
     lines.push('Bind core lookups to the inherited endpoint: `HC_SOCKET="$HC_TERMINAL_SOCKET" hc get "$HC_TERMINAL_ID" --json`. Use that endpoint for core operations; do not fall back to the default socket. Discover app pane mappings explicitly when needed; never substitute the focused pane.');
   }
+  const paneUse = context.kind === "herdr-app" || context.kind === "herdr-legacy"
+    ? ", and for privileged or interactive commands in your own pane as described above"
+    : "";
   lines.push(
-    "Environment awareness does not authorize terminal control. Only use Herdr control features when the user explicitly asks for Herdr or terminal/pane operations, not merely because background work or delegation could help.",
+    `Use Herdr control for terminal or pane operations the user requests${paneUse}. Otherwise leave panes and tabs alone — environment awareness is context, not authorization.`,
     "Inspect targets before sending input. Do not close other people's panes, stop servers, or restart Herdr without explicit authorization; avoid focus changes unless requested.",
     "Detection is cached until session initialization or /reload; recheck live IDs before mutations if topology may have changed.",
   );

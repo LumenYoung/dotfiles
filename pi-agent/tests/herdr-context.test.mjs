@@ -126,7 +126,7 @@ test("instructions route each confirmed environment and preserve control boundar
     const text = buildHerdrInstructions(context, "/home/test", "/custom/app home");
     assert.match(text, new RegExp(`Herdr environment: ${context.kind}`));
     assert.match(text, /nested\/headless/);
-    assert.match(text, /does not authorize terminal control/);
+    assert.match(text, /environment awareness is context, not authorization/);
     assert.match(text, /explicit authorization/);
     assert.match(text, /\/reload/);
     if (context.kind === "herdr-app") {
@@ -134,13 +134,25 @@ test("instructions route each confirmed environment and preserve control boundar
       assert.match(text, /hc --skill/);
       assert.match(text, /\/custom\/app home\/AGENTS.md/);
       assert.match(text, /not a desktop pane ID/);
+      assert.match(text, /never the focused pane or a new tab/);
+      assert.match(text, /herdr-app do pane\.split --direction right --pane <pane>/);
+      assert.match(text, /HC_SOCKET="\$HC_TERMINAL_SOCKET" hc send <terminal>/);
+      assert.match(text, /and for privileged or interactive commands in your own pane/);
+      assert.match(text, /environment awareness is context, not authorization/);
     } else if (context.kind === "herdr-core") {
       assert.match(text, /only herdr-core context is confirmed/);
       assert.doesNotMatch(text, /load the herdr-app skill/);
+      assert.doesNotMatch(text, /pane\.split/);
+      assert.doesNotMatch(text, /in your own pane/);
+      assert.match(text, /context, not authorization/);
     } else {
       assert.match(text, /herdr pane current --current/);
       assert.match(text, /herdr --skill/);
       assert.doesNotMatch(text, /load the herdr-app skill/);
+      assert.match(text, /never the focused pane or a new tab/);
+      assert.match(text, /herdr pane split --current --direction right --cwd "\$PWD" --no-focus/);
+      assert.match(text, /herdr pane run <pane> "<command>"/);
+      assert.match(text, /and for privileged or interactive commands in your own pane/);
     }
   }
   assert.match(buildHerdrInstructions(contexts[0], "/home/test", ""), /\/home\/test\/\.config\/herdr-app\/AGENTS.md/);
