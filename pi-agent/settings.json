@@ -30,8 +30,7 @@
     "npm:pi-goal-x",
     "git:github.com/LumenYoung/pi-vim",
     "git:github.com/NVlabs/SoL-Pi",
-    "git:github.com/carderne/pi-nvim",
-    "git:github.com/chenxiachan/textfold"
+    "git:github.com/carderne/pi-nvim"
   ],
   "piVim": {
     "clipboardMirror": "never"
@@ -296,8 +295,7 @@
     }
   },
   "extensions": [
-    "-builtin:mcp",
-    "git/github.com/chenxiachan/textfold/plugins/pi-textfold/extension/index.ts"
+    "-builtin:mcp"
   ],
   "extensionChangelogVersions": {
     "{\"source\":\"git:github.com/LumenYoung/billion-context-pi@2026-10-01_pi-production-install\",\"scope\":\"user\"}": "0.1.83",
