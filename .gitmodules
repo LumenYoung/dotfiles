@@ -13,3 +13,6 @@
 [submodule "skills/vendor/effective-html"]
 	path = skills/vendor/effective-html
 	url = https://github.com/plannotator/effective-html.git
+[submodule "skills/vendor/agent_skills"]
+	path = skills/vendor/agent_skills
+	url = https://github.com/janestreet/agent_skills.git
