@@ -10,3 +10,9 @@
 [submodule "skills/vendor/agent_skills"]
 	path = skills/vendor/agent_skills
 	url = https://github.com/janestreet/agent_skills.git
+[submodule "skills/vendor/iso-24495"]
+	path = skills/vendor/iso-24495
+	url = https://github.com/GaZmagik/iso-24495.git
+[submodule "skills/vendor/agent-skills"]
+	path = skills/vendor/agent-skills
+	url = https://github.com/mblode/agent-skills.git
