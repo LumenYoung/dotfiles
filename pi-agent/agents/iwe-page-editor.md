@@ -10,7 +10,7 @@ inheritProjectContext: true
 inheritSkills: false
 skills: iwe-kb-bootstrap
 defaultContext: fork
-async: false
+async: true
 acceptance: { level: "none", reason: "Remote IWE changes are verified through post-edit retrieval rather than local workspace evidence." }
 completionGuard: false
 ---

@@ -42,9 +42,9 @@ Use `iwe-page-editor` for IWE updates.
 
 Delegate broad, unfamiliar, or cross-note discovery to `iwe-searcher` in foreground/blocking mode. Treat its handoff as retrieval guidance: retrieve and inspect the relevant notes yourself before relying on them. Once the relevant keys are known, use bounded direct IWE retrieval rather than delegating repeated discovery, and pass exact keys to non-exploratory subagents.
 
-Delegate every IWE mutation to `iwe-page-editor` in foreground/blocking mode with forked context. Give it the intended outcome, relevant keys, and constraints rather than prescribing tool operations. The editor owns those pages for the delegated run; do not edit them concurrently.
+Delegate every IWE mutation to `iwe-page-editor` with forked context. Launch it asynchronously by default and continue only with work independent of the delegated pages and graph structure; use foreground/blocking mode when the next step depends on the mutation and no useful independent work remains. Give it the intended outcome, relevant keys, and constraints rather than prescribing tool operations. The editor owns the affected pages and mutation scope for the delegated run; do not perform conflicting IWE mutations concurrently. Serialize structural or graph-wide mutations, and use multiple editors only for explicitly disjoint, non-structural write scopes.
 
-After the editor returns, retrieve and review every changed page yourself and address any material graph warnings or unresolved issues.
+After the editor completes, retrieve and review every changed page yourself and address any material graph warnings or unresolved issues.
 
 ## Active context pruning usage
 
