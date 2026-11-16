@@ -82,9 +82,6 @@ relocation outside skill roots.
 - Project-local skills: `dotfiles/.agents/skills`
 - Governed global skills source: `dotfiles/skills/global`
 - Vendored upstream skill/package source: `dotfiles/skills/vendor`
-- Pi-only Effective HTML adapters: `dotfiles/pi-agent/skills/effective-html/` → canonical
-  workflows in `dotfiles/skills/vendor/effective-html/skills/`; they are hidden from Pi's
-  model-advertised skills and run only through explicit `/skill:<name>` commands.
 - Opt-in skill source: `dotfiles/optin-skills` → `~/.config/optin-skills`
 - Relative shared-skill links:
   - `codex/skills/global` → `../../skills/global`

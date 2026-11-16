@@ -55,8 +55,8 @@ An upstream-derived skill that needs material local integration changes may be m
 Use `skills/vendor/<upstream-name>/` for upstream repositories tracked as submodules or otherwise maintained outside this repo. Expose the actual skill directory through `skills/global/<skill-name>` when it should be available through the governed global skill symlink model.
 
 Example:
-- `skills/vendor/visual-explainer/` is the upstream repo checkout.
-- `skills/global/visual-explainer -> ../vendor/visual-explainer/plugins/visual-explainer` exposes the actual skill.
+- `skills/vendor/agent_skills/` is the upstream repo checkout.
+- To expose a vendored skill globally, symlink `skills/global/<name>` to the actual skill directory inside the submodule (e.g. `skills/global/<name> -> ../vendor/<repo>/<path-to-skill>`).
 
 Do not edit vendored upstream content casually; update the submodule pointer instead. If a Pi package install is used for tools/prompts, point it at the same local submodule checkout to avoid same-name skill collisions from different real paths.
 
