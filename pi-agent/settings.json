@@ -31,7 +31,8 @@
     "../../dotfiles/skills/vendor/visual-explainer",
     "git:github.com/LumenYoung/pi-vim",
     "git:github.com/NVlabs/SoL-Pi",
-    "git:github.com/carderne/pi-nvim"
+    "git:github.com/carderne/pi-nvim",
+    "git:github.com/chenxiachan/textfold"
   ],
   "piVim": {
     "clipboardMirror": "never"
@@ -296,7 +297,8 @@
     }
   },
   "extensions": [
-    "-builtin:mcp"
+    "-builtin:mcp",
+    "git/github.com/chenxiachan/textfold/plugins/pi-textfold/extension/index.ts"
   ],
   "extensionChangelogVersions": {
     "{\"source\":\"git:github.com/LumenYoung/billion-context-pi@2026-10-01_pi-production-install\",\"scope\":\"user\"}": "0.1.83",
