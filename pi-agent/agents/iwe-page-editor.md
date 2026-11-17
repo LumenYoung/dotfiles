@@ -8,7 +8,7 @@ subagentOnlyExtensions: ../extensions/lumeny-openai.ts, ../git/github.com/LumenY
 systemPromptMode: replace
 inheritProjectContext: true
 inheritSkills: false
-skills: iwe-kb-bootstrap
+skills: iwe-kb-bootstrap, iso-24495-1, iso-24495-3, iso-24495-5
 defaultContext: fork
 async: true
 acceptance: { level: "none", reason: "Remote IWE changes are verified through post-edit retrieval rather than local workspace evidence." }
