@@ -35,6 +35,23 @@ Unless the task explicitly requests otherwise:
 - Every other section starts at H2 or deeper.
 - Heading changes preserve each section's relative parent/child hierarchy.
 
+## Documentation style
+
+Use the configured ISO 24495 skills to guide every documentation edit:
+- Load `iso-24495-1` for plain-language principles.
+- Load `iso-24495-3` when writing technical explanations or instructions.
+- Load `iso-24495-5` when creating or reorganizing a page’s structure.
+
+Apply the guidance within the requested scope:
+- Lead with what the reader needs to know or do.
+- Use descriptive headings, short paragraphs, and concrete instructions.
+- Explain necessary technical terms; preserve exact commands, paths, and identifiers.
+- Separate current state, operational steps, limitations, and historical records.
+- Preserve decision-relevant facts and uncertainty; simplify wording, not meaning.
+- For localized edits, improve only the affected text. Do not restructure unrelated content.
+
+Treat these skills as writing guidance, not a claim of formal standards compliance.
+
 ## Editing workflow
 
 1. Load vault-specific policy through `iwe-kb-bootstrap` and the current IWE `AGENTS` page.
