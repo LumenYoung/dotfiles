@@ -26,7 +26,7 @@
     "npm:pi-subagents",
     "npm:pi-intercom",
     "npm:pi-prompt-template-model",
-    "git:github.com/LumenYoung/pi-btw@605a366cbed6cbc1c5a471801806c04562532f9e",
+    "git:github.com/LumenYoung/pi-btw@231af1eda793e7dc119115046e7d8bda1561dc75",
     "npm:pi-goal-x",
     "git:github.com/LumenYoung/pi-vim",
     "git:github.com/NVlabs/SoL-Pi",
