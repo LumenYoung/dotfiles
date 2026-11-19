@@ -276,22 +276,6 @@
           "/home/yang/.pi/agent/npm/node_modules/pi-web-access/index.ts"
         ]
       }
-    },
-    "agentOverridesByProvider": {
-      "lumeny-openai": {
-        "iwe-page-editor": {
-          "model": "lumeny-openai/gpt-6.1-sol"
-        },
-        "iwe-searcher": {
-          "model": "lumeny-openai/gpt-6-luna"
-        },
-        "document-writer": {
-          "model": "lumeny-openai/gpt-6.1-sol"
-        },
-        "impl-reality-checker": {
-          "model": "lumeny-openai/gpt-6.1-sol"
-        }
-      }
     }
   },
   "extensions": [
