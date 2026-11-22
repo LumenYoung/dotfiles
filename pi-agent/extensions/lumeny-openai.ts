@@ -101,7 +101,7 @@ async function discoverModelIds(baseUrl: string, apiKey: string): Promise<string
   return uniqueModelIds(
     entries
       .map((model) => (typeof model.id === "string" ? model.id.trim() : ""))
-      .filter((id) => id.startsWith("claude-") || isOpenAIModelId(id)),
+      .filter((id) => id.startsWith("claude-") || isOpenAIModelId(id) || id.startsWith("openrouter/")),
   );
 }
 
@@ -142,7 +142,7 @@ export default async function lumenyOpenAI(pi: ExtensionAPI) {
       try {
         modelIds = await discoverModelIds(baseUrl, apiKey);
         if (modelIds.length === 0) {
-          console.warn("[lumeny-openai] Remote /models returned no GPT/Codex/Claude models; using fallback model list.");
+          console.warn("[lumeny-openai] Remote /models returned no supported models; using fallback model list.");
           modelIds = FALLBACK_MODEL_IDS;
         }
       } catch (error) {
@@ -218,4 +218,84 @@ export default async function lumenyOpenAI(pi: ExtensionAPI) {
       })),
     });
   }
+
+  const openRouterIds = uniqueModelIds(modelIds.filter((id) => id.startsWith("openrouter/")));
+  if (openRouterIds.length > 0) {
+    pi.registerProvider("lumeny-openrouter", {
+      name: "Lumeny OpenRouter",
+      baseUrl,
+      api: "openai-completions",
+      apiKey,
+      models: await openRouterModels(openRouterIds),
+    });
+  }
+}
+
+type OpenRouterCatalogModel = {
+  id: string;
+  name?: string;
+  context_length?: number;
+  top_provider?: { max_completion_tokens?: number | null };
+  architecture?: { input_modalities?: string[] };
+  supported_parameters?: string[];
+  pricing?: Record<string, string>;
+};
+
+async function openRouterModels(ids: string[]) {
+  let catalog: OpenRouterCatalogModel[] = [];
+  if (!isTruthyEnv(process.env.PI_OFFLINE)) {
+    try {
+      // CPA lists routable IDs, but omits model limits. Public metadata needs no key.
+      const response = await fetch("https://openrouter.ai/api/v1/models", {
+        signal: AbortSignal.timeout(5000),
+      });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const payload = await response.json();
+      if (!Array.isArray(payload.data)) throw new Error("Missing model data array");
+      catalog = payload.data;
+    } catch {
+      console.warn("[lumeny-openai] OpenRouter metadata unavailable; using conservative limits for CPA OpenRouter models.");
+    }
+  }
+  const byId = new Map(catalog.filter((m) => m && typeof m.id === "string").map((m) => [m.id, m]));
+  return ids.map((id) => {
+    const upstreamId = id.slice("openrouter/".length);
+    const metadata = byId.get(upstreamId);
+    const contextWindow = positiveInteger(metadata?.context_length, 32768);
+    const input: ("text" | "image")[] = ["text"];
+    if (Array.isArray(metadata?.architecture?.input_modalities) && metadata.architecture.input_modalities.includes("image")) {
+      input.push("image");
+    }
+    return {
+      id,
+      name: typeof metadata?.name === "string" && metadata.name.trim() ? metadata.name : upstreamId,
+      reasoning: Array.isArray(metadata?.supported_parameters) && metadata.supported_parameters.includes("reasoning"),
+      input,
+      contextWindow,
+      maxTokens: Math.min(positiveInteger(metadata?.top_provider?.max_completion_tokens, 4096), contextWindow),
+      cost: {
+        input: pricePerMillion(metadata?.pricing?.prompt),
+        output: pricePerMillion(metadata?.pricing?.completion),
+        cacheRead: pricePerMillion(metadata?.pricing?.input_cache_read ?? metadata?.pricing?.prompt),
+        cacheWrite: pricePerMillion(metadata?.pricing?.input_cache_write ?? metadata?.pricing?.prompt),
+      },
+      // The CPA hostname/provider name cannot trigger Pi's OpenRouter auto-detection.
+      compat: {
+        supportsStore: false,
+        supportsDeveloperRole: false,
+        maxTokensField: "max_tokens" as const,
+        thinkingFormat: "openrouter" as const,
+        ...(upstreamId.startsWith("anthropic/") ? { cacheControlFormat: "anthropic" as const } : {}),
+      },
+    };
+  });
+}
+
+function positiveInteger(value: unknown, fallback: number): number {
+  return typeof value === "number" && Number.isInteger(value) && value > 0 ? value : fallback;
+}
+
+function pricePerMillion(value: string | undefined): number {
+  const price = Number(value);
+  return Number.isFinite(price) && price >= 0 ? price * 1_000_000 : 0;
 }
