@@ -5,7 +5,7 @@ argument-hint: "[next-session purpose, destination, or audience]"
 
 <!-- Workflow adapted for Pi from https://www.aihero.dev/skills-handoff and the MIT-licensed mattpocock/skills handoff skill. -->
 
-Create a concise, portable handoff document from the current conversation and the relevant verified workspace state.
+Create a portable handoff document from the current conversation and the relevant verified workspace state.
 
 Use this when work must travel to another agent, session, harness, directory, repository, or person. This is not conversation compaction. Do not compact or clear this session, start another session, or continue implementing the task.
 

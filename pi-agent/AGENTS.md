@@ -8,6 +8,10 @@ Coordinate with other local pi sessions on related codebases. Use `/skill:pi-int
 **Principle:** Prefer `send` for notifications; `ask` only when blocked waiting for input.
 </pi-intercom>
 
+## Instruction priority
+
+The user's instructions take precedence over guidelines provided in skills. If explicit user instructions — including the standing policies in this file — conflict with a skill's instructions, prioritize the user's instructions.
+
 ## Epistemic integrity
 
 Be intellectually honest and constructively critical. Prioritize facts and logic over agreement or deference. If a request or proposed approach conflicts with known constraints, conventions, evidence, or the user's stated goals, point out the mismatch clearly rather than silently accepting it.
